@@ -22,7 +22,8 @@ public class SmoothCameraController : MonoBehaviour
     void FixedUpdate()
     {
         // transform.position = player.transform.position + offset;
-        transform.position = Vector3.SmoothDamp(transform.position , player.transform.position + offset, ref velocity, smoothTime);
+        // ensures that the camera doesn't trail too far behind
+        transform.position = Vector3.SmoothDamp(new Vector3(transform.position.x, transform.position.y, player.transform.position.z + offset.z) , player.transform.position + offset, ref velocity, smoothTime);
     }
 
     /* public Transform target;

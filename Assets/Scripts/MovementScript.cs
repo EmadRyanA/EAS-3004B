@@ -6,6 +6,7 @@ public class MovementScript : MonoBehaviour
 {
     //public float speed;
     public float shift_amount;
+    public float movement_speed = 10;
 
     private Rigidbody rb;
 
@@ -27,6 +28,9 @@ public class MovementScript : MonoBehaviour
         // the default position of the car should always be in the centre of the track. 
         
         rb.position = Vector3.Lerp(rb.position, new Vector3(moveHorizontal * shift_amount, rb.position.y, rb.position.z), 0.25f);
+        
+        // this should always be moving in the direction of the plane
+        rb.velocity = new Vector3(0, rb.velocity.y, movement_speed);
 
     }
 }
