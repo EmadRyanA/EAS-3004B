@@ -1,26 +1,95 @@
 <!-- Simple Graph utility to visualize the spectral flux-->
 <body>
-    <canvas id='fluxCanvas' width = "1024px;" height ="600px;"></canvas>
-</body>
-
+    <canvas id='fluxCanvas' width = "1024px;" height ="300px;"></canvas>
+    <canvas id='thresholdCanvas' width = "1024px;" height ="300px;"></canvas>
+    <canvas id='isbeat' width="1024px" height="20px"></canvas>
+    <br>
 <textarea id='fluxInput'> </textarea>
+<textarea id='thresholdInput'> </textarea>
+<br>
+<input id='rangeInput' type='range' min='0' max='10000' style='width:1000px;'>
+<br>
+<audio  id='audio'
+        controls
+        src="../../Assets/Songs/01 Take On Me.mp3">
+            Your browser does not support the
+            <code>audio</code> element.
+</audio>
 <button type='button' id='fluxSubmit'>
   Go
 </button>
+</body>
+
+
 
 <script>
 
 let fluxArray = [];
+let thresholdArray = [];
 
 let barWidth = 4;
-let segmentWidth = 10000;
+let segmentWidth = 1000;
 
 let currPos = 0;
+let lastPos = 0;
+
+let N_BINS = 1024;
 
 let fluxCanvas = document.getElementById('fluxCanvas');
+let thresholdCanvas = document.getElementById('thresholdCanvas');
 fluxCanvas.width = segmentWidth;
+thresholdCanvas.width = segmentWidth;
 let fluxInput = document.getElementById('fluxInput');
-let context = fluxCanvas.getContext("2d");
+let thresholdInput = document.getElementById('thresholdInput');
+let rangeInput = document.getElementById('rangeInput');
+let audio = document.getElementById('audio');
+audio.playbackRate = 0.5; 
+let isbeat = document.getElementById('isbeat');
+
+let beatCounter = 0;
+
+audio.onplay = function () {
+  animate();
+  isbeat.style.backgroundColor = "red";
+}
+
+function animate() {
+  
+  currPos = Math.floor(audio.currentTime / (audio.duration / fluxArray.length));
+  //console.log(currPos);
+
+  let isBeat = fluxArray[currPos] > 0;
+  let dy = currPos - lastPos;
+  console.log(currPos - lastPos);
+  if (!isBeat && dy > 0) {
+    for (var i = currPos - lastPos; i < currPos; i++) {
+        if (i < 0) continue;
+        if (fluxArray[i] > 0) {
+            isBeat = true;
+            break;
+        }
+    }
+  }
+
+  drawFlux(currPos, fluxCanvas, fluxArray, 256);
+  drawFlux(currPos, thresholdCanvas, thresholdArray, 256);
+
+  let context = isbeat.getContext("2d");
+  if (isBeat) {
+    context.fillStyle = "green";
+    beatCounter = 0;
+  }
+  else {
+    context.fillStyle = "white";
+  }
+  context.fillRect(0, 0, isbeat.width, isbeat.height);
+
+  lastPos = currPos;
+
+  if (!audio.paused) {
+    window.requestAnimationFrame(animate);
+  }
+}
 
 document.getElementById('fluxSubmit').onclick = function () {
     var lines = fluxInput.value;
@@ -28,15 +97,31 @@ document.getElementById('fluxSubmit').onclick = function () {
     for (line of linesSplit) {
         fluxArray.push(parseFloat(line));
     }
-    drawFlux(0);
+    lines = thresholdInput.value;
+    linesSplit = lines.split("\n");
+    for (line of linesSplit) {
+        thresholdArray.push(parseFloat(line));
+    }
+    drawFlux(0, fluxCanvas, fluxArray, 256);
+    drawFlux(0, thresholdCanvas, thresholdArray, 256);
+
+
 }
 
-function drawFlux(pos) {
-  context.clearRect(0, 0, fluxCanvas.width, fluxCanvas.height);
+rangeInput.onchange = function () {
+  let val = rangeInput.value;
+  drawFlux(val, fluxCanvas, fluxArray, 256);
+  drawFlux(val, thresholdCanvas, thresholdArray, 256);
+}
+
+
+
+function drawFlux(pos, canvas, array, mFactor) {
+  let context = canvas.getContext("2d");
+  context.clearRect(0, 0, canvas.width, canvas.height);
   
   context.lineWidth = 1;
-  let mFactor = 512;
-  for (var i = pos; i < pos + segmentWidth && i < fluxArray.length; i++) {
+  for (var i = pos; i < pos + segmentWidth && i < array.length; i++) {
     context.strokeStyle = "white";  
     var grd = context.createLinearGradient(i * barWidth, 0, i * barWidth, mFactor);
     grd.addColorStop(0, "red");
@@ -45,7 +130,7 @@ function drawFlux(pos) {
 
     context.fillStyle = grd;
 
-    var scaledFlux = fluxArray[i] * mFactor;
+    var scaledFlux = array[i] * mFactor;
 
     context.fillStyle = grd;
     context.fillRect(((i - pos) * barWidth), mFactor - scaledFlux, barWidth - 1, scaledFlux);
