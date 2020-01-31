@@ -36,6 +36,7 @@ public class BGA : MonoBehaviour
     public struct output_struct
     {
         public float[][] fftData;
+        public float[] flux;
     }
 
     public output_struct output;
@@ -125,6 +126,7 @@ public class BGA : MonoBehaviour
 
         int finalArraySize = song_info.sampleCount / N_BINS;
         output.fftData = new float[finalArraySize][];
+        output.flux = new float[finalArraySize];
         FFTProvider fftProvider = new DSPLibFFTProvider(N_BINS);
         WINDOW_TYPE fftWindow = WINDOW_TYPE.Hamming;
 
@@ -141,6 +143,20 @@ public class BGA : MonoBehaviour
 
             output.fftData[i] = fftProvider.doFFT(currSamples, fftWindow);
 
+            if (i != 0)
+            {
+                //Compute the spectral flux for the current spectrum
+                float flux = 0;
+                for (int j = 0; j < output.fftData[i].Length; j++)
+                {
+                    float currFlux = (output.fftData[i][j] - output.fftData[i - 1][j]);
+                    //we only want 'rising' spectral flux - since we are detecting beat onset therefore we only care about rise in power
+                    if (currFlux > 0) flux += currFlux;
+                }
+                output.flux[i] = flux;
+            }
+            else output.flux[0] = 0;
+
         }
 
         //Now we have fft data for all of the song
@@ -150,11 +166,12 @@ public class BGA : MonoBehaviour
         //todo deal with random stuff below
 
         //debug output
-        /*
+        
         Debug.Log("FFT Data collected");
 
         using (StreamWriter file = new StreamWriter("output.txt"))
         {
+            /*
             for (int i=0; i<output.fftData.Length; i++)
             {
                 StringBuilder builder = new StringBuilder();
@@ -164,10 +181,15 @@ public class BGA : MonoBehaviour
                 }
                 file.WriteLine(builder.ToString());
             }
+            */
+            for (int i=0; i < output.flux.Length; i++)
+            {
+                file.WriteLine(output.flux[i]);
+            }
         }
 
         Debug.Log("Output file saved");
-        */
+        
 
         //frameScale = (int) (songLength / finalArraySize);
         float sampleLength = song_info.length / (float)song_info.sampleCount;
