@@ -47,13 +47,16 @@
   <ItemGroup>
      <Compile Include="Assets\Models\Sport Car - 3D model\Scripts\CameraScript.cs" />
      <Compile Include="Assets\Models\Sport Car - 3D model\Scripts\LightEffects.cs" />
+     <Compile Include="Assets\Scripts\BGA.cs" />
      <Compile Include="Assets\Scripts\CameraRotation.cs" />
      <Compile Include="Assets\Scripts\downforce.cs" />
+     <Compile Include="Assets\Scripts\FFT.cs" />
      <Compile Include="Assets\Scripts\gameController.cs" />
      <Compile Include="Assets\Scripts\MovementScript.cs" />
      <Compile Include="Assets\Scripts\ObjectiveCollisionDetector.cs" />
      <Compile Include="Assets\Scripts\SmoothCameraController.cs" />
      <Compile Include="Assets\Scripts\ToggleRender.cs" />
+     <Compile Include="Assets\Vendor\DSPLib.cs" />
  <Reference Include="Unity.Timeline.Editor">
  <HintPath>D:/Unity Projects/New Unity Project/Library/ScriptAssemblies/Unity.Timeline.Editor.dll</HintPath>
  </Reference>
