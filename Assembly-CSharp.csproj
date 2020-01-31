@@ -48,9 +48,10 @@
      <Compile Include="Assets\Models\Sport Car - 3D model\Scripts\CameraScript.cs" />
      <Compile Include="Assets\Models\Sport Car - 3D model\Scripts\LightEffects.cs" />
      <Compile Include="Assets\Scripts\CameraRotation.cs" />
-     <Compile Include="Assets\Scripts\CollisionDetector.cs" />
      <Compile Include="Assets\Scripts\downforce.cs" />
+     <Compile Include="Assets\Scripts\gameController.cs" />
      <Compile Include="Assets\Scripts\MovementScript.cs" />
+     <Compile Include="Assets\Scripts\ObjectiveCollisionDetector.cs" />
      <Compile Include="Assets\Scripts\SmoothCameraController.cs" />
      <Compile Include="Assets\Scripts\ToggleRender.cs" />
  <Reference Include="Unity.Timeline.Editor">
