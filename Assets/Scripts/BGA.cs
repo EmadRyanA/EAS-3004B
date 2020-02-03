@@ -17,7 +17,9 @@ using UnityEngine;
 public class BGA : MonoBehaviour
 {
 
-    public const int N_BINS = 1024;
+    public const int N_BINS = 1024; //todo make these options
+    public const float THRESHOLD_TIME = 0.5f;
+    public const float THRESHOLD_MULTIPLIER = 1.5f;
 
     public struct song_info_struct
     {
@@ -37,6 +39,9 @@ public class BGA : MonoBehaviour
     {
         public float[][] fftData;
         public float[] flux;
+        public float[] flux2;
+        public float[] peaks; //true final output
+        public float[] threshold;
     }
 
     public output_struct output;
@@ -69,6 +74,7 @@ public class BGA : MonoBehaviour
         song_info.sampleCount = song_info.audioClip.samples;
         song_info.channels = song_info.audioClip.channels;
         song_info.length = song_info.audioClip.length;
+        Debug.Log(song_info.length);
         //GetData returns samples for both the L(eft) and R(ight) channels
         song_info.samples = new float[song_info.sampleCount * song_info.channels];
         song_info.audioClip.GetData(song_info.samples, 0);
@@ -125,8 +131,13 @@ public class BGA : MonoBehaviour
         Debug.Log("Song samples coverted to mono");
 
         int finalArraySize = song_info.sampleCount / N_BINS;
+
+        Debug.Log(finalArraySize);
         output.fftData = new float[finalArraySize][];
         output.flux = new float[finalArraySize];
+        output.flux2 = new float[finalArraySize];
+        output.peaks = new float[finalArraySize];
+        output.threshold = new float[finalArraySize];
         FFTProvider fftProvider = new DSPLibFFTProvider(N_BINS);
         WINDOW_TYPE fftWindow = WINDOW_TYPE.Hamming;
 
@@ -159,14 +170,65 @@ public class BGA : MonoBehaviour
 
         }
 
-        //Now we have fft data for all of the song
-        //todo beat detection
+        float sampleLength = song_info.length / (float)song_info.sampleCount;
 
+        //define a window size for the threshold. THRESHOLD_TIME is the length in time that the window should be.
+        int thresholdWindowSize = Mathf.FloorToInt(Mathf.FloorToInt((THRESHOLD_TIME / sampleLength) / N_BINS) / 2);
+        Debug.Log("threshold: ");
+        Debug.Log(thresholdWindowSize);
+
+        //Compute threshold for each flux value
+        for (int i = 0; i < output.flux.Length; i++)
+        {
+            float avg = 0;
+            float count = 0;
+            for (int j = (i - thresholdWindowSize); j < (i + thresholdWindowSize); j++)
+            {
+                if (j < 0 || j >= output.flux.Length) continue; //todo should be optimized
+                avg += output.flux[j];
+                count += 1;
+            }
+            if (count > 0)
+            {
+                output.threshold[i] = (avg / count) * THRESHOLD_MULTIPLIER;
+            }
+            else
+            {
+                output.threshold[i] = 0f;
+            }
+        }
+
+        //using the computed threshold, discard any flux values that are below/at the threshold (100% not a beat as it is below avg)
+        for (int i = 0; i < output.flux.Length; i++)
+        {
+            if (output.flux[i] <= output.threshold[i])
+            {
+                output.flux2[i] = 0f;
+            }
+            else
+            {
+                output.flux2[i] = output.flux[i]; //subtract avg so we see only the peak
+            }
+        }        
+
+        //Check for peaks: If curr value > next value this is a peak
+
+        for (int i = 0; i < output.flux2.Length - 1; i++)
+        {
+            if (output.flux2[i] > output.flux2[i + 1])
+            {
+                output.peaks[i] = output.flux2[i]; //Beat detected todo
+            }
+            else
+            {
+                output.peaks[i] = 0f;
+            }
+        }
 
         //todo deal with random stuff below
 
         //debug output
-        
+
         Debug.Log("FFT Data collected");
 
         using (StreamWriter file = new StreamWriter("output.txt"))
@@ -187,13 +249,36 @@ public class BGA : MonoBehaviour
                 file.WriteLine(output.flux[i]);
             }
         }
+        using (StreamWriter file = new StreamWriter("output2.txt"))
+        {
+            for (int i = 0; i < output.threshold.Length; i++)
+            {
+                file.WriteLine(output.threshold[i]);
+            }
+        }
+        using (StreamWriter file = new StreamWriter("output3.txt"))
+        {
+            for (int i = 0; i < output.flux2.Length; i++)
+            {
+                file.WriteLine(output.flux2[i]);
+            }
+        }
+        using (StreamWriter file = new StreamWriter("output4.txt"))
+        {
+            for (int i = 0; i < output.peaks.Length; i++)
+            {
+                file.WriteLine(output.peaks[i]);
+            }
+        }
 
         Debug.Log("Output file saved");
-        
 
         //frameScale = (int) (songLength / finalArraySize);
-        float sampleLength = song_info.length / (float)song_info.sampleCount;
+        //float sampleLength = song_info.length / (float)song_info.sampleCount;
         Debug.Log(sampleLength);
+
+        //Debug.Log(sampleLength * 1000);
+        Debug.Log(sampleLength * N_BINS); //length per reading
 
         done = true;
 
