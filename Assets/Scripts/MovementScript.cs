@@ -7,6 +7,12 @@ public class MovementScript : MonoBehaviour
     //public float speed;
     public float shift_amount;
     public float movement_speed = 10;
+    private float lastTime = 0f;
+    //public float shiftPercentPerFrame = 0.2f;
+    public float shift_speed = 1000;
+    private float currentShiftAmount = 0;
+    private float lerpTime = 1f;
+    private float currentLerpTime;
 
     private Rigidbody rb;
 
@@ -27,8 +33,22 @@ public class MovementScript : MonoBehaviour
         //rb.position = Vector3.Lerp(Vector3.zero, new Vector3(moveHorizontal * shift_amount, rb.position.y, rb.position.z), 0.25f);
         // the default position of the car should always be in the centre of the track. 
         
-        rb.position = Vector3.Lerp(rb.position, new Vector3(moveHorizontal * shift_amount, rb.position.y, rb.position.z), 0.25f);
+        //currentShiftAmount += shiftPercentPerFrame;
         
+        currentLerpTime += Time.deltaTime*2;
+        Debug.Log(currentLerpTime + " " + lerpTime);
+        if(currentLerpTime > lerpTime){
+            currentLerpTime = lerpTime;
+        }
+
+        //float perc = currentLerpTime / lerpTime;
+        //perc = Mathf.Sin(perc * Mathf.PI * 0.5f); // smoothens the camera movement
+        //rb.position = Vector3.Lerp(rb.position, new Vector3(moveHorizontal * shift_amount, rb.position.y, rb.position.z), perc); // orig: 0.25f
+        //rb.position = Vector3.Lerp(rb.position, new Vector3(moveHorizontal * shift_amount, rb.position.y, rb.position.z), 0.25f); // orig: 0.25f
+        
+        float step = shift_speed*Time.deltaTime;
+        rb.position = Vector3.MoveTowards(rb.position, new Vector3(moveHorizontal * shift_amount, rb.position.y, rb.position.z), step);
+
         // this should always be moving in the direction of the plane
         rb.velocity = new Vector3(0, rb.velocity.y, movement_speed);
 
