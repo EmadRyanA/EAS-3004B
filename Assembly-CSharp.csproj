@@ -45,6 +45,8 @@
     <ImplicitlyExpandDesignTimeFacades>false</ImplicitlyExpandDesignTimeFacades>
   </PropertyGroup>
   <ItemGroup>
+     <Compile Include="Assets\MainMenuCanvasController.cs" />
+     <Compile Include="Assets\MainMenuController.cs" />
      <Compile Include="Assets\Models\Sport Car - 3D model\Scripts\CameraScript.cs" />
      <Compile Include="Assets\Models\Sport Car - 3D model\Scripts\LightEffects.cs" />
      <Compile Include="Assets\Scripts\BGA.cs" />

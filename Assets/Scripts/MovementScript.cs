@@ -20,7 +20,7 @@ public class MovementScript : MonoBehaviour
         rb = GetComponent<Rigidbody>();
     }
     // Update is called once per frame
-    void FixedUpdate()
+    void Update()
     {
         float moveHorizontal = Input.GetAxis("Horizontal");
         float moveVertical = Input.GetAxis("Vertical");
@@ -46,8 +46,9 @@ public class MovementScript : MonoBehaviour
         //rb.position = Vector3.Lerp(rb.position, new Vector3(moveHorizontal * shift_amount, rb.position.y, rb.position.z), perc); // orig: 0.25f
         //rb.position = Vector3.Lerp(rb.position, new Vector3(moveHorizontal * shift_amount, rb.position.y, rb.position.z), 0.25f); // orig: 0.25f
         
+        Debug.Log(rb.position.x);
         float step = shift_speed*Time.deltaTime;
-        rb.position = Vector3.MoveTowards(rb.position, new Vector3(moveHorizontal * shift_amount, rb.position.y, rb.position.z), step);
+        transform.position = Vector3.MoveTowards(transform.position, new Vector3(moveHorizontal * shift_amount, transform.position.y, transform.position.z), step);
 
         // this should always be moving in the direction of the plane
         rb.velocity = new Vector3(0, rb.velocity.y, movement_speed);
