@@ -92,3 +92,18 @@ Achievements:
   o	Quit button --- needs implementation/development in other areas
 -	Refactored player movement code 
   o	Player now moves faster from side to side (MoveTowards instead of Lerp)
+
+Sunday
+
+Time spent: 6 hours
+
+Duties: 
+- Main menu
+- Game UI
+- refining gameplay (particularly the camera)
+
+Achievements:
+- Garage function, can now potentially change your vehicle, track progression, etc.
+- more camera anglea/transitions
+- the camera now moves smoothly (using update() rather than fixedupdate())
+- added functionality to many buttons
