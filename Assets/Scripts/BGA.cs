@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Text;
 using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
 using DSPLib;
 using UnityEngine;
+
 
 /* The class that performs beat map generation given an audioClip
  * Sources used during development:
@@ -28,25 +30,9 @@ public class BGA : MonoBehaviour
 
     public const Int32 RANDOM_SEED_LENGTH = 256;
 
-    public struct bga_settings
-    {
-        public int n_bins;
-        public float threshold_time;
-        public float threshold_multiplier;
-        public int rng_seed; //If rng_seed == 0 a new random seed is created
-        public System.Random random;
-
-        public bga_settings(int n_bins, float threshold_time, float threshold_multiplier, int rng_seed)
-        {
-            this.n_bins = n_bins;
-            this.threshold_time = threshold_time;
-            this.threshold_multiplier = threshold_multiplier;
-            this.rng_seed = rng_seed;
-            random = null;
-        }
-    }
-
     public bga_settings settings;
+
+    public System.Random bga_random;
 
     //Information Structs
     public struct song_info_struct
@@ -71,6 +57,7 @@ public class BGA : MonoBehaviour
 
     public song_info_struct song_info;
 
+    //todo: this is a lot of ram! get rid of arrays when we are done with them
     public struct output_struct
     {
         public float[][] fftData;
@@ -90,7 +77,7 @@ public class BGA : MonoBehaviour
 
     public void StartBGA(ref AudioClip audioClip)
     {
-        StartBGA(ref audioClip, new BGA.bga_settings(1024, 0.5f, 1.5f, 0));
+        StartBGA(ref audioClip, new bga_settings(1024, 0.5f, 1.5f, 0.5f, 0));
     }
 
     public void StartBGA(ref AudioClip audioClip, bga_settings settings)
@@ -106,7 +93,7 @@ public class BGA : MonoBehaviour
         {
             settings.rng_seed = generateNewRandomSeed();
         }
-        settings.random = new System.Random(settings.rng_seed);
+        bga_random = new System.Random(settings.rng_seed);
 
         song_info = new song_info_struct(audioClip);
         song_info.samples = new float[song_info.sampleCount * song_info.channels];
@@ -186,6 +173,7 @@ public class BGA : MonoBehaviour
         output.flux = new float[finalArraySize];
         output.flux2 = new float[finalArraySize];
         output.peaks = new float[finalArraySize];
+        output.peaks2 = new float[finalArraySize];
         output.threshold = new float[finalArraySize];
         FFTProvider fftProvider = new DSPLibFFTProvider(settings.n_bins);
         WINDOW_TYPE fftWindow = WINDOW_TYPE.Hamming;
@@ -247,7 +235,7 @@ public class BGA : MonoBehaviour
             }
         }
 
-        //using the computed threshold, discard any flux values that are below/at the threshold (100% not a beat as it is below avg)
+        //using the computed threshold, discard any flux values that are below/at the threshold (most likely not a beat as it is below avg)
         for (int i = 0; i < output.flux.Length; i++)
         {
             if (output.flux[i] <= output.threshold[i])
@@ -266,13 +254,29 @@ public class BGA : MonoBehaviour
         {
             if (output.flux2[i] > output.flux2[i + 1])
             {
-                output.peaks[i] = output.flux2[i]; //Beat detected todo
+                output.peaks[i] = output.flux2[i]; //Beat Detected
             }
             else
             {
                 output.peaks[i] = 0f;
             }
         }
+
+        //Filter peaks to allowable min_time_between_peaks
+        //Todo this is a bit naive should probably select highest peak or something (but will work for now)
+        int minLengthBetweenPeaks = Mathf.FloorToInt(Mathf.FloorToInt((settings.min_peak_seperation_time / sampleLength) / settings.n_bins) / 2);
+        for (int i = 0; i < output.peaks.Length; i++)
+        {
+            if (output.peaks[i] > 0)
+            {
+                output.peaks2[i] = output.peaks[i];
+                i += minLengthBetweenPeaks - 1;
+            }
+            
+        }
+
+        BeatMap beatMap = makeBeatMap();
+        saveBeatMap(ref beatMap);
 
         //todo deal with random stuff below
         //debug output
@@ -318,6 +322,13 @@ public class BGA : MonoBehaviour
                 file.WriteLine(output.peaks[i]);
             }
         }
+        using (StreamWriter file = new StreamWriter("output5.txt"))
+        {
+            for (int i = 0; i < output.peaks2.Length; i++)
+            {
+                file.WriteLine(output.peaks2[i]);
+            }
+        }
 
         Debug.Log("Output file saved");
 
@@ -332,6 +343,26 @@ public class BGA : MonoBehaviour
 
         //done = true;
 
+    }
+
+    //All peaks are detected - now its time to decide where these beats are going
+    BeatMap makeBeatMap()
+    {
+        BeatMap beatMap = new BeatMap(settings, "testBeatmap");
+        //...//
+        return beatMap;
+    }
+
+    void saveBeatMap(ref BeatMap beatMap)
+    {
+        //todo file format, name
+        //for now just seralize beatMap
+        //See https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/concepts/serialization/walkthrough-persisting-an-object-in-visual-studio
+        string fileName = "C:/Beatmaps/" + beatMap.name + ".dat";
+        Stream saveFileStream = File.Create(fileName);
+        BinaryFormatter serializer = new BinaryFormatter();
+        serializer.Serialize(saveFileStream, beatMap);
+        saveFileStream.Close();
     }
 
     // Update is called once per frame

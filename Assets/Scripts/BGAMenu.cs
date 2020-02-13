@@ -25,7 +25,7 @@ public class BGAMenu : MonoBehaviour
 
     public STATE state;
 
-    public string path = "";
+    public string path;
 
     // Start is called before the first frame update
     void Start()
@@ -35,6 +35,8 @@ public class BGAMenu : MonoBehaviour
 
         selectFileButton.onClick.AddListener(selectFileListener);
         generateBeatMapButton.onClick.AddListener(generateBeatMapListener);
+
+        path = "file:///D:\\Music\\UnitySongs\\01 Dreams.ogg";
     }
 
     void selectFileListener()
@@ -50,7 +52,7 @@ public class BGAMenu : MonoBehaviour
         {
             yield return www.Send();
 
-            if (www.isError)
+            if (www.isNetworkError)
             {
                 Debug.Log(www.error);
                 state = STATE.AUDIO_CLIP_ERROR;
@@ -85,6 +87,7 @@ public class BGAMenu : MonoBehaviour
     void generateBeatMapListener()
     {
         Debug.Log("generate");
+        Debug.Log(path);
         if (path != "")
         {
             state = STATE.AUDIO_CLIP_LOADING;
