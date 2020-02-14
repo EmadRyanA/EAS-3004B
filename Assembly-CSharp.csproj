@@ -9,7 +9,7 @@
     <ProductVersion>10.0.20506</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <RootNamespace></RootNamespace>
-    <ProjectGuid>{2E0F1BBE-D7C9-9B85-F0EA-7CD56C1BF4B2}</ProjectGuid>
+    <ProjectGuid>{30E7E334-5428-718C-260C-A7060E54A145}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <AssemblyName>Assembly-CSharp</AssemblyName>
@@ -50,6 +50,10 @@
      <Compile Include="Assets\Models\Sport Car - 3D model\Scripts\CameraScript.cs" />
      <Compile Include="Assets\Models\Sport Car - 3D model\Scripts\LightEffects.cs" />
      <Compile Include="Assets\Scripts\BeatMap.cs" />
+     <Compile Include="Assets\Scripts\BeatMap_BACKUP_8540.cs" />
+     <Compile Include="Assets\Scripts\BeatMap_BASE_8540.cs" />
+     <Compile Include="Assets\Scripts\BeatMap_LOCAL_8540.cs" />
+     <Compile Include="Assets\Scripts\BeatMap_REMOTE_8540.cs" />
      <Compile Include="Assets\Scripts\BeatMapPlayer.cs" />
      <Compile Include="Assets\Scripts\BGA.cs" />
      <Compile Include="Assets\Scripts\BGACommon.cs" />
@@ -70,31 +74,31 @@
      <Compile Include="Assets\Scripts\ToggleRender.cs" />
      <Compile Include="Assets\Vendor\DSPLib.cs" />
  <Reference Include="Unity.Timeline.Editor">
- <HintPath>C:/Users/ddos/Desktop/Unity Projects/SoundWaveSurfer/Library/ScriptAssemblies/Unity.Timeline.Editor.dll</HintPath>
+ <HintPath>C:/Users/ddos/Desktop/Unity Projects/SoundWaveSurfer_1/Library/ScriptAssemblies/Unity.Timeline.Editor.dll</HintPath>
  </Reference>
  <Reference Include="Unity.VSCode.Editor">
- <HintPath>C:/Users/ddos/Desktop/Unity Projects/SoundWaveSurfer/Library/ScriptAssemblies/Unity.VSCode.Editor.dll</HintPath>
+ <HintPath>C:/Users/ddos/Desktop/Unity Projects/SoundWaveSurfer_1/Library/ScriptAssemblies/Unity.VSCode.Editor.dll</HintPath>
  </Reference>
  <Reference Include="Unity.TextMeshPro.Editor">
- <HintPath>C:/Users/ddos/Desktop/Unity Projects/SoundWaveSurfer/Library/ScriptAssemblies/Unity.TextMeshPro.Editor.dll</HintPath>
+ <HintPath>C:/Users/ddos/Desktop/Unity Projects/SoundWaveSurfer_1/Library/ScriptAssemblies/Unity.TextMeshPro.Editor.dll</HintPath>
  </Reference>
  <Reference Include="UnityEngine.UI">
- <HintPath>C:/Users/ddos/Desktop/Unity Projects/SoundWaveSurfer/Library/ScriptAssemblies/UnityEngine.UI.dll</HintPath>
+ <HintPath>C:/Users/ddos/Desktop/Unity Projects/SoundWaveSurfer_1/Library/ScriptAssemblies/UnityEngine.UI.dll</HintPath>
  </Reference>
  <Reference Include="Unity.Timeline">
- <HintPath>C:/Users/ddos/Desktop/Unity Projects/SoundWaveSurfer/Library/ScriptAssemblies/Unity.Timeline.dll</HintPath>
+ <HintPath>C:/Users/ddos/Desktop/Unity Projects/SoundWaveSurfer_1/Library/ScriptAssemblies/Unity.Timeline.dll</HintPath>
  </Reference>
  <Reference Include="Unity.CollabProxy.Editor">
- <HintPath>C:/Users/ddos/Desktop/Unity Projects/SoundWaveSurfer/Library/ScriptAssemblies/Unity.CollabProxy.Editor.dll</HintPath>
+ <HintPath>C:/Users/ddos/Desktop/Unity Projects/SoundWaveSurfer_1/Library/ScriptAssemblies/Unity.CollabProxy.Editor.dll</HintPath>
  </Reference>
  <Reference Include="Unity.Rider.Editor">
- <HintPath>C:/Users/ddos/Desktop/Unity Projects/SoundWaveSurfer/Library/ScriptAssemblies/Unity.Rider.Editor.dll</HintPath>
+ <HintPath>C:/Users/ddos/Desktop/Unity Projects/SoundWaveSurfer_1/Library/ScriptAssemblies/Unity.Rider.Editor.dll</HintPath>
  </Reference>
  <Reference Include="Unity.TextMeshPro">
- <HintPath>C:/Users/ddos/Desktop/Unity Projects/SoundWaveSurfer/Library/ScriptAssemblies/Unity.TextMeshPro.dll</HintPath>
+ <HintPath>C:/Users/ddos/Desktop/Unity Projects/SoundWaveSurfer_1/Library/ScriptAssemblies/Unity.TextMeshPro.dll</HintPath>
  </Reference>
  <Reference Include="UnityEditor.UI">
- <HintPath>C:/Users/ddos/Desktop/Unity Projects/SoundWaveSurfer/Library/ScriptAssemblies/UnityEditor.UI.dll</HintPath>
+ <HintPath>C:/Users/ddos/Desktop/Unity Projects/SoundWaveSurfer_1/Library/ScriptAssemblies/UnityEditor.UI.dll</HintPath>
  </Reference>
  <Reference Include="UnityEngine">
  <HintPath>C:/Program Files/Unity/Hub/Editor/2019.2.19f1/Editor/Data/Managed/UnityEngine/UnityEngine.dll</HintPath>
@@ -627,7 +631,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="Assembly-CSharp-firstpass.csproj">
-      <Project>{BB876779-7A2D-629F-663C-BF97C9782197}</Project>
+      <Project>{E46A531B-44E7-70AD-77B1-3C3590199E9F}</Project>
       <Name>Assembly-CSharp-firstpass</Name>
     </ProjectReference>
   </ItemGroup>
