@@ -1,0 +1,10 @@
+Wednesday ~3hrs
+
+Created basic beatmap structure.
+The beatmap stores a list of LaneObjects (beats + obstacles).
+The LaneObjects store an index (postion in the peaks[]) and an approximate time
+Todo will support converting this list into a queue so LaneObjects can be popped.
+More Todo The BeatMapPlayer will play the beatmap, using update() to check the current time in the song
+and spawn LaneObjects
+Worked on supporting saving beatmaps to files.
+

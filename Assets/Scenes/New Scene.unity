@@ -1121,7 +1121,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   shift_amount: 25
   movement_speed: 0
-  shift_speed: 500
+  shift_speed: 1000
 --- !u!114 &647932233
 MonoBehaviour:
   m_ObjectHideFlags: 0
