@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ﻿#if !UNITY_EDITOR && UNITY_ANDROID
 using System.Threading;
 using UnityEngine;
@@ -26,4 +27,34 @@ namespace SimpleFileBrowser
 		}
 	}
 }
+=======
+﻿#if !UNITY_EDITOR && UNITY_ANDROID
+using System.Threading;
+using UnityEngine;
+
+namespace SimpleFileBrowser
+{
+	public class FBPermissionCallbackAndroid : AndroidJavaProxy
+	{
+		private object threadLock;
+		public int Result { get; private set; }
+
+		public FBPermissionCallbackAndroid( object threadLock ) : base( "com.yasirkula.unity.FileBrowserPermissionReceiver" )
+		{
+			Result = -1;
+			this.threadLock = threadLock;
+		}
+
+		public void OnPermissionResult( int result )
+		{
+			Result = result;
+
+			lock( threadLock )
+			{
+				Monitor.Pulse( threadLock );
+			}
+		}
+	}
+}
+>>>>>>> 431160aa739fa61569cf147d0576d59f0d0da843
 #endif
