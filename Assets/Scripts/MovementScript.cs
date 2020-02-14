@@ -46,9 +46,9 @@ public class MovementScript : MonoBehaviour
         //rb.position = Vector3.Lerp(rb.position, new Vector3(moveHorizontal * shift_amount, rb.position.y, rb.position.z), perc); // orig: 0.25f
         //rb.position = Vector3.Lerp(rb.position, new Vector3(moveHorizontal * shift_amount, rb.position.y, rb.position.z), 0.25f); // orig: 0.25f
         
-        float step = shift_speed*Time.deltaTime;
+        float step = shift_speed * Time.deltaTime;
         rb.position = Vector3.MoveTowards(rb.position, new Vector3(moveHorizontal * shift_amount, rb.position.y, rb.position.z), step);
-
+        
         // this should always be moving in the direction of the plane
         rb.velocity = new Vector3(0, rb.velocity.y, movement_speed);
 
