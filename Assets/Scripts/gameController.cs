@@ -21,13 +21,8 @@ public class gameController : MonoBehaviour
     private float lastTime;
     private Text _pCombo;
     private Text _pScore;
-
-    GameObject gameOverCanvas;
     void Start()
     {
-        gameOverCanvas = GameObject.Find("GameOverCanvas");
-        gameOverCanvas.SetActive(false);
-
         _gameState = null;
        _playerScore = 0;
        _playerCombo = 1; 
@@ -51,11 +46,6 @@ public class gameController : MonoBehaviour
         //Debug.Log(_playerHealth);
         healthBarHandler();
         GameObject.Find("HealthBar").GetComponent<Slider>().value = _playerHealth / TOTAL_PLAYER_HEALTH; 
-
-        if(_gameState == "game_over"){
-            gameOverCanvas.SetActive(true);
-            Time.timeScale = Mathf.Approximately(Time.timeScale, 0.0f) ? 1.0f : 0.0f; // make sure to unpause this
-        }
     }
 
     private void healthBarHandler(){

@@ -1,94 +1,130 @@
 ﻿using System;
 using System.Text;
 using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
 using DSPLib;
 using UnityEngine;
 
+
 /* The class that performs beat map generation given an audioClip
  * Sources used during development:
  * https://medium.com/giant-scam/algorithmic-beat-mapping-in-unity-preprocessed-audio-analysis-d41c339c135a for unity specific steps (e.g getting FFT data for all of the sample length)
  * https://www.codeproject.com/Articles/1107480/DSPLib-FFT-DFT-Fourier-Transform-Library-for-NET-6 This is the FFT library that we currently use.
- * https://www.badlogicgames.com/wordpress/?p=122 Lots of usefull information from this one... Mostly used for beat detection (after unity specific steps are applied)
+ * https://www.badlogicgames.com/wordpress/?p=122 Used to create the peaks[] (detect beats). (this is where concepts like spectral flux, threshold come from)
  */
 
 public class BGA : MonoBehaviour
 {
 
-    public const int N_BINS = 1024; //todo make these options
-    public const float THRESHOLD_TIME = 0.5f;
-    public const float THRESHOLD_MULTIPLIER = 1.5f;
+    public enum STATE
+    {
+        READY,
+        ACTIVE,
+        THREAD_ACTIVE
+    }
 
+    public STATE state;
+
+    public const Int32 RANDOM_SEED_LENGTH = 256;
+
+    public bga_settings settings;
+
+    public System.Random bga_random;
+
+    //Information Structs
     public struct song_info_struct
     {
-        public AudioSource audioSource;
         public AudioClip audioClip;
         public float length;
         public int frequency;
         public int sampleCount;
         public int channels;
         public float[] samples;
+
+        public song_info_struct(AudioClip audioClip)
+        {
+            this.audioClip = audioClip;
+            sampleCount = audioClip.samples;
+            channels = audioClip.channels;
+            length = audioClip.length;
+            frequency = 0;
+            samples = null;
+        }
     }
 
     public song_info_struct song_info;
 
-    //todo beatmap
+    //todo: this is a lot of ram! get rid of arrays when we are done with them
     public struct output_struct
     {
         public float[][] fftData;
         public float[] flux;
         public float[] flux2;
         public float[] peaks; //true final output
+        public float[] peaks2;
         public float[] threshold;
     }
 
     public output_struct output;
 
     //todo gamestate needs to be moved
-    public bool done = false;
-    bool doPlay = false;
-    public int frameCount = 0;
+    //public bool done = false;
+    //bool doPlay = false;
+    //public int frameCount = 0;
 
-    //Allow to enable/disable while testing
-    public bool enabled = false;
- 
-    // Start is called before the first frame update
-    void Start()
+    public void StartBGA(ref AudioClip audioClip)
     {
-        if (!enabled) return;
-        //todo only using audiosource to get the audioclip
-        song_info.audioSource = GetComponent<AudioSource>();
-        song_info.audioClip = song_info.audioSource.clip;
+        StartBGA(ref audioClip, new bga_settings(1024, 0.5f, 1.5f, 0.5f, 0));
+    }
 
-        //Unity's internal sample rate is 2* what we need for our calculations
-        //float sampleRate = AudioSettings.outputSampleRate / 2f;
-        //float binFrequency = sampleRate / N_BINS; //Compute how much frequency each bin contains
+    public void StartBGA(ref AudioClip audioClip, bga_settings settings)
+    {
+        if (this.state != STATE.READY)
+        {
+            throw new Exception("Cannot start the beat generating algorithim if it is already being run! State: " + this.state);
+        }
+        this.state = STATE.ACTIVE;
 
-        //If we were doing real time we could use this function
-        //float[] spectrum = new float[N_BINS];
-        //audioSource.GetSpectrumData(spectrum, 0, FFT_WINDOW);
-        //Instead we use a background thread to process all samples from audioClip
+        this.settings = settings;
+        if (settings.rng_seed == 0)
+        {
+            settings.rng_seed = generateNewRandomSeed();
+        }
+        bga_random = new System.Random(settings.rng_seed);
 
-        song_info.sampleCount = song_info.audioClip.samples;
-        song_info.channels = song_info.audioClip.channels;
-        song_info.length = song_info.audioClip.length;
-        Debug.Log(song_info.length);
-        //GetData returns samples for both the L(eft) and R(ight) channels
+        song_info = new song_info_struct(audioClip);
         song_info.samples = new float[song_info.sampleCount * song_info.channels];
+        //GetData returns samples for both the L(eft) and R(ight) channels
         song_info.audioClip.GetData(song_info.samples, 0);
 
+        output = new output_struct();
+
         //Create the background thread and run the BGA algorithim
-        //The algorthim will have acess to the song_info struct
+        //The algorthim will have access to all the public structs
         Thread BGAThread = new Thread(new ThreadStart(algorithimWrapper));
         BGAThread.Start();
 
     }
 
+    public int generateNewRandomSeed()
+    {
+        return Mathf.FloorToInt(new System.Random().Next(0, RANDOM_SEED_LENGTH));
+    }
+
+    // Start is called before the first frame update
+    void Start()
+    {
+        this.state = STATE.READY;
+        Debug.Log("BGA Game object loaded.");
+    }
+
     //Background thread to run the algorithim
     void algorithimWrapper()
     {
+        this.state = STATE.THREAD_ACTIVE;
         //we need to wrap this in a try catch to output errors properly since this is running on a different thread then the main unity logic
         try
         {
@@ -123,31 +159,32 @@ public class BGA : MonoBehaviour
     }
 
     //The B(eat) G(enerating) A(lgorithim)
-    //Background  to create the beatmap
+    //Background thread to create the beatmap
     void algorithim ()
     {
         float[] samples = getCombinedSamples(ref song_info.samples, song_info.sampleCount, song_info.channels);
 
         Debug.Log("Song samples coverted to mono");
 
-        int finalArraySize = song_info.sampleCount / N_BINS;
+        int finalArraySize = song_info.sampleCount / settings.n_bins;
 
         Debug.Log(finalArraySize);
         output.fftData = new float[finalArraySize][];
         output.flux = new float[finalArraySize];
         output.flux2 = new float[finalArraySize];
         output.peaks = new float[finalArraySize];
+        output.peaks2 = new float[finalArraySize];
         output.threshold = new float[finalArraySize];
-        FFTProvider fftProvider = new DSPLibFFTProvider(N_BINS);
+        FFTProvider fftProvider = new DSPLibFFTProvider(settings.n_bins);
         WINDOW_TYPE fftWindow = WINDOW_TYPE.Hamming;
 
         //perform N_BINS of fft at a time
         for (int i = 0; i < finalArraySize; i++)
         {
-            float[] currSamples = new float[N_BINS];
-            int startIndex = (i * N_BINS);
+            float[] currSamples = new float[settings.n_bins];
+            int startIndex = (i * settings.n_bins);
             //Grab the current sample (length N_BINS) from the samples data
-            for (int j = startIndex; j < startIndex + N_BINS; j++)
+            for (int j = startIndex; j < startIndex + settings.n_bins; j++)
             {
                 currSamples[j - startIndex] = samples[j];
             }
@@ -173,7 +210,7 @@ public class BGA : MonoBehaviour
         float sampleLength = song_info.length / (float)song_info.sampleCount;
 
         //define a window size for the threshold. THRESHOLD_TIME is the length in time that the window should be.
-        int thresholdWindowSize = Mathf.FloorToInt(Mathf.FloorToInt((THRESHOLD_TIME / sampleLength) / N_BINS) / 2);
+        int thresholdWindowSize = Mathf.FloorToInt(Mathf.FloorToInt((settings.threshold_time / sampleLength) / settings.n_bins) / 2);
         Debug.Log("threshold: ");
         Debug.Log(thresholdWindowSize);
 
@@ -190,7 +227,7 @@ public class BGA : MonoBehaviour
             }
             if (count > 0)
             {
-                output.threshold[i] = (avg / count) * THRESHOLD_MULTIPLIER;
+                output.threshold[i] = (avg / count) * settings.threshold_multiplier;
             }
             else
             {
@@ -198,7 +235,7 @@ public class BGA : MonoBehaviour
             }
         }
 
-        //using the computed threshold, discard any flux values that are below/at the threshold (100% not a beat as it is below avg)
+        //using the computed threshold, discard any flux values that are below/at the threshold (most likely not a beat as it is below avg)
         for (int i = 0; i < output.flux.Length; i++)
         {
             if (output.flux[i] <= output.threshold[i])
@@ -217,7 +254,7 @@ public class BGA : MonoBehaviour
         {
             if (output.flux2[i] > output.flux2[i + 1])
             {
-                output.peaks[i] = output.flux2[i]; //Beat detected todo
+                output.peaks[i] = output.flux2[i]; //Beat Detected
             }
             else
             {
@@ -225,8 +262,23 @@ public class BGA : MonoBehaviour
             }
         }
 
-        //todo deal with random stuff below
+        //Filter peaks to allowable min_time_between_peaks
+        //Todo this is a bit naive should probably select highest peak or something (but will work for now)
+        int minLengthBetweenPeaks = Mathf.FloorToInt(Mathf.FloorToInt((settings.min_peak_seperation_time / sampleLength) / settings.n_bins) / 2);
+        for (int i = 0; i < output.peaks.Length; i++)
+        {
+            if (output.peaks[i] > 0)
+            {
+                output.peaks2[i] = output.peaks[i];
+                i += minLengthBetweenPeaks - 1;
+            }
+            
+        }
 
+        BeatMap beatMap = makeBeatMap();
+        saveBeatMap(ref beatMap);
+
+        //todo deal with random stuff below
         //debug output
 
         Debug.Log("FFT Data collected");
@@ -270,21 +322,51 @@ public class BGA : MonoBehaviour
                 file.WriteLine(output.peaks[i]);
             }
         }
+        using (StreamWriter file = new StreamWriter("output5.txt"))
+        {
+            for (int i = 0; i < output.peaks2.Length; i++)
+            {
+                file.WriteLine(output.peaks2[i]);
+            }
+        }
 
         Debug.Log("Output file saved");
 
+        state = STATE.READY;
+
         //frameScale = (int) (songLength / finalArraySize);
         //float sampleLength = song_info.length / (float)song_info.sampleCount;
-        Debug.Log(sampleLength);
+        //Debug.Log(sampleLength);
 
         //Debug.Log(sampleLength * 1000);
-        Debug.Log(sampleLength * N_BINS); //length per reading
+        //Debug.Log(sampleLength * N_BINS); //length per reading
 
-        done = true;
+        //done = true;
 
     }
 
+    //All peaks are detected - now its time to decide where these beats are going
+    BeatMap makeBeatMap()
+    {
+        BeatMap beatMap = new BeatMap(settings, "testBeatmap");
+        //...//
+        return beatMap;
+    }
+
+    void saveBeatMap(ref BeatMap beatMap)
+    {
+        //todo file format, name
+        //for now just seralize beatMap
+        //See https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/concepts/serialization/walkthrough-persisting-an-object-in-visual-studio
+        string fileName = "C:/Beatmaps/" + beatMap.name + ".dat";
+        Stream saveFileStream = File.Create(fileName);
+        BinaryFormatter serializer = new BinaryFormatter();
+        serializer.Serialize(saveFileStream, beatMap);
+        saveFileStream.Close();
+    }
+
     // Update is called once per frame
+    /*
     void Update()
     {
         if (done)
@@ -308,4 +390,5 @@ public class BGA : MonoBehaviour
         }
 
     }
+    */
 }
