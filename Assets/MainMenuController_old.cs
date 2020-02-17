@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MainMenuController : MonoBehaviour
+public class MainMenuController_old : MonoBehaviour
 {
     // Start is called before the first frame update
     public static Vector3[] cameraLocations;

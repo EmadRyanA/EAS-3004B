@@ -46,7 +46,7 @@ public class MovementScript : MonoBehaviour
         //rb.position = Vector3.Lerp(rb.position, new Vector3(moveHorizontal * shift_amount, rb.position.y, rb.position.z), perc); // orig: 0.25f
         //rb.position = Vector3.Lerp(rb.position, new Vector3(moveHorizontal * shift_amount, rb.position.y, rb.position.z), 0.25f); // orig: 0.25f
         
-        Debug.Log(rb.position.x);
+        //Debug.Log(rb.position.x);
         float step = shift_speed*Time.deltaTime;
         transform.position = Vector3.MoveTowards(transform.position, new Vector3(moveHorizontal * shift_amount, transform.position.y, transform.position.z), step);
 

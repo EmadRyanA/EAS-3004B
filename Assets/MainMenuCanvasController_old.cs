@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class MainMenuCanvasController : MonoBehaviour
+public class MainMenuCanvasController_old : MonoBehaviour
 {
     // Start is called before the first frame update
 
