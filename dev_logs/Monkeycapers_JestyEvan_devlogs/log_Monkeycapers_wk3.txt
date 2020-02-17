@@ -1,9 +1,0 @@
-Saturday and Sunday
-
-~3 hrs
-Worked on loading the song from a file.
-Reorganized BGA code to support this.
-Began work on BGAMenu; this will be merged to MainMenu soon
-Needs to support:
-  more formats
-  listing of files in directory
