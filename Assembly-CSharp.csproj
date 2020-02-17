@@ -9,7 +9,11 @@
     <ProductVersion>10.0.20506</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <RootNamespace></RootNamespace>
+<<<<<<< HEAD
     <ProjectGuid>{2E0F1BBE-D7C9-9B85-F0EA-7CD56C1BF4B2}</ProjectGuid>
+=======
+    <ProjectGuid>{B2B58FB2-4462-6B0C-A872-40DD957E5FE0}</ProjectGuid>
+>>>>>>> 431160aa739fa61569cf147d0576d59f0d0da843
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <AssemblyName>Assembly-CSharp</AssemblyName>
@@ -49,26 +53,37 @@
      <Compile Include="Assets\MainMenuController.cs" />
      <Compile Include="Assets\Models\Sport Car - 3D model\Scripts\CameraScript.cs" />
      <Compile Include="Assets\Models\Sport Car - 3D model\Scripts\LightEffects.cs" />
+<<<<<<< HEAD
      <Compile Include="Assets\Scripts\BeatMapPlayer.cs" />
      <Compile Include="Assets\Scripts\BGA.cs" />
      <Compile Include="Assets\Scripts\BGACommon.cs" />
      <Compile Include="Assets\Scripts\BGAMenu.cs" />
+=======
+     <Compile Include="Assets\Scripts\BGA.cs" />
+>>>>>>> 431160aa739fa61569cf147d0576d59f0d0da843
      <Compile Include="Assets\Scripts\CameraRotation.cs" />
      <Compile Include="Assets\Scripts\downforce.cs" />
      <Compile Include="Assets\Scripts\FFT.cs" />
      <Compile Include="Assets\Scripts\gameController.cs" />
+<<<<<<< HEAD
      <Compile Include="Assets\Scripts\JSONReader.cs" />
      <Compile Include="Assets\Scripts\MainMenuCanvasController.cs" />
      <Compile Include="Assets\Scripts\MainMenuController.cs" />
+=======
+>>>>>>> 431160aa739fa61569cf147d0576d59f0d0da843
      <Compile Include="Assets\Scripts\MovementScript.cs" />
      <Compile Include="Assets\Scripts\ObjectiveCollisionDetector.cs" />
      <Compile Include="Assets\Scripts\PauseButton.cs" />
      <Compile Include="Assets\Scripts\PausePanelButtonHandler.cs" />
+<<<<<<< HEAD
      <Compile Include="Assets\Scripts\PlayerClass.cs" />
+=======
+>>>>>>> 431160aa739fa61569cf147d0576d59f0d0da843
      <Compile Include="Assets\Scripts\SmoothCameraController.cs" />
      <Compile Include="Assets\Scripts\ToggleRender.cs" />
      <Compile Include="Assets\Vendor\DSPLib.cs" />
  <Reference Include="Unity.Timeline.Editor">
+<<<<<<< HEAD
  <HintPath>C:/Users/ddos/Desktop/Unity Projects/SoundWaveSurfer/Library/ScriptAssemblies/Unity.Timeline.Editor.dll</HintPath>
  </Reference>
  <Reference Include="Unity.VSCode.Editor">
@@ -94,6 +109,33 @@
  </Reference>
  <Reference Include="UnityEditor.UI">
  <HintPath>C:/Users/ddos/Desktop/Unity Projects/SoundWaveSurfer/Library/ScriptAssemblies/UnityEditor.UI.dll</HintPath>
+=======
+ <HintPath>D:/Unity Projects/New Unity Project/Library/ScriptAssemblies/Unity.Timeline.Editor.dll</HintPath>
+ </Reference>
+ <Reference Include="Unity.VSCode.Editor">
+ <HintPath>D:/Unity Projects/New Unity Project/Library/ScriptAssemblies/Unity.VSCode.Editor.dll</HintPath>
+ </Reference>
+ <Reference Include="Unity.TextMeshPro.Editor">
+ <HintPath>D:/Unity Projects/New Unity Project/Library/ScriptAssemblies/Unity.TextMeshPro.Editor.dll</HintPath>
+ </Reference>
+ <Reference Include="UnityEngine.UI">
+ <HintPath>D:/Unity Projects/New Unity Project/Library/ScriptAssemblies/UnityEngine.UI.dll</HintPath>
+ </Reference>
+ <Reference Include="Unity.Timeline">
+ <HintPath>D:/Unity Projects/New Unity Project/Library/ScriptAssemblies/Unity.Timeline.dll</HintPath>
+ </Reference>
+ <Reference Include="Unity.CollabProxy.Editor">
+ <HintPath>D:/Unity Projects/New Unity Project/Library/ScriptAssemblies/Unity.CollabProxy.Editor.dll</HintPath>
+ </Reference>
+ <Reference Include="Unity.Rider.Editor">
+ <HintPath>D:/Unity Projects/New Unity Project/Library/ScriptAssemblies/Unity.Rider.Editor.dll</HintPath>
+ </Reference>
+ <Reference Include="Unity.TextMeshPro">
+ <HintPath>D:/Unity Projects/New Unity Project/Library/ScriptAssemblies/Unity.TextMeshPro.dll</HintPath>
+ </Reference>
+ <Reference Include="UnityEditor.UI">
+ <HintPath>D:/Unity Projects/New Unity Project/Library/ScriptAssemblies/UnityEditor.UI.dll</HintPath>
+>>>>>>> 431160aa739fa61569cf147d0576d59f0d0da843
  </Reference>
  <Reference Include="UnityEngine">
  <HintPath>C:/Program Files/Unity/Hub/Editor/2019.2.19f1/Editor/Data/Managed/UnityEngine/UnityEngine.dll</HintPath>
@@ -624,12 +666,15 @@
  <HintPath>C:/Program Files/Unity/Hub/Editor/2019.2.19f1/Editor/Data/NetStandard/compat/2.0.0/shims/netfx/System.Xml.Serialization.dll</HintPath>
  </Reference>
   </ItemGroup>
+<<<<<<< HEAD
   <ItemGroup>
     <ProjectReference Include="Assembly-CSharp-firstpass.csproj">
       <Project>{BB876779-7A2D-629F-663C-BF97C9782197}</Project>
       <Name>Assembly-CSharp-firstpass</Name>
     </ProjectReference>
   </ItemGroup>
+=======
+>>>>>>> 431160aa739fa61569cf147d0576d59f0d0da843
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -2,7 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+<<<<<<< HEAD
 using UnityEngine.SceneManagement;
+=======
+>>>>>>> 431160aa739fa61569cf147d0576d59f0d0da843
 
 public class PausePanelButtonHandler : MonoBehaviour
 {
@@ -19,7 +22,10 @@ public class PausePanelButtonHandler : MonoBehaviour
         btnSettings = this.transform.Find("SettingsButton").GetComponent<Button>();
 
         btnPause.onClick.AddListener(handlePause);
+<<<<<<< HEAD
         btnQuit.onClick.AddListener(handleQuit);
+=======
+>>>>>>> 431160aa739fa61569cf147d0576d59f0d0da843
 
     }
 
@@ -37,8 +43,12 @@ public class PausePanelButtonHandler : MonoBehaviour
 
     // quits the current game, brings the game back to menu screen
     private void handleQuit(){
+<<<<<<< HEAD
         Time.timeScale = Mathf.Approximately(Time.timeScale, 0.0f) ? 1.0f : 0.0f;
         SceneManager.LoadScene(sceneBuildIndex:1);
+=======
+
+>>>>>>> 431160aa739fa61569cf147d0576d59f0d0da843
     }
 
     // brings up another panel containing editable settings
