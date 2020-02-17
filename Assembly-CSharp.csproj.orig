@@ -89,7 +89,9 @@
      <Compile Include="Assets\Scripts\PauseButton.cs" />
      <Compile Include="Assets\Scripts\PausePanelButtonHandler.cs" />
      <Compile Include="Assets\Scripts\PlayerClass.cs" />
+     <Compile Include="Assets\Scripts\PlayerMoveLogic.cs" />
      <Compile Include="Assets\Scripts\SmoothCameraController.cs" />
+     <Compile Include="Assets\Scripts\TileManager.cs" />
      <Compile Include="Assets\Scripts\ToggleRender.cs" />
      <Compile Include="Assets\Vendor\DSPLib.cs" />
  <Reference Include="Unity.Timeline.Editor">
