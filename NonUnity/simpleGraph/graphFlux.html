@@ -11,7 +11,7 @@
 <br>
 <audio  id='audio'
         controls
-        src="../../Assets/Songs/01 Take On Me.mp3">
+        src="01 Dreams.ogg">
             Your browser does not support the
             <code>audio</code> element.
 </audio>
@@ -43,7 +43,7 @@ let fluxInput = document.getElementById('fluxInput');
 let thresholdInput = document.getElementById('thresholdInput');
 let rangeInput = document.getElementById('rangeInput');
 let audio = document.getElementById('audio');
-audio.playbackRate = 0.5; 
+audio.playbackRate = 1; 
 let isbeat = document.getElementById('isbeat');
 
 let beatCounter = 0;
@@ -60,7 +60,7 @@ function animate() {
 
   let isBeat = fluxArray[currPos] > 0;
   let dy = currPos - lastPos;
-  console.log(currPos - lastPos);
+  //console.log(currPos - lastPos);
   if (!isBeat && dy > 0) {
     for (var i = currPos - lastPos; i < currPos; i++) {
         if (i < 0) continue;
@@ -139,7 +139,7 @@ function drawFlux(pos, canvas, array, mFactor) {
 
   }
 
-  console.log("done");
+  //console.log("done");
 }
 
 

@@ -34,9 +34,15 @@ public class MainMenuCanvasController : MonoBehaviour
     int currentState = 2;
     void Start()
     {
+<<<<<<< HEAD
 
         //print(Application.persistentDataPath);
         //player = 
+=======
+        //print(Application.persistentDataPath);
+        //player = 
+        
+>>>>>>> 1340a0937943f54a00200a9e0e4f49a9acd5aec5
         //playButton = GameObject.Find("PlayButton").GetComponent<Button>();
         // initializing gameobjects
         playButton = GameObject.Find("PlayButton");
@@ -55,10 +61,17 @@ public class MainMenuCanvasController : MonoBehaviour
         
         // user profile canvas initializers
         userProfileCanvas = GameObject.Find("UserProfileCanvas");
+<<<<<<< HEAD
         usernameText = userProfileCanvas.transform.Find("Username").gameObject;
         levelText = userProfileCanvas.transform.Find("LevelText").gameObject;
         experienceText = userProfileCanvas.transform.Find("ExperienceText").gameObject;
         experienceBar = userProfileCanvas.transform.Find("ExperienceBar").gameObject;
+=======
+        usernameText = GameObject.Find("Username");
+        levelText = GameObject.Find("LevelText");
+        experienceText = GameObject.Find("ExperienceText");
+        experienceBar = GameObject.Find("ExperienceBar");
+>>>>>>> 1340a0937943f54a00200a9e0e4f49a9acd5aec5
         
         // listeners
         playButton.GetComponent<Button>().onClick.AddListener(toBeatmapSelection);
@@ -70,6 +83,7 @@ public class MainMenuCanvasController : MonoBehaviour
         MapSelect.SetActive(false);
 
         // the user's profile should be visible in all states, so set visible here
+<<<<<<< HEAD
         //userProfileCanvas.SetActive(true);
 
         //initiate the user's data
@@ -77,6 +91,9 @@ public class MainMenuCanvasController : MonoBehaviour
         levelText.GetComponent<Text>().text = "Level: " + MainMenuController.player.level;
         experienceText.GetComponent<Text>().text = "XP: " + MainMenuController.player.currentExperience + " / " + (MainMenuController.player.currentExperience + MainMenuController.player.experienceForNextLevel);
         experienceBar.GetComponent<Slider>().value = MainMenuController.player.currentExperience/(MainMenuController.player.currentExperience + MainMenuController.player.experienceForNextLevel);
+=======
+        userProfileCanvas.SetActive(true);
+>>>>>>> 1340a0937943f54a00200a9e0e4f49a9acd5aec5
 
         //comparisonVector3 = new Vector3(0.01f, 0.01f, 0.01f);
     }
@@ -88,8 +105,11 @@ public class MainMenuCanvasController : MonoBehaviour
         // beatmap select pov
         if(!updated){
             if(currentState == 1){
+<<<<<<< HEAD
                 userProfileCanvas.SetActive(false);
                 
+=======
+>>>>>>> 1340a0937943f54a00200a9e0e4f49a9acd5aec5
                 MapSelect.SetActive(true);
                 
                 playButton.SetActive(false);
@@ -112,8 +132,11 @@ public class MainMenuCanvasController : MonoBehaviour
             // main menu pov
             }else if(currentState == 2){
                 // disabling other canvases
+<<<<<<< HEAD
                 userProfileCanvas.SetActive(true);
                 
+=======
+>>>>>>> 1340a0937943f54a00200a9e0e4f49a9acd5aec5
                 MapSelect.SetActive(false);
                 Garage.SetActive(false);
 
@@ -135,11 +158,17 @@ public class MainMenuCanvasController : MonoBehaviour
 
             // garage pov
             }else if(currentState == 3){
+<<<<<<< HEAD
                 // enabling the car selection canvas 
                 Garage.SetActive(true);
 
                 userProfileCanvas.SetActive(true);
 
+=======
+                // enabling the car selection canvas
+                Garage.SetActive(true);
+
+>>>>>>> 1340a0937943f54a00200a9e0e4f49a9acd5aec5
                 //disabling buttons
                 playButton.SetActive(false);
                 exitGameButton.SetActive(false);
