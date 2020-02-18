@@ -1,10 +1,11 @@
-Library/*
-.vscode/*
-Logs/*
-obj/*
-Temp/*
+Library/
+.vscode/
+Logs/
+obj/
+Temp/
 output.txt
 output2.txt
 output3.txt
 output4.txt
 output5.txt
+Library/shadercompiler-UnityShaderCompiler.exe0.log
