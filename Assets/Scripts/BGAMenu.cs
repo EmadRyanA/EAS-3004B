@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Networking;
-using SimpleFileBrowser; //https://github.com/yasirkula/UnitySimpleFileBrowser
 
 public class BGAMenu : MonoBehaviour
 {
@@ -42,7 +41,7 @@ public class BGAMenu : MonoBehaviour
     void selectFileListener()
     {
         Debug.Log("Test");
-        FileBrowser.ShowLoadDialog(onSelectFileSuccess, onSelectFileCancel);
+        //FileBrowser.ShowLoadDialog(onSelectFileSuccess, onSelectFileCancel);
     }
 
     IEnumerator getAudioClipFromPath(string path)
