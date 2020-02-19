@@ -4,10 +4,6 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
->>>>>>> 1340a0937943f54a00200a9e0e4f49a9acd5aec5
   m_Scenes:
   - enabled: 1
     path: Assets/Scenes/New Scene.unity
@@ -15,10 +11,4 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Main Menu.unity
     guid: 8dcc1063134c9de4cb7304741708e8b9
-<<<<<<< HEAD
-=======
-=======
-  m_Scenes: []
->>>>>>> 431160aa739fa61569cf147d0576d59f0d0da843
->>>>>>> 1340a0937943f54a00200a9e0e4f49a9acd5aec5
   m_configObjects: {}

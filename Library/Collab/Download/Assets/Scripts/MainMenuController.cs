@@ -22,6 +22,7 @@ public class MainMenuController : MonoBehaviour
         player = new PlayerClass("", 0, 0, 0, 0);
         
         //saveToJSON(player);
+        // loads the player's data upon startup
         LoadFromJSON(ref player);
         print(player.name);
         

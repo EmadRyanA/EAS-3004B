@@ -34,9 +34,9 @@ public class MainMenuCanvasController : MonoBehaviour
     int currentState = 2;
     void Start()
     {
+
         //print(Application.persistentDataPath);
         //player = 
-        
         //playButton = GameObject.Find("PlayButton").GetComponent<Button>();
         // initializing gameobjects
         playButton = GameObject.Find("PlayButton");
@@ -55,10 +55,10 @@ public class MainMenuCanvasController : MonoBehaviour
         
         // user profile canvas initializers
         userProfileCanvas = GameObject.Find("UserProfileCanvas");
-        usernameText = GameObject.Find("Username");
-        levelText = GameObject.Find("LevelText");
-        experienceText = GameObject.Find("ExperienceText");
-        experienceBar = GameObject.Find("ExperienceBar");
+        usernameText = userProfileCanvas.transform.Find("Username").gameObject;
+        levelText = userProfileCanvas.transform.Find("LevelText").gameObject;
+        experienceText = userProfileCanvas.transform.Find("ExperienceText").gameObject;
+        experienceBar = userProfileCanvas.transform.Find("ExperienceBar").gameObject;
         
         // listeners
         playButton.GetComponent<Button>().onClick.AddListener(toBeatmapSelection);
@@ -70,7 +70,13 @@ public class MainMenuCanvasController : MonoBehaviour
         MapSelect.SetActive(false);
 
         // the user's profile should be visible in all states, so set visible here
-        userProfileCanvas.SetActive(true);
+        //userProfileCanvas.SetActive(true);
+
+        //initiate the user's data
+        usernameText.GetComponent<Text>().text = MainMenuController.player.name;
+        levelText.GetComponent<Text>().text = "Level: " + MainMenuController.player.level;
+        experienceText.GetComponent<Text>().text = "XP: " + MainMenuController.player.currentExperience + " / " + (MainMenuController.player.currentExperience + MainMenuController.player.experienceForNextLevel);
+        experienceBar.GetComponent<Slider>().value = MainMenuController.player.currentExperience/(MainMenuController.player.currentExperience + MainMenuController.player.experienceForNextLevel);
 
         //comparisonVector3 = new Vector3(0.01f, 0.01f, 0.01f);
     }
@@ -82,6 +88,8 @@ public class MainMenuCanvasController : MonoBehaviour
         // beatmap select pov
         if(!updated){
             if(currentState == 1){
+                userProfileCanvas.SetActive(false);
+                
                 MapSelect.SetActive(true);
                 
                 playButton.SetActive(false);
@@ -104,6 +112,8 @@ public class MainMenuCanvasController : MonoBehaviour
             // main menu pov
             }else if(currentState == 2){
                 // disabling other canvases
+                userProfileCanvas.SetActive(true);
+                
                 MapSelect.SetActive(false);
                 Garage.SetActive(false);
 
@@ -125,8 +135,10 @@ public class MainMenuCanvasController : MonoBehaviour
 
             // garage pov
             }else if(currentState == 3){
-                // enabling the car selection canvas
+                // enabling the car selection canvas 
                 Garage.SetActive(true);
+
+                userProfileCanvas.SetActive(true);
 
                 //disabling buttons
                 playButton.SetActive(false);

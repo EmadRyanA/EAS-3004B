@@ -72,7 +72,4 @@ void FileBrowserHelpers.DeleteFile( string path );
 void FileBrowserHelpers.DeleteDirectory( string path );
 string FileBrowserHelpers.GetFilename( string path );
 long FileBrowserHelpers.GetFilesize( string path );
-<<<<<<< HEAD
 DateTime FileBrowserHelpers.GetLastModifiedDate( string path );
-=======
->>>>>>> 1340a0937943f54a00200a9e0e4f49a9acd5aec5

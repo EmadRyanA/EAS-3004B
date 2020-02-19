@@ -903,15 +903,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   shift_amount: 25
 <<<<<<< HEAD
-  movement_speed: 60
-  shift_speed: 1000
-=======
   movement_speed: 0
   shift_speed: 500
---- !u!114 &647932233
-MonoBehaviour:
-  m_ObjectHideFlags: 0
->>>>>>> 1340a0937943f54a00200a9e0e4f49a9acd5aec5
+=======
+  movement_speed: 60
+  shift_speed: 1000
+>>>>>>> e75878660a947b9178133e70bb2e44adb63d4141
 --- !u!114 &647932233
 MonoBehaviour:
   m_ObjectHideFlags: 0
