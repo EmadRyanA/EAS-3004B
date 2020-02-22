@@ -1,5 +1,6 @@
-Library/*
-.vscode/*
-Logs/*
-obj/*
-Temp/*
+Library/
+.vscode/
+Logs/
+obj/
+Temp/
+output*.txt
