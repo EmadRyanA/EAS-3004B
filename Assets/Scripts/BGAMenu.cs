@@ -9,6 +9,9 @@ public class BGAMenu : MonoBehaviour
 
     public Button selectFileButton;
     public Button generateBeatMapButton;
+    public Slider thresholdMultiplierSlider;
+    public Slider minPeakSeperationTimeSlider;
+    public Slider thresholdWindowLengthSlider;
     public BGA bga;
 
     public AudioClip inputAudioClip; //To be loaded from web url or file uri
@@ -31,6 +34,10 @@ public class BGAMenu : MonoBehaviour
     {
         selectFileButton = selectFileButton.GetComponent<Button>();
         generateBeatMapButton = generateBeatMapButton.GetComponent<Button>();
+        thresholdMultiplierSlider = thresholdMultiplierSlider.GetComponent<Slider>();
+        minPeakSeperationTimeSlider = minPeakSeperationTimeSlider.GetComponent<Slider>();
+        thresholdWindowLengthSlider = thresholdWindowLengthSlider.GetComponent<Slider>();
+
 
         selectFileButton.onClick.AddListener(selectFileListener);
         generateBeatMapButton.onClick.AddListener(generateBeatMapListener);
@@ -101,7 +108,9 @@ public class BGAMenu : MonoBehaviour
         {
             Debug.Log("Starting BGA");
             state = STATE.BGA_STARTED;
-            bga.StartBGA(ref inputAudioClip);
+
+            bga_settings settings = new bga_settings(1024, thresholdWindowLengthSlider.value, thresholdMultiplierSlider.value, minPeakSeperationTimeSlider.value, 5f, 0);
+            bga.StartBGA(ref inputAudioClip, settings);
         }
     }
 }

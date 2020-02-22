@@ -29,7 +29,18 @@ public class BeatMap
 
     public Queue<LaneObject> initLaneObjectQueue ()
     {
-        //todo: load all LaneObject from laneObjectStore into a queue
-        return null;
+        //todo this is in place
+        laneObjectStore.Sort((x, y) => {
+            return x.sampleIndex - y.sampleIndex;
+        });
+        return new Queue<LaneObject>(laneObjectStore);
     }
 }
+/*
+public class LaneObjectComparer: IComparer<LaneObject>
+{
+    public int Compare(LaneObject x, LaneObject y) {
+        return x.sampleIndex - y.sampleIndex;
+    }
+}
+*/

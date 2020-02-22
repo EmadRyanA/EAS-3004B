@@ -12,10 +12,10 @@ public enum LANE_OBJECT_TYPE
 [Serializable()]
 public struct LaneObject
 {
-    int sampleIndex; //Index of this obj in peaks[]
-    float time; //Timestamp approximation of sampleIndex
-    int lane; //0 - (lanes - 1)
-    LANE_OBJECT_TYPE type;
+    public int sampleIndex; //Index of this obj in peaks[]
+    public float time; //Timestamp approximation of sampleIndex
+    public int lane; //0 - (lanes - 1)
+    public LANE_OBJECT_TYPE type;
     public LaneObject(int sampleIndex, float time, int lane, LANE_OBJECT_TYPE type)
     {
         this.sampleIndex = sampleIndex;
@@ -28,18 +28,20 @@ public struct LaneObject
 [Serializable()]
 public struct bga_settings
 {
-    public int n_bins;
-    public float threshold_time;
-    public float threshold_multiplier;
-    public float min_peak_seperation_time;
+    public int n_bins; //the number of bins to use for FFT - must be power of 2
+    public float threshold_time; //time in seconds for how long the threshold should be
+    public float threshold_multiplier; //the multiplier used for the threshold
+    public float min_peak_seperation_time; //The minimum time between peaks in seconds
+    public float warm_up_time; //time in seconds of how long the period where no Beat LaneObjects are generated
     public int rng_seed; //If rng_seed == 0 a new random seed is created
 
-    public bga_settings(int n_bins, float threshold_time, float threshold_multiplier, float min_peak_seperation_time, int rng_seed)
+    public bga_settings(int n_bins, float threshold_time, float threshold_multiplier, float min_peak_seperation_time, float warm_up_time, int rng_seed)
     {
         this.n_bins = n_bins;
         this.threshold_time = threshold_time;
         this.threshold_multiplier = threshold_multiplier;
         this.min_peak_seperation_time = min_peak_seperation_time;
+        this.warm_up_time = warm_up_time;
         this.rng_seed = rng_seed;
     }
 }

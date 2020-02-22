@@ -1,0 +1,95 @@
+<body>
+    <canvas id='lanesCanvas' width = "1024px;" height ="300px;"></canvas>
+    <br>
+<textarea id='lanesInput'> </textarea>
+<br>
+<input type='text' id='samplesInput' value='9266'>
+<br>
+<input id='rangeInput' type='range' min='0' max='10000' style='width:1000px;'>
+<br>
+<audio  id='audio'
+        controls
+        src="01 Dreams.ogg">
+            Your browser does not support the
+            <code>audio</code> element.
+</audio>
+<button type='button' id='lanesSubmit'>
+  Go
+</button>
+</body>
+
+<script>
+
+let lanes = [];
+lanes[0] = [];
+lanes[1] = [];
+lanes[2] = [];
+
+let laneHeight = 100;
+let beatWidth = 10;
+
+let laneLength = 100;
+
+let currPos = 0;
+
+let lanesCanvas = document.getElementById('lanesCanvas');
+lanesCanvas.width = laneLength * beatWidth;
+lanesCanvas.height = laneHeight * 3;
+
+let lanesInput = document.getElementById('lanesInput');
+let rangeInput = document.getElementById('rangeInput');
+let samplesInput = document.getElementById('samplesInput');
+let audio = document.getElementById('audio');
+audio.playbackRate = 1; 
+
+audio.onplay = function () {
+  animate();
+}
+
+function animate() {
+    currPos = Math.floor(audio.currentTime / (audio.duration / samplesInput.value));
+
+    let context = lanesCanvas.getContext("2d");
+
+    context.clearRect(0, 0, lanesCanvas.width, lanesCanvas.height);
+
+    for (var i = currPos; i < currPos + laneLength; i++) {
+        for (var j = 0; j < lanes.length; j++) {
+          let beat = lanes[j][i];
+          if (beat == undefined) continue;
+          if (beat.type == 1) {
+              context.fillStyle = "red";
+          }
+          else {
+              context.fillStyle = "blue";
+          }
+          context.fillRect((i - currPos) * beatWidth, beat.lane * laneHeight, beatWidth, laneHeight);
+        }
+    }
+
+    if (!audio.paused) {
+      window.requestAnimationFrame(animate);
+    }
+}
+
+document.getElementById('lanesSubmit').onclick = function () {
+    console.log("load beats queue");
+    var lines = lanesInput.value;
+    var linesSplit = lines.split("\n");
+    for (line of linesSplit) {
+        var lineSplit = line.split(" ");
+        var lane = parseInt(lineSplit[1]);
+        if (lane >= 0 && lane <= 3) {
+          lanes[parseInt(lineSplit[1])][parseInt(lineSplit[0])] = {
+            "index":parseInt(lineSplit[0]),
+            "lane":parseInt(lineSplit[1]),
+            "time":parseFloat(lineSplit[2]),
+            "type":parseInt(lineSplit[3])    
+          };
+      }
+    }
+    console.log(lanes);
+    audio.play();
+}
+
+</script>

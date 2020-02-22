@@ -41,6 +41,7 @@ public class BGA : MonoBehaviour
         public float length;
         public int frequency;
         public int sampleCount;
+        public float sampleLength; //Length of each sample in seconds
         public int channels;
         public float[] samples;
 
@@ -51,6 +52,7 @@ public class BGA : MonoBehaviour
             channels = audioClip.channels;
             length = audioClip.length;
             frequency = 0;
+            sampleLength = 0;
             samples = null;
         }
     }
@@ -77,7 +79,7 @@ public class BGA : MonoBehaviour
 
     public void StartBGA(ref AudioClip audioClip)
     {
-        StartBGA(ref audioClip, new bga_settings(1024, 0.5f, 1.5f, 0.5f, 0));
+        StartBGA(ref audioClip, new bga_settings(1024, 0.5f, 1.5f, 0.5f, 5f, 0));
     }
 
     public void StartBGA(ref AudioClip audioClip, bga_settings settings)
@@ -87,7 +89,9 @@ public class BGA : MonoBehaviour
             throw new Exception("Cannot start the beat generating algorithim if it is already being run! State: " + this.state);
         }
         this.state = STATE.ACTIVE;
-
+        Debug.Log("Threshold, multiplier:");
+        Debug.Log(settings.threshold_time);
+        Debug.Log(settings.threshold_multiplier);
         this.settings = settings;
         if (settings.rng_seed == 0)
         {
@@ -97,6 +101,7 @@ public class BGA : MonoBehaviour
 
         song_info = new song_info_struct(audioClip);
         song_info.samples = new float[song_info.sampleCount * song_info.channels];
+        song_info.sampleLength = song_info.length / (float)song_info.sampleCount;
         //GetData returns samples for both the L(eft) and R(ight) channels
         song_info.audioClip.GetData(song_info.samples, 0);
 
@@ -178,7 +183,7 @@ public class BGA : MonoBehaviour
         FFTProvider fftProvider = new DSPLibFFTProvider(settings.n_bins);
         WINDOW_TYPE fftWindow = WINDOW_TYPE.Hamming;
 
-        //perform N_BINS of fft at a time
+        //perform fft using N_BINS at a time
         for (int i = 0; i < finalArraySize; i++)
         {
             float[] currSamples = new float[settings.n_bins];
@@ -207,10 +212,8 @@ public class BGA : MonoBehaviour
 
         }
 
-        float sampleLength = song_info.length / (float)song_info.sampleCount;
-
         //define a window size for the threshold. THRESHOLD_TIME is the length in time that the window should be.
-        int thresholdWindowSize = Mathf.FloorToInt(Mathf.FloorToInt((settings.threshold_time / sampleLength) / settings.n_bins) / 2);
+        int thresholdWindowSize = Mathf.FloorToInt((settings.threshold_time / song_info.sampleLength) / settings.n_bins);
         Debug.Log("threshold: ");
         Debug.Log(thresholdWindowSize);
 
@@ -264,15 +267,23 @@ public class BGA : MonoBehaviour
 
         //Filter peaks to allowable min_time_between_peaks
         //Todo this is a bit naive should probably select highest peak or something (but will work for now)
-        int minLengthBetweenPeaks = Mathf.FloorToInt(Mathf.FloorToInt((settings.min_peak_seperation_time / sampleLength) / settings.n_bins) / 2);
-        for (int i = 0; i < output.peaks.Length; i++)
-        {
-            if (output.peaks[i] > 0)
+        //int minLengthBetweenPeaks = Mathf.FloorToInt(Mathf.FloorToInt((settings.min_peak_seperation_time / sampleLength) / settings.n_bins) / 2);
+        if (settings.min_peak_seperation_time > 0) {
+            int minLengthBetweenPeaks = Mathf.FloorToInt((settings.min_peak_seperation_time / song_info.sampleLength) / settings.n_bins);
+            for (int i = 0; i < output.peaks.Length; i++)
             {
-                output.peaks2[i] = output.peaks[i];
-                i += minLengthBetweenPeaks - 1;
+                if (output.peaks[i] > 0)
+                {
+                    output.peaks2[i] = output.peaks[i];
+                    i += minLengthBetweenPeaks - 1;
+                }
+                
             }
-            
+        }
+        else {
+            for (int i = 0; i < output.peaks.Length; i++) {
+                output.peaks2[i] = output.peaks[i];
+            }
         }
 
         BeatMap beatMap = makeBeatMap();
@@ -329,6 +340,13 @@ public class BGA : MonoBehaviour
                 file.WriteLine(output.peaks2[i]);
             }
         }
+        using (StreamWriter file = new StreamWriter("output6.txt"))
+        {
+            Queue<LaneObject> laneObjects = beatMap.initLaneObjectQueue();
+            foreach (LaneObject l in laneObjects) {
+                file.WriteLine(l.sampleIndex + " " + l.lane + " " + l.time + " " + (l.type == LANE_OBJECT_TYPE.Beat ? "1" : "0"));
+            }
+        }
 
         Debug.Log("Output file saved");
 
@@ -345,11 +363,78 @@ public class BGA : MonoBehaviour
 
     }
 
+    float getTimeFromIndex(int index) {
+        return song_info.sampleLength * index * settings.n_bins;
+    }
+    float getIndexFromTime(float time) {
+        return (Mathf.FloorToInt(time / song_info.sampleLength)) / settings.n_bins;
+    }
+
     //All peaks are detected - now its time to decide where these beats are going
     BeatMap makeBeatMap()
     {
         BeatMap beatMap = new BeatMap(settings, "testBeatmap");
-        //...//
+
+        int currLane = 0;
+        int currLaneCount = 0;
+        
+        for (int i=0; i < output.peaks2.Length; i++) {
+            float currTime = getTimeFromIndex(i);
+            if (output.peaks2[i] <= 0) {
+                continue;
+            } 
+            if (currTime < settings.warm_up_time) { //we do not spawn notes until warm up time is done. So we spawn obstacles on L and R to show the beats
+                int lane = (bga_random.Next(0, 2) == 1) ? 0 : 2;
+                LaneObject lObj = new LaneObject(i, currTime, lane, LANE_OBJECT_TYPE.Obstacle);
+                beatMap.addLaneObject(lObj);
+            }
+            else {
+                //we have not spawned a beat yet, choose a random lane
+                if (currLaneCount == 0) {
+                    currLane = bga_random.Next(0, 3);
+                    currLaneCount = 1;
+                }
+                else {
+                    //use a 1/x like function to decrease the probability that we stay in the current lane the longer we stay in the lane
+                    //todo if (bga_random.NextDouble() > (1.0 / ((0.8 * (currLaneCount - 1) + 1.3)))) {
+                    if (bga_random.NextDouble() < 0.75) { //25 % chance we stay in the same lane
+                        currLaneCount = 1;
+                        int direction = (bga_random.Next(0, 2) == 1) ? -1 : 1; //move left or right? if on ends wrap around
+                        currLane = Math.Abs((currLane + direction) % BGACommon.NUMBER_LANES);
+                    }
+                    else {
+                        currLaneCount += 1;
+                    }
+                    int randomObstacle = bga_random.Next(0, 4);
+                    switch (randomObstacle) {
+                        case 0: break;
+                        case 1:
+                            //add an obstacle on lane n + 1
+                            beatMap.addLaneObject(new LaneObject(i, currTime, Math.Abs((currLane + 1) % BGACommon.NUMBER_LANES), LANE_OBJECT_TYPE.Obstacle));
+                            break;
+                        
+                        case 2:
+                            //add an obstacle on lane n - 1
+                            beatMap.addLaneObject(new LaneObject(i, currTime, Math.Abs((currLane - 1) % BGACommon.NUMBER_LANES), LANE_OBJECT_TYPE.Obstacle));
+                            break;
+                        
+                        case 3:
+                            //add an obstacle on lanes n - 1 and n + 1
+                            beatMap.addLaneObject(new LaneObject(i, currTime, Math.Abs((currLane + 1) % BGACommon.NUMBER_LANES), LANE_OBJECT_TYPE.Obstacle));
+                            beatMap.addLaneObject(new LaneObject(i, currTime, Math.Abs((currLane - 1) % BGACommon.NUMBER_LANES), LANE_OBJECT_TYPE.Obstacle));
+                            break;
+                        default:
+                            throw new Exception("randomObstacle is an unexpected value! Expected [0, 3]; actual: " + randomObstacle);
+                        
+                    }
+                    
+                    LaneObject lObj = new LaneObject(i, currTime, currLane, LANE_OBJECT_TYPE.Beat);
+                    beatMap.addLaneObject(lObj);
+
+                }
+            }
+        }
+
         return beatMap;
     }
 
