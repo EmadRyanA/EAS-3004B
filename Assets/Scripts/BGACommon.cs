@@ -46,6 +46,29 @@ public struct bga_settings
     }
 }
 
+[Serializable()]
+public struct song_info_struct
+    {
+        //public AudioClip audioClip;
+        public float length;
+        public int frequency;
+        public int sampleCount;
+        public float sampleLength; //Length of each sample in seconds
+        public int channels;
+        public float[] samples;
+
+        public song_info_struct(AudioClip audioClip)
+        {
+            //this.audioClip = audioClip;
+            sampleCount = audioClip.samples;
+            channels = audioClip.channels;
+            length = audioClip.length;
+            frequency = audioClip.frequency;
+            sampleLength = 0;
+            samples = null;
+        }
+    }
+
 public static class BGACommon
 {
     public const int NUMBER_LANES = 3;

@@ -35,27 +35,6 @@ public class BGA : MonoBehaviour
     public System.Random bga_random;
 
     //Information Structs
-    public struct song_info_struct
-    {
-        public AudioClip audioClip;
-        public float length;
-        public int frequency;
-        public int sampleCount;
-        public float sampleLength; //Length of each sample in seconds
-        public int channels;
-        public float[] samples;
-
-        public song_info_struct(AudioClip audioClip)
-        {
-            this.audioClip = audioClip;
-            sampleCount = audioClip.samples;
-            channels = audioClip.channels;
-            length = audioClip.length;
-            frequency = 0;
-            sampleLength = 0;
-            samples = null;
-        }
-    }
 
     public song_info_struct song_info;
 
@@ -103,7 +82,7 @@ public class BGA : MonoBehaviour
         song_info.samples = new float[song_info.sampleCount * song_info.channels];
         song_info.sampleLength = song_info.length / (float)song_info.sampleCount;
         //GetData returns samples for both the L(eft) and R(ight) channels
-        song_info.audioClip.GetData(song_info.samples, 0);
+        audioClip.GetData(song_info.samples, 0);
 
         output = new output_struct();
 
@@ -373,7 +352,7 @@ public class BGA : MonoBehaviour
     //All peaks are detected - now its time to decide where these beats are going
     BeatMap makeBeatMap()
     {
-        BeatMap beatMap = new BeatMap(settings, "testBeatmap");
+        BeatMap beatMap = new BeatMap(settings, song_info, "testBeatmap");
 
         int currLane = 0;
         int currLaneCount = 0;

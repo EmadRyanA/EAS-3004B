@@ -10,13 +10,21 @@ public class BeatMapPlayer : MonoBehaviour
     public static string beatLocations = "C:/Beatmaps";
     public static string fileName = beatLocations + "/testBeatMap.dat";
 
+    public AudioSource audioSource;
+
     public BeatMap beatMap;
+
+    public Queue<LaneObject> objQueue;
   
     // Start is called before the first frame update
     void Start()
     {
         Debug.Log("BeatMapPlayer gameObject loaded");
         beatMap = loadBeatMap(fileName);
+        objQueue = beatMap.initLaneObjectQueue();
+        audioSource = audioSource.GetComponent<AudioSource>();
+        audioSource.clip = beatMap.getAudioClip();
+        audioSource.Play();
     }
 
     BeatMap loadBeatMap(string fileName)
@@ -32,6 +40,7 @@ public class BeatMapPlayer : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        //Read from objQueue and spawn beats and obstacles :)
+        //get current time from audioSource
     }
 }
