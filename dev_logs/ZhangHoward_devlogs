@@ -107,3 +107,39 @@ Achievements:
 - more camera anglea/transitions
 - the camera now moves smoothly (using update() rather than fixedupdate())
 - added functionality to many buttons
+
+Week of feb 10 – feb 16 
+
+Tuesday 
+Time spent: 2 hours 
+Duties: 
+- JSON exporting and importing to save player data 
+Achievements: 
+- Created some UI elements that uses deserialized data  
+Laid down the foundation code for json serialization/deserialization. 
+
+Thursday 
+Time spent: 1 hour 
+Duties: 
+- Exporting/importing player data to an external file 
+Achievements: 
+- Save file exporting/importing code is now in place, and ready for use 
+- Exporting a save file populates the corresponding fields in the main menu 
+
+Sunday 
+Time spent: 6 hours 
+Duties: 
+- Cleaning up/updating the GitHub repository 
+Achievements: 
+- The repository is now up to date, no issues with committing 
+
+Week of feb 17 – feb 23 
+
+Wednesday 
+Time spent: 2 hours 
+Duties: 
+- Adding alternate movement states (driving, flying, drifting) 
+Achievements: 
+- Introduced trigger objects that change the player’s state upon detecting a collision 
+- Trigger can be customized to transition to different states (e.g. driving -> flying, drifting -> driving, etc.) 
+- Bug fixes related to the new trigger object 
