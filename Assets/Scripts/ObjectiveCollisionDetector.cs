@@ -15,8 +15,19 @@ public class ObjectiveCollisionDetector : MonoBehaviour
 
     // Update is called once per frame
 
-    private void OnDestroy() {
-        if(this.name == "BadObjective"){
+    //private void OnDestroy() {
+        
+    //}
+
+    private void OnTriggerEnter(Collider other){
+       Debug.Log(other.name);
+       /*
+       if(other.name == "PlayerHitbox"){
+            Destroy(this);
+       }
+       */
+
+       if(this.tag == "BadObjective"){
             gameController._playerCombo = 1;
             gameController._playerHealth -= gameController._damageRate;
         }else{ // good objective
@@ -30,13 +41,6 @@ public class ObjectiveCollisionDetector : MonoBehaviour
 
         GetComponent<Animation>().Play("objective_collide");
         //GetComponent<Renderer>().enabled = false; 
-    }
-
-    private void OnTriggerEnter(Collider other){
-       Debug.Log(other.name);
-       if(other.name == "PlayerHitbox"){
-            Destroy(this);
-       }
        
     }
 }

@@ -9,7 +9,6 @@ public class gameController : MonoBehaviour
     // serves to initialize and store some important values
     public const float TOTAL_PLAYER_HEALTH = 100;
     
-    
     public static int _playerScore;
     public static int _playerCombo;
     public static float _playerHealth;
@@ -17,7 +16,7 @@ public class gameController : MonoBehaviour
     public float _playerHealthDecreaseRate; // decrease rate should change depending on BPM of song (faster BPM = faster rate)
     public static float _playerHealthRecoveryRate = 10;
     public static float _damageRate = 3; // potentially change this according to difficulty?
-    
+
     private float lastTime;
     private Text _pCombo;
     private Text _pScore;
