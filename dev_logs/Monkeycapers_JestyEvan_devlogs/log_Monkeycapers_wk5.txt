@@ -1,0 +1,15 @@
+wk5: Feb 16 - Feb 22
+Feb 17 and Feb 18:
+Delt with some nasty merge issues
+~2hrs
+
+Feb 22:
+Wrote the beatmap generating function. This function creates LaneObjects from beats and
+adds them to a List in the BeatMap class. This class is saved as a .dat file.
+
+Wrote a test JS website to visualize the beatmap and all laneobjects with the song
+(protoTypePlayer.html)
+
+For now, storing all song samples in the beatmap as a float[]. In the future the beatmap
+should reference an audio file and load the samples from there.
+~5hrs
