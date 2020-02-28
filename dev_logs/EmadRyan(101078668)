@@ -15,4 +15,9 @@ Week 2(January 24-31)
     -Removes old tiles from behind the player so we don't run out of memory
     -selects tiles from prefab folder randomly to place them
   created some prefab tiles for testing.
+  Week 5(Feb 14-21) 
+    -Reading week
+  Week 6(Feb 21-28)
+    -Created materials and sprites for graphics
+    -Added background and road textures
   
