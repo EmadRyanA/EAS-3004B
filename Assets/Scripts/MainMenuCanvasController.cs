@@ -1,7 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Runtime.Serialization.Formatters.Binary;
+using UnityEngine.SceneManagement;
 
 public class MainMenuCanvasController : MonoBehaviour
 {
@@ -31,6 +34,9 @@ public class MainMenuCanvasController : MonoBehaviour
     GameObject MapSelect;
     GameObject Garage;
     //GameObject mapsContent;
+    GameObject loadBeatMapButton;
+    //public static string beatmapDir; 
+
     
     int currentState = 2;
     void Start()
@@ -53,7 +59,8 @@ public class MainMenuCanvasController : MonoBehaviour
         MapSelect = GameObject.Find("MapSelectCanvas");
         Garage = GameObject.Find("CarSelectCanvas");
         title = GameObject.Find("Title");
-        //mapsContent = mapsContent.GetComponent<GameObject>();
+        //mapsContent = GameObject.Find("MapsContent");
+        loadBeatMapButton = GameObject.Find("LoadBeatmapButton"); // temp workaround
         
         // user profile canvas initializers
         userProfileCanvas = GameObject.Find("UserProfileCanvas");
@@ -68,6 +75,7 @@ public class MainMenuCanvasController : MonoBehaviour
         exitGameButton.GetComponent<Button>().onClick.AddListener(exitGame);
         garageButton.GetComponent<Button>().onClick.AddListener(toGarage);
         returnToMainMenuGarageButton.GetComponent<Button>().onClick.AddListener(toGarage);
+        loadBeatMapButton.GetComponent<Button>().onClick.AddListener(loadBeatmap);
         
         MapSelect.SetActive(false);
 
@@ -81,6 +89,7 @@ public class MainMenuCanvasController : MonoBehaviour
         experienceBar.GetComponent<Slider>().value = MainMenuController.player.currentExperience/(MainMenuController.player.currentExperience + MainMenuController.player.experienceForNextLevel);
 
         //comparisonVector3 = new Vector3(0.01f, 0.01f, 0.01f);
+        
     }
 
     // Update is called once per frame
@@ -110,6 +119,7 @@ public class MainMenuCanvasController : MonoBehaviour
                     // only stops updating once the camera completes its transition
                     updated = true;
                 }
+
             
             // main menu pov
             }else if(currentState == 2){
@@ -187,6 +197,22 @@ public class MainMenuCanvasController : MonoBehaviour
 // quits the game
     private void exitGame(){
         Application.Quit();
+    }
+
+    private void loadBeatmap(){
+        string beatMapDir = Application.persistentDataPath + "/BeatMaps/";
+        Debug.Log(beatMapDir);
+        //see https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/concepts/serialization/walkthrough-persisting-an-object-in-visual-studio
+        //if (!fileName.EndsWith(".dat")) continue;
+        Stream openFileStream = File.OpenRead(beatMapDir + "testBeatmap.dat");
+        BinaryFormatter deserializer = new BinaryFormatter();
+        //BeatMap beatMap = (BeatMap)deserializer.Deserialize(openFileStream);
+        SceneManager.LoadScene("New Scene");
+        //print(beatMap.initLaneObjectQueue().Peek());
+        //GameObject beatMapPanel = (GameObject)Instantiate(prefab, new Vector3(0, 0, 0), new Quaternion(0, 0, 0, 0), mapsContent);
+        //BeatMapEntryController controller = beatMapPanel.GetComponentInChildren<BeatMapEntryController>();
+        //controller.fileName = fileName;
+        //beatMapPanel.GetComponentInChildren<Text>().text = beatMap.name;
     }
 
 }

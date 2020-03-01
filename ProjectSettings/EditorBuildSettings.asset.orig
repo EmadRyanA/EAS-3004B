@@ -5,10 +5,18 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/New Scene.unity
     guid: 09629aefd885bde46b4fd1f0c35a8d57
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/Main Menu.unity
     guid: 8dcc1063134c9de4cb7304741708e8b9
+  - enabled: 1
+<<<<<<< HEAD
+    path: Assets/Scenes/_TestScene.unity
+    guid: 063a416523b856f489ef1fd2c2148158
+=======
+    path: Assets/Scenes/TestBGAPlayer.unity
+    guid: cc2d8bc1427c8334983d6bf4226d79cd
+>>>>>>> 3275c8068cfd3b3807028318dd906aec6a9af37c
   m_configObjects: {}

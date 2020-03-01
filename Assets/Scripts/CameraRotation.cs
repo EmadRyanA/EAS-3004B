@@ -41,6 +41,7 @@ public class CameraRotation : MonoBehaviour
         step = GameObject.Find("Player").GetComponent<MovementScript>().shift_speed*Time.deltaTime; // gets the step value from movementscript
 
         Debug.Log(initialRotation);
+        
     }
 
     // Update is called once per frame

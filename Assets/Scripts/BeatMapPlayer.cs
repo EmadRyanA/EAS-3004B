@@ -27,7 +27,7 @@ public class BeatMapPlayer : MonoBehaviour
         audioSource.Play();
     }
 
-    BeatMap loadBeatMap(string fileName)
+    public static BeatMap loadBeatMap(string fileName)
     {
         //see https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/concepts/serialization/walkthrough-persisting-an-object-in-visual-studio
         Stream openFileStream = File.OpenRead(fileName);

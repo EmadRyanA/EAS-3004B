@@ -28,6 +28,7 @@ public class PausePanelButtonHandler : MonoBehaviour
         Time.timeScale = Mathf.Approximately(Time.timeScale, 0.0f) ? 1.0f : 0.0f;
         PauseButton.paused = !PauseButton.paused;
         PauseButton.pauseBtn.enabled = !PauseButton.pauseBtn.enabled;
+        gameController.audioSrc.Play();
     }
 
     // resets the stage, restarts the game.

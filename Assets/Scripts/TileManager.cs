@@ -49,7 +49,9 @@ public class TileManager : MonoBehaviour
         GameObject tileIns;
         if(prefabIndex == -1)
         {
-            tileIns = Instantiate(tilePrefabs[RandomPrefab()]) as GameObject;
+            //tileIns = Instantiate(tilePrefabs[RandomPrefab()]) as GameObject;
+            tileIns = Instantiate(tilePrefabs[0]) as GameObject;
+
         }
         else
         {
