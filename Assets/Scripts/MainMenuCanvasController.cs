@@ -30,6 +30,7 @@ public class MainMenuCanvasController : MonoBehaviour
     Camera mainCamera;
     GameObject MapSelect;
     GameObject Garage;
+    //GameObject mapsContent;
     
     int currentState = 2;
     void Start()
@@ -52,6 +53,7 @@ public class MainMenuCanvasController : MonoBehaviour
         MapSelect = GameObject.Find("MapSelectCanvas");
         Garage = GameObject.Find("CarSelectCanvas");
         title = GameObject.Find("Title");
+        //mapsContent = mapsContent.GetComponent<GameObject>();
         
         // user profile canvas initializers
         userProfileCanvas = GameObject.Find("UserProfileCanvas");
@@ -84,7 +86,7 @@ public class MainMenuCanvasController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Debug.Log(currentState);
+        //Debug.Log(currentState);
         // beatmap select pov
         if(!updated){
             if(currentState == 1){
@@ -100,7 +102,7 @@ public class MainMenuCanvasController : MonoBehaviour
 
                 title.SetActive(false);
 
-                Debug.Log(MainMenuController.cameraLocations + " " + MainMenuController.cameraRotations);
+                //Debug.Log(MainMenuController.cameraLocations + " " + MainMenuController.cameraRotations);
                 mainCamera.transform.position = Vector3.Lerp(mainCamera.transform.position, MainMenuController.cameraLocations[1], Time.deltaTime);
                 mainCamera.transform.rotation = Quaternion.RotateTowards(mainCamera.transform.rotation, MainMenuController.cameraRotations[1], 70*Time.deltaTime);  
 

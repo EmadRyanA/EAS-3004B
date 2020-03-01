@@ -11,4 +11,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Main Menu.unity
     guid: 8dcc1063134c9de4cb7304741708e8b9
+  - enabled: 1
+    path: Assets/Scenes/TestBGAPlayer.unity
+    guid: cc2d8bc1427c8334983d6bf4226d79cd
   m_configObjects: {}
