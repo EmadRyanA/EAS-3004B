@@ -7,8 +7,8 @@ using UnityEngine;
 
 public class BeatMapPlayer : MonoBehaviour
 {
-    public static string beatLocations = "C:/Beatmaps";
-    public static string fileName = beatLocations + "/testBeatMap.dat";
+    //public static string beatLocations = "C:/Beatmaps";
+    public static string fileName;
 
     public AudioSource audioSource;
 
