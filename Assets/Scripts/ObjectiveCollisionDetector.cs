@@ -9,7 +9,7 @@ public class ObjectiveCollisionDetector : MonoBehaviour
     void Start()
     {
 
-        Debug.Log(GetComponent<Renderer>().enabled);
+        //Debug.Log(GetComponent<Renderer>().enabled);
         GetComponent<Renderer>().enabled = true;
     }
 
@@ -20,26 +20,31 @@ public class ObjectiveCollisionDetector : MonoBehaviour
     //}
 
     private void OnTriggerEnter(Collider other){
-       Debug.Log(other.name);
+       print(other.name);
        /*
        if(other.name == "PlayerHitbox"){
             Destroy(this);
        }
        */
-
-       if(this.tag == "BadObjective"){
-            gameController._playerCombo = 1;
-            gameController._playerHealth -= gameController._damageRate;
-        }else{ // good objective
-            gameController._playerScore += gameController._playerCombo * 100;
-            gameController._playerCombo += 1;
-            gameController._playerHealth += gameController._playerHealthRecoveryRate;
+       if(other.name == "PlayerHitbox"){
+           if(this.tag == "BadObjective"){
+                gameController._playerCombo = 1;
+                gameController._playerHealth -= gameController._damageRate;
+            }else if(this.tag == "Objective"){ // good objective
+                Debug.Log("here");
+                gameController._playerScore += gameController._playerCombo * 100;
+                gameController._playerCombo += 1;
+                gameController._playerHealth += gameController._playerHealthRecoveryRate;
             if(gameController._playerHealth > 100){
                 gameController._playerHealth = 100;
             }
         }
+       } 
+       
+
 
         GetComponent<Animation>().Play("objective_collide");
+        //Destroy(this);
         //GetComponent<Renderer>().enabled = false; 
        
     }

@@ -22,8 +22,8 @@ public class MovementScript : MonoBehaviour
     private Vector3 currAcc;  
     private float moveHorizontalTilt = 0;
     private float moveVerticalTilt = 0;
-    public static float tiltSensHorizontal = 10;
-    public static float tiltSensVertical = 10;
+    public static float tiltSensHorizontal = 2.5f;
+    public static float tiltSensVertical = 2.5f;
 
     void Start(){
         rb = GetComponent<Rigidbody>();
@@ -67,9 +67,19 @@ public class MovementScript : MonoBehaviour
         rb.velocity = new Vector3(0, rb.velocity.y, movement_speed); 
 
         if(movementState == 0){ // default driving state
-            float moveHorizontal = Input.GetAxis("Horizontal");
+            //float moveHorizontal = Input.GetAxis("Horizontal");
+            float moveHorizontal = 0;
             float moveVertical = Input.GetAxis("Vertical");
 
+            foreach(Touch touch in Input.touches){
+                
+                print(Screen.currentResolution.width);
+                if(touch.position.x < Screen.currentResolution.width / 2){ // left side of the screen
+                    moveHorizontal = -1;
+                }else{
+                    moveHorizontal = 1;
+                }
+            }
 
             transform.position = Vector3.MoveTowards(transform.position, new Vector3(moveHorizontal * shift_amount, transform.position.y, transform.position.z), step);
             transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.Euler(0,0,0), step);
@@ -88,10 +98,15 @@ public class MovementScript : MonoBehaviour
 
             // rotates the car depending on how hard the user tilts the phone
             print(rb.velocity);
-            transform.position = Vector3.MoveTowards(transform.position, new Vector3(moveHorizontal * shift_amount, transform.position.y, transform.position.z), step);
-            transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.Euler(0, moveHorizontal*45*-1, 0), step);
+            transform.position = Vector3.MoveTowards(transform.position, new Vector3(moveHorizontalTilt * shift_amount, transform.position.y, transform.position.z), step);
+            transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.Euler(0, moveHorizontalTilt*45*-1, 0), step);
             
         }else if(movementState == 2){ // flying state
+            float moveHorizontal = Input.GetAxis("Horizontal");
+            float moveVertical = Input.GetAxis("Vertical");
+
+            transform.position = Vector3.MoveTowards(transform.position, new Vector3(moveHorizontal * shift_amount, 10, transform.position.z), step);
+            transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.Euler(0, 0, moveHorizontal*20), step);
 
         }
         
