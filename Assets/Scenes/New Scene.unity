@@ -628,6 +628,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _playerHealthDecreaseRate: 0
   gameOverPanel: {fileID: 628370374}
+  player: {fileID: 647932227}
+  gameOverRetryButton: {fileID: 2141982605}
+  gameOverQuitButton: {fileID: 1138935009}
 --- !u!4 &450969052
 Transform:
   m_ObjectHideFlags: 0
@@ -847,7 +850,6 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1221201376}
-  - {fileID: 628370375}
   m_Father: {fileID: 1835918084}
   m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -942,15 +944,15 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 628370374}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1892818366}
   - {fileID: 2141982606}
   - {fileID: 1138935010}
-  m_Father: {fileID: 610007331}
-  m_RootOrder: 1
+  m_Father: {fileID: 1835918084}
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -3071,6 +3073,7 @@ RectTransform:
   - {fileID: 304694191}
   - {fileID: 1327463347}
   - {fileID: 610007331}
+  - {fileID: 628370375}
   m_Father: {fileID: 450969052}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -3091,7 +3094,7 @@ GameObject:
   - component: {fileID: 1892818368}
   - component: {fileID: 1892818367}
   m_Layer: 5
-  m_Name: GameOverlLabel
+  m_Name: GameOverLabel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

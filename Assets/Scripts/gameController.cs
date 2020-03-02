@@ -4,6 +4,7 @@ using System.IO;
 using System;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Runtime.Serialization;
 
@@ -26,7 +27,13 @@ public class gameController : MonoBehaviour
     private Text _pCombo;
     private Text _pScore;
     private System.Random rand = new System.Random();
+    
+    // game over panel
     public GameObject gameOverPanel;
+    public GameObject player;
+    public GameObject gameOverRetryButton;
+    public GameObject gameOverQuitButton;
+    BeatMap beatMap;
     
     void Start()
     {
@@ -36,10 +43,16 @@ public class gameController : MonoBehaviour
        _pCombo = GameObject.Find("scoreText").GetComponent<Text>();
        _pScore = GameObject.Find("comboText").GetComponent<Text>();
        _playerHealth = 100f;
-       _playerHealthDecreaseRate = 5f;
+       _playerHealthDecreaseRate = 1f;
        lastTime = Time.time;
 
        //gameOverPanel = GameObject.Find("GameOverPanel");
+       gameOverPanel.SetActive(false);
+       //gameOverRetryButton = GameObject.Find("GameOverRetryButton");
+       //gameOverQuitButton = GameObject.Find("GameOverQuitButton");
+
+       gameOverRetryButton.GetComponent<Button>().onClick.AddListener(handleGameOverRetry);
+       gameOverQuitButton.GetComponent<Button>().onClick.AddListener(handleGameOverQuit);
 
        audioSrc = this.GetComponent<AudioSource>(); // there is an audiosource in beatmapplayer, but it is more convenient to create one here
        
@@ -50,24 +63,11 @@ public class gameController : MonoBehaviour
        //Stream openFileStream = File.OpenRead(Application.persistentDataPath + "/BeatMaps/testBeatmap.dat");
         //BinaryFormatter deserializer = new BinaryFormatter();
         //BeatMap beatMap = (BeatMap)deserializer.Deserialize(openFileStream);
-        BeatMap beatMap = BeatMapPlayer.loadBeatMap(BeatMapPlayer.fileName);
-        GameObject objective = GameObject.Find("Objective");
-        GameObject badObjective = GameObject.Find("BadObjective");
         
-        audioSrc.clip = beatMap.getAudioClip();
+        
 
-        float movementSpeed = GameObject.Find("Player").GetComponent<MovementScript>().movement_speed; // public, non static variable
-        foreach(LaneObject laneObj in beatMap.initLaneObjectQueue()){
-            //float laneObjX = laneObj.lane;
-            
-            Instantiate(objective, new Vector3(laneToX(laneObj.lane), 0, (movementSpeed * laneObj.time)), Quaternion.Euler(0,0,0));
-            for(int i = 0; i<rand.Next(-1, 3); i++){ // generate up to 3 badobjectives per objective
-                // generates a badobjective at a random offset between x and y, either behind or in front the objective in a random lane
-                Instantiate(badObjective, new Vector3(laneToX(rand.Next(0, 3)), 0, (movementSpeed * laneObj.time) + (randPosNeg() * rand.Next(25, 50))), Quaternion.Euler(0,0,0));
-            }
-            print(laneObj.lane);
-            
-        }
+        generateBeats();
+
         //print(beatMap.initLaneObjectQueue().Peek().lane);
         audioSrc.Play();
     }
@@ -88,14 +88,36 @@ public class gameController : MonoBehaviour
         // decreases playerhealth at a fixed rate
         if(_playerHealth <=0){
             _gameState = "game_over";
-            Debug.Log(_gameState); 
+            //Debug.Log(_playerHealth); 
             gameOverPanel.SetActive(true);
+
+            Time.timeScale = 0; // pauses game
+            audioSrc.Stop(); // stops audio playback
+
             return;
         }
         if(Time.time - lastTime >= 0.1){
             _playerHealth -= _playerHealthDecreaseRate;
             lastTime = Time.time;
         }
+    }
+
+    // when the quit button on the game over screen is clicked
+    private void handleGameOverQuit(){
+        Time.timeScale = 1; // unpause
+        SceneManager.LoadScene("Main Menu");
+    }
+    // when the retry button on the game over screen is clicked
+    private void handleGameOverRetry(){
+        Time.timeScale = 1; // unpause
+        
+        // reset everything
+        _playerHealth = 100f;
+        GameObject.Find("TileManager").GetComponent<TileManager>().init(); // reset tilemanager
+        gameOverPanel.SetActive(false);
+        player.transform.position = new Vector3(0, 5, 0);
+        generateBeats();
+        audioSrc.Play();
     }
 
     private float laneToX(int lane){
@@ -122,5 +144,26 @@ public class gameController : MonoBehaviour
             return -1;
         }
 
+    }
+
+    void generateBeats(){
+        beatMap = BeatMapPlayer.loadBeatMap(BeatMapPlayer.fileName);
+        GameObject objective = GameObject.Find("Objective");
+        GameObject badObjective = GameObject.Find("BadObjective");
+        
+        audioSrc.clip = beatMap.getAudioClip();
+
+        float movementSpeed = GameObject.Find("Player").GetComponent<MovementScript>().movement_speed; // public, non static variable
+        foreach(LaneObject laneObj in beatMap.initLaneObjectQueue()){
+            //float laneObjX = laneObj.lane;
+            
+            Instantiate(objective, new Vector3(laneToX(laneObj.lane), 0, (movementSpeed * laneObj.time)), Quaternion.Euler(0,0,0));
+            for(int i = 0; i<rand.Next(-1, 3); i++){ // generate up to 3 badobjectives per objective
+                // generates a badobjective at a random offset between x and y, either behind or in front the objective in a random lane
+                Instantiate(badObjective, new Vector3(laneToX(rand.Next(0, 3)), 0, (movementSpeed * laneObj.time) + (randPosNeg() * rand.Next(25, 50))), Quaternion.Euler(0,0,0));
+            }
+            print(laneObj.lane);
+            
+        }
     }
 }
