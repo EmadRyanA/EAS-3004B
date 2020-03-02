@@ -113,7 +113,7 @@ public class gameController : MonoBehaviour
         
         // reset everything
         _playerHealth = 100f;
-        GameObject.Find("TileManager").GetComponent<TileManager>().init(); // reset tilemanager
+        GameObject.Find("TileManager").GetComponent<TileManager>().init(); // reset tilemanager (refactored Emad's code)
         gameOverPanel.SetActive(false);
         player.transform.position = new Vector3(0, 5, 0);
         generateBeats();
@@ -157,11 +157,17 @@ public class gameController : MonoBehaviour
         foreach(LaneObject laneObj in beatMap.initLaneObjectQueue()){
             //float laneObjX = laneObj.lane;
             
-            Instantiate(objective, new Vector3(laneToX(laneObj.lane), 0, (movementSpeed * laneObj.time)), Quaternion.Euler(0,0,0));
-            for(int i = 0; i<rand.Next(-1, 3); i++){ // generate up to 3 badobjectives per objective
-                // generates a badobjective at a random offset between x and y, either behind or in front the objective in a random lane
-                Instantiate(badObjective, new Vector3(laneToX(rand.Next(0, 3)), 0, (movementSpeed * laneObj.time) + (randPosNeg() * rand.Next(25, 50))), Quaternion.Euler(0,0,0));
+            if(laneObj.type==0){ // obstacle
+                Instantiate(badObjective, new Vector3(laneToX(laneObj.lane), 0, (movementSpeed * laneObj.time)), Quaternion.Euler(0,0,0));
+            }else{ // beat
+                Instantiate(objective, new Vector3(laneToX(laneObj.lane), 0, (movementSpeed * laneObj.time)), Quaternion.Euler(0,0,0));
             }
+            
+            
+            //for(int i = 0; i<rand.Next(-1, 3); i++){ // generate up to 3 badobjectives per objective
+                // generates a badobjective at a random offset between x and y, either behind or in front the objective in a random lane
+                //Instantiate(badObjective, new Vector3(laneToX(rand.Next(0, 3)), 0, (movementSpeed * laneObj.time) + (randPosNeg() * rand.Next(25, 50))), Quaternion.Euler(0,0,0));
+            //}
             print(laneObj.lane);
             
         }
