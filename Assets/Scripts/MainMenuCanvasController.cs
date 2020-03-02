@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class MainMenuCanvasController : MonoBehaviour
 {
@@ -27,6 +28,7 @@ public class MainMenuCanvasController : MonoBehaviour
     GameObject experienceText;
     GameObject experienceBar;
     Button exitButton;
+    public Button generateBeatMapButton;
     Camera mainCamera;
     GameObject MapSelect;
     GameObject Garage;
@@ -53,6 +55,7 @@ public class MainMenuCanvasController : MonoBehaviour
         MapSelect = GameObject.Find("MapSelectCanvas");
         Garage = GameObject.Find("CarSelectCanvas");
         title = GameObject.Find("Title");
+        generateBeatMapButton = generateBeatMapButton.GetComponent<Button>();
         //mapsContent = mapsContent.GetComponent<GameObject>();
         
         // user profile canvas initializers
@@ -68,6 +71,9 @@ public class MainMenuCanvasController : MonoBehaviour
         exitGameButton.GetComponent<Button>().onClick.AddListener(exitGame);
         garageButton.GetComponent<Button>().onClick.AddListener(toGarage);
         returnToMainMenuGarageButton.GetComponent<Button>().onClick.AddListener(toGarage);
+        generateBeatMapButton.onClick.AddListener(() => {
+          SceneManager.LoadScene(sceneBuildIndex:2);
+        });
         
         MapSelect.SetActive(false);
 

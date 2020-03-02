@@ -20,7 +20,7 @@ public class BeatMapEntryController : MonoBehaviour
     void songPlayListener()
     {
         BeatMapPlayer.fileName = fileName;
-        SceneManager.LoadScene(sceneBuildIndex:0);
+        SceneManager.LoadScene(sceneBuildIndex:3);
     }
 
     // Update is called once per frame
