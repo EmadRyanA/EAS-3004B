@@ -30,6 +30,7 @@ public class MainMenuCanvasController : MonoBehaviour
     GameObject experienceText;
     GameObject experienceBar;
     Button exitButton;
+    public Button generateBeatMapButton;
     Camera mainCamera;
     GameObject MapSelect;
     GameObject Garage;
@@ -59,8 +60,8 @@ public class MainMenuCanvasController : MonoBehaviour
         MapSelect = GameObject.Find("MapSelectCanvas");
         Garage = GameObject.Find("CarSelectCanvas");
         title = GameObject.Find("Title");
-        //mapsContent = GameObject.Find("MapsContent");
-        loadBeatMapButton = GameObject.Find("LoadBeatmapButton"); // temp workaround
+        generateBeatMapButton = generateBeatMapButton.GetComponent<Button>();
+        //mapsContent = mapsContent.GetComponent<GameObject>();
         
         // user profile canvas initializers
         userProfileCanvas = GameObject.Find("UserProfileCanvas");
@@ -75,7 +76,9 @@ public class MainMenuCanvasController : MonoBehaviour
         exitGameButton.GetComponent<Button>().onClick.AddListener(exitGame);
         garageButton.GetComponent<Button>().onClick.AddListener(toGarage);
         returnToMainMenuGarageButton.GetComponent<Button>().onClick.AddListener(toGarage);
-        loadBeatMapButton.GetComponent<Button>().onClick.AddListener(loadBeatmap);
+        generateBeatMapButton.onClick.AddListener(() => {
+          SceneManager.LoadScene(sceneBuildIndex:2);
+        });
         
         MapSelect.SetActive(false);
 

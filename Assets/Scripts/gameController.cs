@@ -34,9 +34,17 @@ public class gameController : MonoBehaviour
     public GameObject gameOverRetryButton;
     public GameObject gameOverQuitButton;
     BeatMap beatMap;
-    
+
+    public enum LOAD_STATE {
+        NOT_LOADED,
+        LOADED
+    }
+
+    public LOAD_STATE load_state;
+
     void Start()
     {
+        load_state = LOAD_STATE.NOT_LOADED;
         _gameState = null;
        _playerScore = 0;
        _playerCombo = 1; 
@@ -59,29 +67,35 @@ public class gameController : MonoBehaviour
        // do not render the pause canvas on launch
        GameObject.Find("PauseCanvas").SetActive(false);
 
+       beatMap = BeatMapPlayer.loadBeatMap();
+       beatMap.loadSamples(this);
        // temp, generate gameobjects based on beatmap
        //Stream openFileStream = File.OpenRead(Application.persistentDataPath + "/BeatMaps/testBeatmap.dat");
         //BinaryFormatter deserializer = new BinaryFormatter();
         //BeatMap beatMap = (BeatMap)deserializer.Deserialize(openFileStream);
-        
-        
-
-        generateBeats();
-
-        //print(beatMap.initLaneObjectQueue().Peek().lane);
-        audioSrc.Play();
     }
 
     // Update is called once per frame
     private void Update() {
-        // score handler
-        _pCombo.text = _playerCombo + "x";
-        _pScore.text = _playerScore + "";
 
-        // health/healthbar handler
-        //Debug.Log(_playerHealth);
-        healthBarHandler();
-        GameObject.Find("HealthBar").GetComponent<Slider>().value = _playerHealth / TOTAL_PLAYER_HEALTH; 
+        if (load_state == LOAD_STATE.NOT_LOADED) {
+            if (beatMap.state == BeatMap.STATE.SAMPLES_LOADED) {
+                generateBeats();
+                audioSrc.Play();
+                load_state = LOAD_STATE.LOADED;
+            }
+        }
+        else {
+            // score handler
+            _pCombo.text = _playerCombo + "x";
+            _pScore.text = _playerScore + "";
+
+            // health/healthbar handler
+            //Debug.Log(_playerHealth);
+            healthBarHandler();
+            GameObject.Find("HealthBar").GetComponent<Slider>().value = _playerHealth / TOTAL_PLAYER_HEALTH; 
+        }
+        
     }
 
     private void healthBarHandler(){
@@ -147,7 +161,8 @@ public class gameController : MonoBehaviour
     }
 
     void generateBeats(){
-        beatMap = BeatMapPlayer.loadBeatMap(BeatMapPlayer.fileName);
+        
+         //load the samples from the songFilePath
         GameObject objective = GameObject.Find("Objective");
         GameObject badObjective = GameObject.Find("BadObjective");
         
