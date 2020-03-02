@@ -325,7 +325,6 @@ MonoBehaviour:
   thresholdMultiplierSlider: {fileID: 769163262}
   minPeakSeperationTimeSlider: {fileID: 747924358}
   thresholdWindowLengthSlider: {fileID: 632112707}
-  bga: {fileID: 0}
   inputAudioClip: {fileID: 0}
   state: 0
   path: 
@@ -1999,7 +1998,6 @@ GameObject:
   - component: {fileID: 1524106199}
   - component: {fileID: 1524106198}
   - component: {fileID: 1524106197}
-  - component: {fileID: 1524106200}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -2072,34 +2070,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1524106200
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1524106196}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 97cea5e7b0c79ba40badf42f53e8cdbf, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  state: 0
-  settings:
-    n_bins: 0
-    threshold_time: 0
-    threshold_multiplier: 0
-    min_peak_seperation_time: 0
-    warm_up_time: 0
-    rng_seed: 0
-  song_info:
-    length: 0
-    frequency: 0
-    sampleCount: 0
-    sampleLength: 0
-    channels: 0
-    samples: []
-  songFilePath: 
 --- !u!1 &1710951026
 GameObject:
   m_ObjectHideFlags: 0

@@ -38,6 +38,7 @@ public class BGA
     //Information Structs
 
     public song_info_struct song_info;
+    public song_meta_struct song_meta;
 
     public static string persistentDataPath;
 
@@ -66,14 +67,10 @@ public class BGA
     //  this.state = STATE.READY;
     //}
 
-    public void StartBGA(ref AudioClip audioClip)
-    {
-        StartBGA(ref audioClip, new bga_settings(1024, 0.5f, 1.5f, 0.5f, 5f, 0), null);
-    }
-
-    public void StartBGA(ref AudioClip audioClip, bga_settings settings, string songFilePath)
+    public void StartBGA(ref AudioClip audioClip, bga_settings settings, song_meta_struct song, string songFilePath)
     {
         this.songFilePath = songFilePath;
+        this.song_meta = song;
         if (this.state != STATE.READY)
         {
             throw new Exception("Cannot start the beat generating algorithim if it is already being run! State: " + this.state);
@@ -358,7 +355,7 @@ public class BGA
     //All peaks are detected - now its time to decide where these beats are going
     BeatMap makeBeatMap()
     {
-        BeatMap beatMap = new BeatMap(settings, song_info, "testBeatmap", songFilePath);
+        BeatMap beatMap = new BeatMap(settings, song_info, song_meta, songFilePath);
 
         int currLane = 0;
         int currLaneCount = 0;

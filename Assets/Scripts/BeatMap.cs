@@ -21,17 +21,18 @@ public class BeatMap
     private List<LaneObject> laneObjectStore; //Store as list since queue cannot be seralized
     private bga_settings bga_settings; //Settings used to create this Beatmap
     private song_info_struct song_info;
-    public string name { get; set; }
+    public song_meta_struct song_meta {get;}
     public string fileName {get; set;} //not path; just the name in /BeatMaps/
     public string songFilePath {get; set;} //Where we store the .mp3 file
 
-    public BeatMap (bga_settings bga_settings, song_info_struct song_info, string name, string songFilePath)
+    public BeatMap (bga_settings bga_settings, song_info_struct song_info, song_meta_struct song_meta, string songFilePath)
     {
+        this.song_meta = song_meta;
         this.bga_settings = bga_settings;
         this.song_info = song_info;
         this.state = STATE.SAMPLES_LOADED;
-        this.name = name;
-        this.fileName = name + ";" + bga_settings.rng_seed.ToString() + ".dat";
+        //this.name = name;
+        this.fileName = song_meta.title + "~" + song_meta.artist + "~" + song_meta.album + ";" + bga_settings.rng_seed.ToString() + ".dat";
         this.songFilePath = songFilePath;
         laneObjectStore = new List<LaneObject>();
     }
@@ -55,7 +56,7 @@ public class BeatMap
 
         Debug.Log(audioType);
 
-        using (UnityWebRequest www = UnityWebRequestMultimedia.GetAudioClip(path, audioType))
+        using (UnityWebRequest www = UnityWebRequestMultimedia.GetAudioClip("file://" + path, audioType))
         {
             yield return www.Send();
 
@@ -86,7 +87,7 @@ public class BeatMap
 
     public void loadSamples(MonoBehaviour callingMonoBehaviour) {
         state = STATE.SAMPLES_UNLOADED;
-        callingMonoBehaviour.StartCoroutine(getAudioClipFromPath(songFilePath));
+        callingMonoBehaviour.StartCoroutine(getAudioClipFromPath(songFilePath + ".mp3"));
     }
 
     public void unloadSamples() {
@@ -111,7 +112,7 @@ public class BeatMap
         Debug.Log(song_info.channels);
         Debug.Log(song_info.samples.Length);
         Debug.Log(song_info.frequency);
-        AudioClip audioClip = AudioClip.Create(name, song_info.samples.Length, song_info.channels, song_info.frequency, false);
+        AudioClip audioClip = AudioClip.Create(song_meta.title, song_info.samples.Length, song_info.channels, song_info.frequency, false);
         audioClip.SetData(song_info.samples, 0);
         return audioClip;
     }

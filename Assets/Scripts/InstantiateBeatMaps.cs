@@ -26,7 +26,8 @@ public class InstantiateBeatMaps : MonoBehaviour
           GameObject beatMapPanel = (GameObject)Instantiate(prefab, new Vector3(0, 0, 0), new Quaternion(0, 0, 0, 0), mapsContent);
           BeatMapEntryController controller = beatMapPanel.GetComponentInChildren<BeatMapEntryController>();
           controller.fileName = fileName;
-          beatMapPanel.GetComponentInChildren<Text>().text = beatMap.name;
+          controller.setCoverArt(beatMap.songFilePath + ".png");
+          beatMapPanel.GetComponentInChildren<Text>().text = beatMap.song_meta.title + " by " + beatMap.song_meta.artist;
         }
         
     }

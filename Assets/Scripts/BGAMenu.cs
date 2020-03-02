@@ -32,6 +32,8 @@ public class BGAMenu : MonoBehaviour
     public STATE state;
 
     public string path;
+    
+    public song_meta_struct song;
 
     // Start is called before the first frame update
     void Start()
@@ -51,7 +53,7 @@ public class BGAMenu : MonoBehaviour
         selectFileButton.onClick.AddListener(selectFileListener);
         generateBeatMapButton.onClick.AddListener(generateBeatMapListener);
 
-        path = "file:///D:\\Music\\UnitySongs\\01 Dreams.ogg"; //for testing on windows: set the path var to a song
+        //path = "file:///D:\\Music\\UnitySongs\\01 Dreams.ogg"; //for testing on windows: set the path var to a song
     }
 
 
@@ -93,7 +95,9 @@ public class BGAMenu : MonoBehaviour
     {
       Debug.Log("Got a result from java");
       Debug.Log(s);
-      path = "file://" + s;
+      string[] strings = s.Split(new char[] {BGACommon.DELIMITER});
+      song = new song_meta_struct(strings[0], strings[1], strings[2]);
+      path = Application.persistentDataPath + "/Songs/" + s;
       //path = s;
     }
 
@@ -119,7 +123,7 @@ public class BGAMenu : MonoBehaviour
 
         Debug.Log(audioType);
 
-        using (UnityWebRequest www = UnityWebRequestMultimedia.GetAudioClip(path, audioType))
+        using (UnityWebRequest www = UnityWebRequestMultimedia.GetAudioClip("file://" + path, audioType))
         {
             yield return www.Send();
 
@@ -164,7 +168,7 @@ public class BGAMenu : MonoBehaviour
         if (path != "")
         {
             state = STATE.AUDIO_CLIP_LOADING;
-            StartCoroutine(getAudioClipFromPath(path));
+            StartCoroutine(getAudioClipFromPath(path + ".mp3"));
         }
     }
 
@@ -177,7 +181,7 @@ public class BGAMenu : MonoBehaviour
             state = STATE.BGA_STARTED;
 
             bga_settings settings = new bga_settings(1024, thresholdWindowLengthSlider.value, thresholdMultiplierSlider.value, minPeakSeperationTimeSlider.value, 5f, 0);
-            bga.StartBGA(ref inputAudioClip, settings, path);
+            bga.StartBGA(ref inputAudioClip, settings, song, path);
         }
 
         if (state == STATE.BGA_STARTED) {

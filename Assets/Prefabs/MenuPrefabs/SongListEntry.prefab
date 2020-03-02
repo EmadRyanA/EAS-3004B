@@ -91,6 +91,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   fileName: 
   songPlay: {fileID: 7438358216725353992}
+  coverArtImage: {fileID: 7438358215873640192}
 --- !u!1 &7438358215873640318
 GameObject:
   m_ObjectHideFlags: 0
@@ -316,8 +317,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -253, y: 0.000002861}
-  m_SizeDelta: {x: 160, y: 30}
+  m_AnchoredPosition: {x: -166.5, y: 0.000002861}
+  m_SizeDelta: {x: 333, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7438358217289819135
 CanvasRenderer:

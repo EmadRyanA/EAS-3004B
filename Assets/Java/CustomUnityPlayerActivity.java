@@ -15,12 +15,17 @@ import java.io.*;
 import android.provider.OpenableColumns;
 import android.provider.MediaStore.MediaColumns;
 import android.provider.MediaStore;
+import android.media.MediaMetadataRetriever;
+import android.graphics.BitmapFactory;
+import android.graphics.Bitmap;
+import android.graphics.Bitmap.CompressFormat;
 
 
 public class CustomUnityPlayerActivity extends UnityPlayerActivity {
 
     public static final int REQUEST_CODE = 1;
     public static String outFilePath = "";
+    public static final char delimeter = '~';
     
     //See https://docs.unity3d.com/Manual/AndroidUnityPlayerActivity.html
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,27 +49,48 @@ public class CustomUnityPlayerActivity extends UnityPlayerActivity {
             //String fileName = returnCursor.getString(nameIndex);
             //long fileSize = returnCursor.getLong(sizeIndex);
 
-            String[] projection = {
-                MediaStore.Audio.Media.TITLE,
-                MediaStore.Audio.Media.ARTIST,
-                MediaStore.Audio.Media.DISPLAY_NAME
-            };
+            //String[] projection = {
+            //    MediaStore.Audio.Media.TITLE,
+            //    MediaStore.Audio.Media.ARTIST,
+            //    MediaStore.Audio.Media.DISPLAY_NAME
+            //};
 
-            Cursor cursor = getContentResolver().query(fileUri, projection, null, null, null);
+            //Cursor cursor = getContentResolver().query(fileUri, projection, null, null, null);
 
-            cursor.moveToFirst();
-            String songTitle = cursor.getString(0);
-            String songArtist = cursor.getString(1);
-            String songDisplayName = cursor.getString(2); 
+            //cursor.moveToFirst();
+            //String songTitle = (cursor.getString(0) == null ? "NA" : cursor.getString(0)).replaceAll("~", "");
+            //String songArtist = (cursor.getString(1) == null ? "NA" : cursor.getString(1)).replaceAll("~", "");
+            //String songDisplayName = (cursor.getString(2) == null ? "NA" : cursor.getString(2)).replaceAll("~", "");
 
-            String filePath = outFilePath + "/" + songDisplayName; //todo: what if there are more than 1 song with name? Get some unique key
+            MediaMetadataRetriever metaData = new MediaMetadataRetriever();
+            metaData.setDataSource(this, fileUri);
 
-            Log.d("CustomUnityPlayerActivity", songDisplayName);
+            String songTitle = metaData.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE);
+            String songArtist = metaData.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST);
+            String songAlbum = metaData.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUM);
+            byte[] songArt = metaData.getEmbeddedPicture();
+            Bitmap songBitmap = BitmapFactory.decodeByteArray(songArt, 0, songArt.length);
+            songTitle = (songTitle == null ? "NA" : songTitle).replaceAll("~", "");
+            songArtist = (songArtist == null ? "NA": songArtist).replaceAll("~", "");
+            songAlbum = (songAlbum == null ? "NA": songAlbum).replaceAll("~", "");
+
+            String songInfo = (songTitle + "~" + songArtist + "~" + songAlbum);
+
+            String filePath = outFilePath + "/" + songInfo; //todo this is still not perfect...
+
+            try (OutputStream out = new FileOutputStream(filePath + ".png")) {
+              songBitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
+            }
+            catch (Exception e) {
+
+            }
+
+            Log.d("CustomUnityPlayerActivity", filePath);
 
             //see https://commonsware.com/blog/2016/03/15/how-consume-content-uri.html
             try (InputStream in = getContentResolver().openInputStream(fileUri)) {
                 //see https://stackoverflow.com/questions/9292954/how-to-make-a-copy-of-a-file-in-android/29685580
-                try (OutputStream out = new FileOutputStream(filePath)) {
+                try (OutputStream out = new FileOutputStream(filePath + ".mp3")) {
                   byte[] buf = new byte[1024];
                   int len;
                   while ((len = in.read(buf)) > 0) {
@@ -79,7 +105,7 @@ public class CustomUnityPlayerActivity extends UnityPlayerActivity {
                 Log.d("CustomUnityPlayerActivity", "E2");
             }
 
-            UnityPlayer.UnitySendMessage("BGACanvas", "resultFromJava", filePath);
+            UnityPlayer.UnitySendMessage("BGACanvas", "resultFromJava", songInfo);
         }
         
     }

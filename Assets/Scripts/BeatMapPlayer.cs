@@ -39,7 +39,7 @@ public class BeatMapPlayer : MonoBehaviour
         BeatMap beatMap = (BeatMap)deserializer.Deserialize(openFileStream);
         beatMap.loadSamples(this); //load the samples from the songFilePath
         Debug.Log("Beatmap loaded");
-        Debug.Log(beatMap.name);
+        Debug.Log(beatMap.song_meta.title);
         return beatMap;
     }
 
