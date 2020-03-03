@@ -15,6 +15,7 @@ public class BGAMenu : MonoBehaviour
     public Slider thresholdMultiplierSlider;
     public Slider minPeakSeperationTimeSlider;
     public Slider thresholdWindowLengthSlider;
+    public Text songNameText;
     public BGA bga;
 
     public AudioClip inputAudioClip; //To be loaded from web url or file uri
@@ -44,6 +45,7 @@ public class BGAMenu : MonoBehaviour
         thresholdMultiplierSlider = thresholdMultiplierSlider.GetComponent<Slider>();
         minPeakSeperationTimeSlider = minPeakSeperationTimeSlider.GetComponent<Slider>();
         thresholdWindowLengthSlider = thresholdWindowLengthSlider.GetComponent<Slider>();
+        songNameText = songNameText.GetComponent<Text>();
         backButton = backButton.GetComponent<Button>();
 
         backButton.onClick.AddListener(() => {
@@ -97,6 +99,7 @@ public class BGAMenu : MonoBehaviour
       Debug.Log(s);
       string[] strings = s.Split(new char[] {BGACommon.DELIMITER});
       song = new song_meta_struct(strings[0], strings[1], strings[2]);
+      songNameText.text = song.title + " by " + song.artist;
       path = Application.persistentDataPath + "/Songs/" + s;
       //path = s;
     }
