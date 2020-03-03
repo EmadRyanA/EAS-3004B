@@ -39,6 +39,8 @@ public class PausePanelButtonHandler : MonoBehaviour
     // quits the current game, brings the game back to menu screen
     private void handleQuit(){
         Time.timeScale = Mathf.Approximately(Time.timeScale, 0.0f) ? 1.0f : 0.0f;
+        PauseButton.paused = false;
+        PauseButton.pauseBtn.enabled = true;
         SceneManager.LoadScene("Main Menu");
     }
 
