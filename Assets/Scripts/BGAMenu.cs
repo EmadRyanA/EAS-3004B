@@ -6,6 +6,10 @@ using UnityEngine.UI;
 using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
 
+#if !UNITY_ANDROID
+using System.Windows.Forms;
+#endif
+
 public class BGAMenu : MonoBehaviour
 {
 
@@ -17,6 +21,10 @@ public class BGAMenu : MonoBehaviour
     public Slider thresholdWindowLengthSlider;
     public Text songNameText;
     public BGA bga;
+
+    #if !UNITY_ANDROID
+    private OpenFileDialog openFileDialog;
+    #endif
 
     public AudioClip inputAudioClip; //To be loaded from web url or file uri
 
@@ -55,7 +63,9 @@ public class BGAMenu : MonoBehaviour
         selectFileButton.onClick.AddListener(selectFileListener);
         generateBeatMapButton.onClick.AddListener(generateBeatMapListener);
 
-        //path = "file:///D:\\Music\\UnitySongs\\01 Dreams.ogg"; //for testing on windows: set the path var to a song
+        path = Application.persistentDataPath + "/Songs/Dreams~Lost Sky~Dreams"; //for testing on windows: set the path var to a song
+        song = new song_meta_struct("Dreams", "Lost Sky", "Dreams"); //for testing; set the meta data
+        songNameText.text = song.title + " by " + song.artist;//for testing; set the text UI
     }
 
 
@@ -63,19 +73,24 @@ public class BGAMenu : MonoBehaviour
 
     void selectFileListener()
     {
-        Debug.Log("Opening select file on android...");
 
-        //https://docs.unity3d.com/ScriptReference/AndroidJavaRunnable.html
-        AndroidJavaClass unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
-        AndroidJavaObject activity = unityPlayer.GetStatic<AndroidJavaObject>("currentActivity");
-        string filePath = Application.persistentDataPath + "/Songs";
-        Debug.Log(filePath);
-        if (!Directory.Exists(filePath)) {
-            Directory.CreateDirectory(filePath);
+        if (BGACommon.IS_PC) {
+           
         }
-        //path = "file://" + filePath;
-        activity.Call("CallFromUnity", filePath);
-
+        else {
+            Debug.Log("Opening select file on android...");
+            //https://docs.unity3d.com/ScriptReference/AndroidJavaRunnable.html
+            AndroidJavaClass unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
+            AndroidJavaObject activity = unityPlayer.GetStatic<AndroidJavaObject>("currentActivity");
+            string filePath = Application.persistentDataPath + "/Songs";
+            Debug.Log(filePath);
+            if (!Directory.Exists(filePath)) {
+                Directory.CreateDirectory(filePath);
+            }
+            //path = "file://" + filePath;
+            activity.Call("CallFromUnity", filePath);
+        }
+        
         //FileBrowser.ShowLoadDialog(onSelectFileSuccess, onSelectFileCancel);
     }
 
@@ -109,6 +124,7 @@ public class BGAMenu : MonoBehaviour
     void selectFileListener()
     {
         //not supported on windows, function still needs to be declared
+        openFileDialog = new OpenFileDialog();
     }
 
     #endif
@@ -117,16 +133,18 @@ public class BGAMenu : MonoBehaviour
     {
         //see https://docs.unity3d.com/ScriptReference/Networking.UnityWebRequestMultimedia.GetAudioClip.html
 
-        AudioType audioType;
-        #if UNITY_ANDROID
-          audioType = AudioType.MPEG; //for android use MPEG (.mp3)
-        #else
-          audioType = AudioType.OGGVORBIS; //for testing on windows use OGGVORBIS (.ogg) since windows does not have mpeg codec native
-        #endif
+        // AudioType audioType;
+        // #if UNITY_ANDROID
+        //   audioType = AudioType.MPEG; //for android use MPEG (.mp3)
+        // #else
+        //   audioType = AudioType.OGGVORBIS; //for testing on windows use OGGVORBIS (.ogg) since windows does not have mpeg codec native
+        // #endif
 
-        Debug.Log(audioType);
+        Debug.Log(BGACommon.AUDIO_TYPE);
+        Debug.Log(BGACommon.SONG_FORMAT);
 
-        using (UnityWebRequest www = UnityWebRequestMultimedia.GetAudioClip("file://" + path, audioType))
+
+        using (UnityWebRequest www = UnityWebRequestMultimedia.GetAudioClip("file://" + path, BGACommon.AUDIO_TYPE))
         {
             yield return www.Send();
 
@@ -171,7 +189,7 @@ public class BGAMenu : MonoBehaviour
         if (path != "")
         {
             state = STATE.AUDIO_CLIP_LOADING;
-            StartCoroutine(getAudioClipFromPath(path + ".mp3"));
+            StartCoroutine(getAudioClipFromPath(path + BGACommon.SONG_FORMAT));
         }
     }
 

@@ -69,7 +69,7 @@ public class CustomUnityPlayerActivity extends UnityPlayerActivity {
             String songArtist = metaData.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST);
             String songAlbum = metaData.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUM);
             byte[] songArt = metaData.getEmbeddedPicture();
-            Bitmap songBitmap = BitmapFactory.decodeByteArray(songArt, 0, songArt.length);
+            Bitmap songBitmap = (songArt == null) ? null : BitmapFactory.decodeByteArray(songArt, 0, songArt.length);
             songTitle = (songTitle == null ? "NA" : songTitle).replaceAll("~", "");
             songArtist = (songArtist == null ? "NA": songArtist).replaceAll("~", "");
             songAlbum = (songAlbum == null ? "NA": songAlbum).replaceAll("~", "");
@@ -78,11 +78,13 @@ public class CustomUnityPlayerActivity extends UnityPlayerActivity {
 
             String filePath = outFilePath + "/" + songInfo; //todo this is still not perfect...
 
-            try (OutputStream out = new FileOutputStream(filePath + ".png")) {
-              songBitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
-            }
-            catch (Exception e) {
+            if (songBitmap != null) {
+                try (OutputStream out = new FileOutputStream(filePath + ".png")) {
+                    songBitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
+                }
+                catch (Exception e) {
 
+                }
             }
 
             Log.d("CustomUnityPlayerActivity", filePath);
@@ -111,7 +113,6 @@ public class CustomUnityPlayerActivity extends UnityPlayerActivity {
     }
 
     public void CallFromUnity(String outFile) {
-
       outFilePath = outFile;
       Log.d("CustomUnityPlayerActivity", "I am called from unity");
       Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
