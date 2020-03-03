@@ -28,14 +28,21 @@ public class BeatMapEntryController : MonoBehaviour
     }
 
     public void setCoverArt(string path) {
-        byte[] bytes = System.IO.File.ReadAllBytes(path);
-        Texture2D texture2D = new Texture2D(1, 1);
-        texture2D.LoadImage(bytes);
-        Sprite sprite = Sprite.Create(texture2D, new Rect(0, 0, texture2D.width, texture2D.height), new Vector2(0, 0));
-        if (sprite != null) coverArtImage.sprite = sprite;
+        try {
+            byte[] bytes = System.IO.File.ReadAllBytes(path);
+            Texture2D texture2D = new Texture2D(1, 1);
+            texture2D.LoadImage(bytes);
+            Sprite sprite = Sprite.Create(texture2D, new Rect(0, 0, texture2D.width, texture2D.height), new Vector2(0, 0));
+            if (sprite != null) coverArtImage.sprite = sprite;
+        }
+        catch (IOException e) {
+            Debug.Log("err");
+            Debug.Log(e);
+        }
         //StartCoroutine(downloadCoverArt(path));
     }
 
+    /*
     IEnumerator downloadCoverArt(string path)
     {
       Debug.Log("Getting cover art");
@@ -58,6 +65,7 @@ public class BeatMapEntryController : MonoBehaviour
             }
       }
     }
+    */
 
     // Update is called once per frame
     void Update()
