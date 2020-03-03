@@ -18,6 +18,7 @@ public class PauseButton : MonoBehaviour
     private void TogglePause(){
         Time.timeScale = Mathf.Approximately(Time.timeScale, 0.0f) ? 1.0f : 0.0f;
         paused = !paused;
+        gameController.audioSrc.Pause();
         pauseBtn.enabled = !pauseBtn.enabled;
     }
 

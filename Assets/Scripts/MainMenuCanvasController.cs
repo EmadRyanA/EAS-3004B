@@ -1,7 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Runtime.Serialization.Formatters.Binary;
+using UnityEngine.SceneManagement;
 
 public class MainMenuCanvasController : MonoBehaviour
 {
@@ -27,9 +30,14 @@ public class MainMenuCanvasController : MonoBehaviour
     GameObject experienceText;
     GameObject experienceBar;
     Button exitButton;
+    public Button generateBeatMapButton;
     Camera mainCamera;
     GameObject MapSelect;
     GameObject Garage;
+    //GameObject mapsContent;
+    GameObject loadBeatMapButton;
+    //public static string beatmapDir; 
+
     
     int currentState = 2;
     void Start()
@@ -52,6 +60,8 @@ public class MainMenuCanvasController : MonoBehaviour
         MapSelect = GameObject.Find("MapSelectCanvas");
         Garage = GameObject.Find("CarSelectCanvas");
         title = GameObject.Find("Title");
+        generateBeatMapButton = generateBeatMapButton.GetComponent<Button>();
+        //mapsContent = mapsContent.GetComponent<GameObject>();
         
         // user profile canvas initializers
         userProfileCanvas = GameObject.Find("UserProfileCanvas");
@@ -66,6 +76,9 @@ public class MainMenuCanvasController : MonoBehaviour
         exitGameButton.GetComponent<Button>().onClick.AddListener(exitGame);
         garageButton.GetComponent<Button>().onClick.AddListener(toGarage);
         returnToMainMenuGarageButton.GetComponent<Button>().onClick.AddListener(toGarage);
+        generateBeatMapButton.onClick.AddListener(() => {
+          SceneManager.LoadScene(sceneBuildIndex:2);
+        });
         
         MapSelect.SetActive(false);
 
@@ -79,12 +92,13 @@ public class MainMenuCanvasController : MonoBehaviour
         experienceBar.GetComponent<Slider>().value = MainMenuController.player.currentExperience/(MainMenuController.player.currentExperience + MainMenuController.player.experienceForNextLevel);
 
         //comparisonVector3 = new Vector3(0.01f, 0.01f, 0.01f);
+        
     }
 
     // Update is called once per frame
     void Update()
     {
-        Debug.Log(currentState);
+        //Debug.Log(currentState);
         // beatmap select pov
         if(!updated){
             if(currentState == 1){
@@ -100,7 +114,7 @@ public class MainMenuCanvasController : MonoBehaviour
 
                 title.SetActive(false);
 
-                Debug.Log(MainMenuController.cameraLocations + " " + MainMenuController.cameraRotations);
+                //Debug.Log(MainMenuController.cameraLocations + " " + MainMenuController.cameraRotations);
                 mainCamera.transform.position = Vector3.Lerp(mainCamera.transform.position, MainMenuController.cameraLocations[1], Time.deltaTime);
                 mainCamera.transform.rotation = Quaternion.RotateTowards(mainCamera.transform.rotation, MainMenuController.cameraRotations[1], 70*Time.deltaTime);  
 
@@ -108,6 +122,7 @@ public class MainMenuCanvasController : MonoBehaviour
                     // only stops updating once the camera completes its transition
                     updated = true;
                 }
+
             
             // main menu pov
             }else if(currentState == 2){
@@ -185,6 +200,22 @@ public class MainMenuCanvasController : MonoBehaviour
 // quits the game
     private void exitGame(){
         Application.Quit();
+    }
+
+    private void loadBeatmap(){
+        string beatMapDir = Application.persistentDataPath + "/BeatMaps/";
+        Debug.Log(beatMapDir);
+        //see https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/concepts/serialization/walkthrough-persisting-an-object-in-visual-studio
+        //if (!fileName.EndsWith(".dat")) continue;
+        Stream openFileStream = File.OpenRead(beatMapDir + "testBeatmap.dat");
+        BinaryFormatter deserializer = new BinaryFormatter();
+        //BeatMap beatMap = (BeatMap)deserializer.Deserialize(openFileStream);
+        SceneManager.LoadScene("New Scene");
+        //print(beatMap.initLaneObjectQueue().Peek());
+        //GameObject beatMapPanel = (GameObject)Instantiate(prefab, new Vector3(0, 0, 0), new Quaternion(0, 0, 0, 0), mapsContent);
+        //BeatMapEntryController controller = beatMapPanel.GetComponentInChildren<BeatMapEntryController>();
+        //controller.fileName = fileName;
+        //beatMapPanel.GetComponentInChildren<Text>().text = beatMap.name;
     }
 
 }

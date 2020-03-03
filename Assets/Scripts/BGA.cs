@@ -16,19 +16,20 @@ using UnityEngine;
  * https://www.badlogicgames.com/wordpress/?p=122 Used to create the peaks[] (detect beats). (this is where concepts like spectral flux, threshold come from)
  */
 
-public class BGA : MonoBehaviour
+public class BGA
 {
 
     public enum STATE
     {
         READY,
         ACTIVE,
-        THREAD_ACTIVE
+        THREAD_ACTIVE,
+        DONE
     }
 
     public STATE state;
 
-    public const Int32 RANDOM_SEED_LENGTH = 256;
+    public const Int32 RANDOM_SEED_LENGTH = 8;
 
     public bga_settings settings;
 
@@ -37,6 +38,11 @@ public class BGA : MonoBehaviour
     //Information Structs
 
     public song_info_struct song_info;
+    public song_meta_struct song_meta;
+
+    public static string persistentDataPath;
+
+    public string songFilePath;
 
     //todo: this is a lot of ram! get rid of arrays when we are done with them
     public struct output_struct
@@ -56,13 +62,15 @@ public class BGA : MonoBehaviour
     //bool doPlay = false;
     //public int frameCount = 0;
 
-    public void StartBGA(ref AudioClip audioClip)
-    {
-        StartBGA(ref audioClip, new bga_settings(1024, 0.5f, 1.5f, 0.5f, 5f, 0));
-    }
+    //todo constructor
+    //public BGA() {
+    //  this.state = STATE.READY;
+    //}
 
-    public void StartBGA(ref AudioClip audioClip, bga_settings settings)
+    public void StartBGA(ref AudioClip audioClip, bga_settings settings, song_meta_struct song, string songFilePath)
     {
+        this.songFilePath = songFilePath;
+        this.song_meta = song;
         if (this.state != STATE.READY)
         {
             throw new Exception("Cannot start the beat generating algorithim if it is already being run! State: " + this.state);
@@ -74,8 +82,10 @@ public class BGA : MonoBehaviour
         this.settings = settings;
         if (settings.rng_seed == 0)
         {
-            settings.rng_seed = generateNewRandomSeed();
+            this.settings.rng_seed = generateNewRandomSeed();
+            Debug.Log(this.settings.rng_seed);
         }
+        
         bga_random = new System.Random(settings.rng_seed);
 
         song_info = new song_info_struct(audioClip);
@@ -86,6 +96,8 @@ public class BGA : MonoBehaviour
 
         output = new output_struct();
 
+        persistentDataPath = Application.persistentDataPath; //We can't use unity specific calls in the bga thread, and we need this variable for later
+
         //Create the background thread and run the BGA algorithim
         //The algorthim will have access to all the public structs
         Thread BGAThread = new Thread(new ThreadStart(algorithimWrapper));
@@ -95,15 +107,15 @@ public class BGA : MonoBehaviour
 
     public int generateNewRandomSeed()
     {
-        return Mathf.FloorToInt(new System.Random().Next(0, RANDOM_SEED_LENGTH));
+        return Mathf.FloorToInt(new System.Random().Next((int)Mathf.Pow(10, (RANDOM_SEED_LENGTH - 1)), (int)Mathf.Pow(10, RANDOM_SEED_LENGTH) - 1));
     }
 
     // Start is called before the first frame update
-    void Start()
-    {
-        this.state = STATE.READY;
-        Debug.Log("BGA Game object loaded.");
-    }
+    //void Start()
+    //{
+    //    this.state = STATE.READY;
+    //    Debug.Log("BGA Game object loaded.");
+    //}
 
     //Background thread to run the algorithim
     void algorithimWrapper()
@@ -272,20 +284,12 @@ public class BGA : MonoBehaviour
         //debug output
 
         Debug.Log("FFT Data collected");
+        this.state = STATE.DONE;
+
+        /*
 
         using (StreamWriter file = new StreamWriter("output.txt"))
         {
-            /*
-            for (int i=0; i<output.fftData.Length; i++)
-            {
-                StringBuilder builder = new StringBuilder();
-                for (int j=0;j<output.fftData[i].Length;j++)
-                {
-                    builder.AppendFormat("{0}, ", output.fftData[i][j].ToString());
-                }
-                file.WriteLine(builder.ToString());
-            }
-            */
             for (int i=0; i < output.flux.Length; i++)
             {
                 file.WriteLine(output.flux[i]);
@@ -328,8 +332,7 @@ public class BGA : MonoBehaviour
         }
 
         Debug.Log("Output file saved");
-
-        state = STATE.READY;
+        */
 
         //frameScale = (int) (songLength / finalArraySize);
         //float sampleLength = song_info.length / (float)song_info.sampleCount;
@@ -352,7 +355,7 @@ public class BGA : MonoBehaviour
     //All peaks are detected - now its time to decide where these beats are going
     BeatMap makeBeatMap()
     {
-        BeatMap beatMap = new BeatMap(settings, song_info, "testBeatmap");
+        BeatMap beatMap = new BeatMap(settings, song_info, song_meta, songFilePath);
 
         int currLane = 0;
         int currLaneCount = 0;
@@ -419,10 +422,14 @@ public class BGA : MonoBehaviour
 
     void saveBeatMap(ref BeatMap beatMap)
     {
+
+        beatMap.unloadSamples();
         //todo file format, name
         //for now just seralize beatMap
         //See https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/concepts/serialization/walkthrough-persisting-an-object-in-visual-studio
-        string fileName = "C:/Beatmaps/" + beatMap.name + ".dat";
+        string fileDir = persistentDataPath + "/BeatMaps";
+        if (!Directory.Exists(fileDir)) Directory.CreateDirectory(fileDir);
+        string fileName = fileDir + "/" + beatMap.fileName;
         Stream saveFileStream = File.Create(fileName);
         BinaryFormatter serializer = new BinaryFormatter();
         serializer.Serialize(saveFileStream, beatMap);

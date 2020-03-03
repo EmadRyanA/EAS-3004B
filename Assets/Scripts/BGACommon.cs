@@ -47,6 +47,21 @@ public struct bga_settings
 }
 
 [Serializable()]
+public struct song_meta_struct
+{
+    public String title;
+    public String artist;
+    public String album;
+
+    public song_meta_struct (String title, String artist, String album) {
+        this.title = title;
+        this.artist = artist;
+        this.album = album;
+    }
+
+}
+
+[Serializable()]
 public struct song_info_struct
     {
         //public AudioClip audioClip;
@@ -72,6 +87,7 @@ public struct song_info_struct
 public static class BGACommon
 {
     public const int NUMBER_LANES = 3;
+    public static Char DELIMITER = '~';
 }
 
 /*

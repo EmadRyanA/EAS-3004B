@@ -15,9 +15,14 @@ public class TileManager : MonoBehaviour
     public int maxTileCount = 9;
     private int lastPrefab;
 
-    // Start is called before the first frame update
-    void Start()
-    {
+    public void init(){
+        // initialize variables
+        playerArea = 75.0f;
+        zCreated = -15.0f;
+        tileLength = 75.0f;
+        maxTileCount = 9;
+        lastPrefab = 0;
+
         shiftPlayer = GameObject.FindGameObjectWithTag("Player").transform;
         activeTiles = new List<GameObject>();
         for(int n = 0; n < maxTileCount; n++)
@@ -32,6 +37,14 @@ public class TileManager : MonoBehaviour
             }
         }
     }
+
+    // Start is called before the first frame update
+    void Start()
+    {
+        init();
+    }
+
+    
 
     // Update is called once per frame
     void Update()
@@ -49,7 +62,9 @@ public class TileManager : MonoBehaviour
         GameObject tileIns;
         if(prefabIndex == -1)
         {
-            tileIns = Instantiate(tilePrefabs[RandomPrefab()]) as GameObject;
+            //tileIns = Instantiate(tilePrefabs[RandomPrefab()]) as GameObject;
+            tileIns = Instantiate(tilePrefabs[0]) as GameObject;
+
         }
         else
         {
