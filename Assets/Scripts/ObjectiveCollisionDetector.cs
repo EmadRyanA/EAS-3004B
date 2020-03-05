@@ -15,10 +15,6 @@ public class ObjectiveCollisionDetector : MonoBehaviour
 
     // Update is called once per frame
 
-    //private void OnDestroy() {
-        
-    //}
-
     private void OnTriggerEnter(Collider other){
        print(other.name);
        /*
@@ -34,15 +30,16 @@ public class ObjectiveCollisionDetector : MonoBehaviour
                 Debug.Log("here");
                 gameController._playerScore += gameController._playerCombo * 100;
                 gameController._playerCombo += 1;
+                if(gameController._playerCombo > gameController._playerMaxCombo){
+                    gameController._playerMaxCombo = gameController._playerCombo;
+                }
                 gameController._playerHealth += gameController._playerHealthRecoveryRate;
+                gameController._playerNotesHit++;
             if(gameController._playerHealth > 100){
                 gameController._playerHealth = 100;
             }
         }
        } 
-       
-
-
         GetComponent<Animation>().Play("objective_collide");
         //Destroy(this);
         //GetComponent<Renderer>().enabled = false; 

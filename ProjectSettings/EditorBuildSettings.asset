@@ -17,4 +17,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/New Scene.unity
     guid: 09629aefd885bde46b4fd1f0c35a8d57
+  - enabled: 1
+    path: Assets/Scenes/VictoryRoyaleScene.unity
+    guid: 50b61d546717b2542ba728a27b6d9691
   m_configObjects: {}

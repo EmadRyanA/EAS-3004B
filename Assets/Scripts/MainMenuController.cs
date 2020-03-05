@@ -8,12 +8,21 @@ using System.Runtime.Serialization;
 public class MainMenuController : MonoBehaviour
 {
     // Start is called before the first frame update
+    public static bool finishedMap = false;
     public static Vector3[] cameraLocations;
     public static Quaternion[] cameraRotations;
     public TextAsset jsonFile;
     public static PlayerClass player;
+    WinDataClass winData;
     void Start()
     {
+        // prevents reading on game launch
+        if(finishedMap){
+            WinDataClassHelper.LoadFromExternal(ref winData);
+            handlePlayerUpdate();
+            finishedMap = false; 
+        }
+        
         Time.timeScale = 1f;
         cameraLocations = new Vector3[] {new Vector3(22.42f, 3.46f, 17.65f), new Vector3(-1.91f, 6.15f, 41.69f), new Vector3(36.81f, 4.09f, 29.95f)};
         cameraRotations = new Quaternion[] {Quaternion.Euler(0f ,0f , -3.446f), Quaternion.Euler(2.148f, 141.484f, 2.696f), Quaternion.Euler(-0.667f, -81.023f, 1.109f)};
@@ -28,6 +37,18 @@ public class MainMenuController : MonoBehaviour
         print(player.name);
         
         
+    }
+
+    void handlePlayerUpdate(){
+        player.money += winData.moneyEarned;
+        player.currentExperience += winData.expEarned;
+        // handling level up
+        if(player.currentExperience >= player.experienceForNextLevel){
+            player.level += 1;
+            //player.experienceForPrevLevel = player.experienceForNextLevel;
+            player.experienceForNextLevel = player.experienceForNextLevel * 2;
+        }
+        saveToJSON(player);
     }
 
     // Update is called once per frame
@@ -73,6 +94,9 @@ public class MainMenuController : MonoBehaviour
 
         //return JsonUtility.FromJson<PlayerClass>(json.text);
     }
+
+    
+
     // saves a player to json
     public void saveToJSON(PlayerClass player){
          
@@ -91,4 +115,39 @@ public class MainMenuController : MonoBehaviour
         file.Close();
         
     }
+
+    
+
+    /* public void LoadFromExternal(ref WinDataClass wd){
+        string dest = Application.persistentDataPath + "/winData.dat";
+        FileStream file;
+
+        if(File.Exists(dest)){
+            file = File.OpenRead(dest);
+        }else{
+            // create a default player json if it doesn't exist
+            //file = File.Create(dest);
+            //player = new PlayerClass("NewPlayer", 0, 0, 1000, 1500);
+            //player.name = "NewPlayer";
+            //player.level = 0;
+            //player.currentExperience = 0;
+            //player.experienceForNextLevel = 1000;
+            //player.money = 1500;
+            print("error loading victory file");
+            //print("here");
+            //saveToJSON(player);
+            return; // something here
+        }
+        BinaryFormatter bf = new BinaryFormatter();
+        
+        wd = (WinDataClass) bf.Deserialize(file);
+        //print(player.name);
+        //print(player.money);
+        //player = new PlayerClass("", 0,0,0,0);
+        
+        file.Close();
+
+
+        //return JsonUtility.FromJson<PlayerClass>(json.text);
+    } */
 }

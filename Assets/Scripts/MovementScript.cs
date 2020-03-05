@@ -73,7 +73,7 @@ public class MovementScript : MonoBehaviour
 
             foreach(Touch touch in Input.touches){
                 
-                print(Screen.currentResolution.width);
+                //print(Screen.currentResolution.width);
                 if(touch.position.x < Screen.currentResolution.width / 2){ // left side of the screen
                     moveHorizontal = -1;
                 }else{

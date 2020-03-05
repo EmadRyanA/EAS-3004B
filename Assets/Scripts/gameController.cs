@@ -12,20 +12,40 @@ public class gameController : MonoBehaviour
 {
     // Start is called before the first frame update
     // serves to initialize and store some important values
-    public const float TOTAL_PLAYER_HEALTH = 100;
     
+    /*
+    [Serializable]
+    public struct WinData{
+        public int score;
+        public int maxCombo;
+        public int notesHit;
+        public int mapTotalNotes;
+        public int moneyEarned;
+        public float expEarned;
+    }
+    */
+    
+    private int totalNotes;
+    public const float TOTAL_PLAYER_HEALTH = 100;
     public static int _playerScore;
     public static int _playerCombo;
+    public static int _playerMaxCombo;
     public static float _playerHealth;
-    public static string _gameState; // switch this to indicate different states, e.g. menu, gameplay, death, etc.
+    public static int _playerNotesHit;
+    public static GameState _gameState; // switch this to indicate different states, e.g. menu, gameplay, death, etc.
+    public enum GameState{
+        playing,
+        win,
+        game_over
+    }
     public float _playerHealthDecreaseRate; // decrease rate should change depending on BPM of song (faster BPM = faster rate)
     public static float _playerHealthRecoveryRate = 10;
     public static float _damageRate = 3; // potentially change this according to difficulty?
     public static AudioSource audioSrc;
-
     private float lastTime;
     private Text _pCombo;
     private Text _pScore;
+    
     private System.Random rand = new System.Random();
     
     // game over panel
@@ -45,14 +65,17 @@ public class gameController : MonoBehaviour
     void Start()
     {
         load_state = LOAD_STATE.NOT_LOADED;
-        _gameState = null;
+        _gameState = GameState.playing;
        _playerScore = 0;
-       _playerCombo = 1; 
+       _playerCombo = 1;
+       _playerNotesHit = 0;
+       _playerMaxCombo = 1;
        _pCombo = GameObject.Find("scoreText").GetComponent<Text>();
        _pScore = GameObject.Find("comboText").GetComponent<Text>();
        _playerHealth = 100f;
        _playerHealthDecreaseRate = 1f;
        lastTime = Time.time;
+       totalNotes = 0; 
 
        //gameOverPanel = GameObject.Find("GameOverPanel");
        gameOverPanel.SetActive(false);
@@ -101,7 +124,7 @@ public class gameController : MonoBehaviour
     private void healthBarHandler(){
         // decreases playerhealth at a fixed rate
         if(_playerHealth <=0){
-            _gameState = "game_over";
+            _gameState = GameState.game_over;
             //Debug.Log(_playerHealth); 
             gameOverPanel.SetActive(true);
 
@@ -110,7 +133,7 @@ public class gameController : MonoBehaviour
 
             return;
         }
-        if(Time.time - lastTime >= 0.1){
+        if(Time.time - lastTime >= 0.1){ // decreases at a specified rate
             _playerHealth -= _playerHealthDecreaseRate;
             lastTime = Time.time;
         }
@@ -163,19 +186,26 @@ public class gameController : MonoBehaviour
     void generateBeats(){
         
          //load the samples from the songFilePath
+        float lastObjectiveZ = 0;
         GameObject objective = GameObject.Find("Objective");
         GameObject badObjective = GameObject.Find("BadObjective");
+        GameObject trigger = GameObject.Find("MovementStateTrigger");
+        Queue<LaneObject> bmQueue = beatMap.initLaneObjectQueue();
         
         audioSrc.clip = beatMap.getAudioClip();
 
         float movementSpeed = GameObject.Find("Player").GetComponent<MovementScript>().movement_speed; // public, non static variable
-        foreach(LaneObject laneObj in beatMap.initLaneObjectQueue()){
+        
+        //totalNotes = bmQueue.Count; // counting total notes to be used in win calculations
+        // generate each objective 
+        foreach(LaneObject laneObj in bmQueue){
             //float laneObjX = laneObj.lane;
-            
+            lastObjectiveZ = movementSpeed * laneObj.time;
             if(laneObj.type==0){ // obstacle
-                Instantiate(badObjective, new Vector3(laneToX(laneObj.lane), 0, (movementSpeed * laneObj.time)), Quaternion.Euler(0,0,0));
+                Instantiate(badObjective, new Vector3(laneToX(laneObj.lane), 0, lastObjectiveZ), Quaternion.Euler(0,0,0));
             }else{ // beat
-                Instantiate(objective, new Vector3(laneToX(laneObj.lane), 0, (movementSpeed * laneObj.time)), Quaternion.Euler(0,0,0));
+                totalNotes++;
+                Instantiate(objective, new Vector3(laneToX(laneObj.lane), 0, lastObjectiveZ), Quaternion.Euler(0,0,0));
             }
             
             
@@ -183,8 +213,58 @@ public class gameController : MonoBehaviour
                 // generates a badobjective at a random offset between x and y, either behind or in front the objective in a random lane
                 //Instantiate(badObjective, new Vector3(laneToX(rand.Next(0, 3)), 0, (movementSpeed * laneObj.time) + (randPosNeg() * rand.Next(25, 50))), Quaternion.Euler(0,0,0));
             //}
-            print(laneObj.lane);
+            
+            //print(laneObj.lane);
             
         }
+        // generate a trigger at the end of the track, 5 seconds after the last object spawned
+        GameObject gameEndTrigger = Instantiate(trigger, new Vector3(laneToX(1), 0, lastObjectiveZ + (5*movementSpeed)), Quaternion.Euler(0,0,0)); //new Vector3(laneToX(1), 0, lastObjectiveZ + (5*movementSpeed))
+        gameEndTrigger.GetComponent<MovementStateTrigger>().stateToTrigger = MovementStateTrigger.movementStates.GameEnd;
+    }
+
+   /*  public void saveToExternal(WinDataClass wd){
+         
+        string dest = Application.persistentDataPath + "/winData.dat";
+        FileStream file;
+        //string jsonStr = JsonUtility.ToJson(player);
+
+        if(File.Exists(dest)){
+            file = File.OpenWrite(dest);
+        }else{
+            file = File.Create(dest);
+        }
+
+        BinaryFormatter bf = new BinaryFormatter();
+        bf.Serialize(file, wd);
+        file.Close();
+    } */
+
+    // handles updating the player data after a win
+    // calculating the grade, etc.
+    public void handleGameWin(){
+        print("handleGameWin()");
+        //decimal moneyEarnedDecimal = (decimal)(Math.Sqrt(_playerScore) * (_playerNotesHit/totalNotes) + _playerMaxCombo)/100;
+        //decimal expEarnedDecimal = (decimal)(Math.Sqrt(_playerScore)) * (_playerNotesHit/totalNotes) + (_playerMaxCombo == 1 ? 0 : _playerMaxCombo);
+
+
+        WinDataClass winData = new WinDataClass(0,0,0,0,0,0);
+        winData.score = _playerScore;
+        winData.maxCombo = _playerMaxCombo;
+        winData.notesHit = _playerNotesHit;
+        winData.mapTotalNotes = totalNotes; // can calculate the percentage using this and above
+        winData.moneyEarned = (int)Math.Round((Math.Sqrt(_playerScore) * (float)((decimal)_playerNotesHit/(decimal)totalNotes) + _playerMaxCombo)/100.0); // round money earned to closest integer
+        winData.expEarned = (float)Math.Round(((Math.Sqrt(_playerScore)) * (float)((decimal)_playerNotesHit/(decimal)totalNotes) + (_playerMaxCombo == 1 ? 0 : _playerMaxCombo)), 2); // round exp to 2 digits
+
+        print("big equation thing: " + Math.Round(((Math.Sqrt(_playerScore) * (float)((decimal)_playerNotesHit/(decimal)totalNotes) + _playerMaxCombo)/100.0), 2));
+        /* 
+        print("square root: " + (float)(Math.Sqrt(_playerScore)));
+        print("percentage: " + (float)((_playerNotesHit/totalNotes)*1.0));
+        print("winData.moneyEarned: " + winData.moneyEarned);
+        print("winData.expEarned: " + winData.expEarned); */
+
+        WinDataClassHelper.saveToExternal(winData);
+
+        _gameState = GameState.win;
+        SceneManager.LoadScene("VictoryRoyaleScene");
     }
 }

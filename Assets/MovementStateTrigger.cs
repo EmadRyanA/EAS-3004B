@@ -9,7 +9,8 @@ public class MovementStateTrigger : MonoBehaviour
     public enum movementStates{
         Driving, // 0
         Drifting, // 1
-        Flying // 2
+        Flying, // 2
+        GameEnd
     };
     public movementStates stateToTrigger;
     void Start()
@@ -37,6 +38,9 @@ public class MovementStateTrigger : MonoBehaviour
             case 2: // flying
                 print("movement state changed to flying");
                 MovementScript.movementState = 2;
+                break;
+            case 3: // gameend, place a gameend trigger at the end of every stage
+                GameObject.Find("Game Controller").GetComponent<gameController>().handleGameWin();
                 break;
             default:
                 break;
