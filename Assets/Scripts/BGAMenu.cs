@@ -7,7 +7,6 @@ using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
 
 #if !UNITY_ANDROID
-using System.Windows.Forms;
 #endif
 
 public class BGAMenu : MonoBehaviour
@@ -23,7 +22,6 @@ public class BGAMenu : MonoBehaviour
     public BGA bga;
 
     #if !UNITY_ANDROID
-    private OpenFileDialog openFileDialog;
     #endif
 
     public AudioClip inputAudioClip; //To be loaded from web url or file uri
@@ -124,7 +122,6 @@ public class BGAMenu : MonoBehaviour
     void selectFileListener()
     {
         //not supported on windows, function still needs to be declared
-        openFileDialog = new OpenFileDialog();
     }
 
     #endif
