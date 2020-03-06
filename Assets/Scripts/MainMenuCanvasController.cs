@@ -88,8 +88,8 @@ public class MainMenuCanvasController : MonoBehaviour
         //initiate the user's data
         usernameText.GetComponent<Text>().text = MainMenuController.player.name;
         levelText.GetComponent<Text>().text = "Level: " + MainMenuController.player.level;
-        experienceText.GetComponent<Text>().text = "XP: " + MainMenuController.player.currentExperience + " / " + (MainMenuController.player.currentExperience + MainMenuController.player.experienceForNextLevel);
-        experienceBar.GetComponent<Slider>().value = MainMenuController.player.currentExperience/(MainMenuController.player.currentExperience + MainMenuController.player.experienceForNextLevel);
+        experienceText.GetComponent<Text>().text = "XP: " + MainMenuController.player.currentExperience + " / " + (MainMenuController.player.experienceForNextLevel);
+        experienceBar.GetComponent<Slider>().value = MainMenuController.player.currentExperience/(MainMenuController.player.experienceForNextLevel);
 
         //comparisonVector3 = new Vector3(0.01f, 0.01f, 0.01f);
         

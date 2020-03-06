@@ -1,0 +1,9 @@
+Feb 29
+
+Worked on supporting the native android file picker
+  - Extended the main UnityPlayerActivity to override the onActivityResult function
+  - this lets us capture the return of the file picker activity
+  - to actually open the file picker we send an Intent
+  - To call the java code special unity functions are used to call from c# and return to c# from java
+
+~7hrs

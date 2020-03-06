@@ -1,0 +1,12 @@
+March 1st - 2nd
+
+  - Worked on saving the result mp3 from the file picker & playing the beatmap using this mp3
+  - instead of saving the large float[] in beatmap, save the location of the song (in persistentDataPath/Songs/)
+  - and then load the mp3 file and populate samples
+  - Save the songs metadata e.g title, artist, album
+  - Save the coverArt to a png file in /Songs/
+  - In the main menu, read all beatmap files and put into a listview with the Title/Artist and coverArt
+  - (the list view is still WIP and needs work)
+  - Integrated with howards changes to create a working prototype which was showed off in class
+
+~12 hours

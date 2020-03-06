@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
 
 public enum LANE_OBJECT_TYPE
 {
@@ -87,7 +88,10 @@ public struct song_info_struct
 public static class BGACommon
 {
     public const int NUMBER_LANES = 3;
-    public static Char DELIMITER = '~';
+    public const Char DELIMITER = '~';
+    public const bool IS_PC = true; // debug
+    public const string SONG_FORMAT = (IS_PC ? ".ogg" : ".mp3");
+    public const AudioType AUDIO_TYPE = (IS_PC ? AudioType.OGGVORBIS : AudioType.MPEG);
 }
 
 /*

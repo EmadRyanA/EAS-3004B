@@ -200,3 +200,29 @@ Achievements:
 - generation of objectives is functional
 - testing if game runs/works on mobile
 
+___________________________________________
+Week of Mar 1 - Mar 9
+
+---------
+Wednesday
+Time spent: 2 hours
+
+Duties:
+- adding the game win state
+
+Achievements:
+- serialization of game win data
+- added victory scene to display the results of the player's performance
+- added helper class to better organize code
+- a "game end" trigger now spawns at the end of every beatmap
+
+---------
+Thursday
+Time spent: 3 hours
+
+Duties:
+- adding the game win state, refining it
+
+Achievements:
+- fixed issues related to integer division in the serialization of the player's performance data
+- fixed some UI issues - displaying text on the victory scene

@@ -47,16 +47,16 @@ public class BeatMap
     {
         //see https://docs.unity3d.com/ScriptReference/Networking.UnityWebRequestMultimedia.GetAudioClip.html
 
-        AudioType audioType;
-        #if UNITY_ANDROID
-          audioType = AudioType.MPEG; //for android use MPEG (.mp3)
-        #else
-          audioType = AudioType.OGGVORBIS; //for testing on windows use OGGVORBIS (.ogg) since windows does not have mpeg codec native
-        #endif
+        // AudioType audioType;
+        // #if UNITY_ANDROID
+        //   audioType = AudioType.MPEG; //for android use MPEG (.mp3)
+        // #else
+        //   audioType = AudioType.OGGVORBIS; //for testing on windows use OGGVORBIS (.ogg) since windows does not have mpeg codec native
+        // #endif
 
-        Debug.Log(audioType);
+        //Debug.Log(audioType);
 
-        using (UnityWebRequest www = UnityWebRequestMultimedia.GetAudioClip("file://" + path, audioType))
+        using (UnityWebRequest www = UnityWebRequestMultimedia.GetAudioClip("file://" + path, BGACommon.AUDIO_TYPE))
         {
             yield return www.Send();
 
@@ -87,7 +87,7 @@ public class BeatMap
 
     public void loadSamples(MonoBehaviour callingMonoBehaviour) {
         state = STATE.SAMPLES_UNLOADED;
-        callingMonoBehaviour.StartCoroutine(getAudioClipFromPath(songFilePath + ".mp3"));
+        callingMonoBehaviour.StartCoroutine(getAudioClipFromPath(songFilePath + BGACommon.SONG_FORMAT));
     }
 
     public void unloadSamples() {
