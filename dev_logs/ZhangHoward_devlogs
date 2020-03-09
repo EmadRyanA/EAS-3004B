@@ -226,3 +226,15 @@ Duties:
 Achievements:
 - fixed issues related to integer division in the serialization of the player's performance data
 - fixed some UI issues - displaying text on the victory scene
+
+---------
+Friday
+Time spent: 2 hours
+
+Duties:
+- Improving graphical fidelity of the game
+
+Achievements:
+- added some post processing effects (e.g. depth of field, chromatic aberration, bloom, etc.)
+- adjusted post processing parameters to suit the overall look of the game
+- minor bugfixes
