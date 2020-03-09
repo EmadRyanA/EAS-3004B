@@ -16,14 +16,16 @@ public class WinDataClass
     public int mapTotalNotes{get;set;}
     public int moneyEarned{get;set;}
     public float expEarned{get;set;}
+    public string grade{get;set;}
 
-    public WinDataClass(int s, int mc, int nh, int mtn, int me, float ee){
+    public WinDataClass(int s, int mc, int nh, int mtn, int me, float ee, string g){
         score = s;
         maxCombo = mc;
         notesHit = nh;
         mapTotalNotes = mtn;
         moneyEarned = me;
         expEarned = ee;
+        grade = g;
     }
 
 

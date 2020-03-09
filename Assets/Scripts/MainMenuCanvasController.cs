@@ -29,6 +29,7 @@ public class MainMenuCanvasController : MonoBehaviour
     GameObject levelText;
     GameObject experienceText;
     GameObject experienceBar;
+    GameObject editNameButton;
     Button exitButton;
     public Button generateBeatMapButton;
     Camera mainCamera;
@@ -69,6 +70,7 @@ public class MainMenuCanvasController : MonoBehaviour
         levelText = userProfileCanvas.transform.Find("LevelText").gameObject;
         experienceText = userProfileCanvas.transform.Find("ExperienceText").gameObject;
         experienceBar = userProfileCanvas.transform.Find("ExperienceBar").gameObject;
+        editNameButton = GameObject.Find("EditNameButton").gameObject;
         
         // listeners
         playButton.GetComponent<Button>().onClick.AddListener(toBeatmapSelection);
@@ -79,6 +81,7 @@ public class MainMenuCanvasController : MonoBehaviour
         generateBeatMapButton.onClick.AddListener(() => {
           SceneManager.LoadScene(sceneBuildIndex:2);
         });
+        editNameButton.GetComponent<Button>().onClick.AddListener(toEditUsername);
         
         MapSelect.SetActive(false);
 
@@ -216,6 +219,19 @@ public class MainMenuCanvasController : MonoBehaviour
         //BeatMapEntryController controller = beatMapPanel.GetComponentInChildren<BeatMapEntryController>();
         //controller.fileName = fileName;
         //beatMapPanel.GetComponentInChildren<Text>().text = beatMap.name;
+    }
+
+    private void toEditUsername(){
+        //ouchScreenKeyboard keyboard;
+        print("test");
+        string nameToEdit = "test";
+        
+        TouchScreenKeyboard.Open(nameToEdit, TouchScreenKeyboardType.Default);
+        MainMenuController.player.name = nameToEdit;
+        // saving user data
+        MainMenuController.saveToJSON(MainMenuController.player);
+        MainMenuController.LoadFromJSON(ref MainMenuController.player);
+        usernameText.GetComponent<Text>().text = nameToEdit;
     }
 
 }
