@@ -19,7 +19,7 @@ public class SmoothCameraController : MonoBehaviour
 
     // Update is called once per frame
     // late update is called when everything else has been called.
-    void Update()
+    void FixedUpdate()
     {
         // transform.position = player.transform.position + offset;
         // ensures that the camera doesn't trail too far behind

@@ -15,6 +15,10 @@ public class MainMenuController : MonoBehaviour
     public static PlayerClass player;
     public static bool updated = false;
     WinDataClass winData;
+    public static GameObject[] cars;
+    public static Vector3[] carPositions; // proper car positions so that the car is one the plane
+    
+    
     void Start()
     {
         // prevents reading on game launch
@@ -27,16 +31,35 @@ public class MainMenuController : MonoBehaviour
         Time.timeScale = 1f;
         cameraLocations = new Vector3[] {new Vector3(22.42f, 3.46f, 17.65f), new Vector3(-1.91f, 6.15f, 41.69f), new Vector3(36.81f, 4.09f, 29.95f)};
         cameraRotations = new Quaternion[] {Quaternion.Euler(0f ,0f , -3.446f), Quaternion.Euler(2.148f, 141.484f, 2.696f), Quaternion.Euler(-0.667f, -81.023f, 1.109f)};
-    
-        
+
+        // load cars
+        GameObject car_gt86 = GameObject.Find("car_gt86");
+        GameObject car_merc = GameObject.Find("car_merc");
+        GameObject car_lambo = GameObject.Find("car_lambo");
+       cars = new GameObject[]{car_gt86, car_merc, car_lambo}; // do not change indices
+        carPositions = new Vector3[]{new Vector3(-516, -592.95f, 96.9325f), new Vector3(-516, -592.94f, 96.9325f), new Vector3(-516, -589.8253f, 96.9325f)};
+
         //saveToJSON(player);
-        player = new PlayerClass("", 0, 0, 0, 0);
+        player = new PlayerClass("", 0, 0, 0, 0, 0);
         
         //saveToJSON(player);
         // loads the player's data upon startup
-        LoadFromJSON(ref player);
+        LoadPlayerFromExternal(ref player);
         print(player.name);
         
+        // make the user's current car active.
+        int counter = 0;
+        cars[2].SetActive(false);
+        foreach(GameObject obj in cars){
+            //print(obj.transform.position);
+            if(counter == player.currentCarID){
+                //obj.transform.position = carPositions[]
+                obj.SetActive(true);
+            }else{
+                obj.SetActive(false);
+            }
+            counter++;
+        }
         
     }
 
@@ -49,7 +72,7 @@ public class MainMenuController : MonoBehaviour
             //player.experienceForPrevLevel = player.experienceForNextLevel;
             player.experienceForNextLevel = player.experienceForNextLevel * 2;
         }
-        saveToJSON(player);
+        savePlayerToExternal(player);
     }
 
     // Update is called once per frame
@@ -63,7 +86,7 @@ public class MainMenuController : MonoBehaviour
     }
 
     // parses a json, saves the data into a PlayerClass object.
-    public static void LoadFromJSON(ref PlayerClass player){
+    public static void LoadPlayerFromExternal(ref PlayerClass player){
         string dest = Application.persistentDataPath + "/player.dat";
         FileStream file;
 
@@ -72,7 +95,7 @@ public class MainMenuController : MonoBehaviour
         }else{
             // create a default player json if it doesn't exist
             //file = File.Create(dest);
-            player = new PlayerClass("NewPlayer", 0, 0, 1000, 1500);
+            player = new PlayerClass("NewPlayer", 0, 0, 1000, 1500, 0);
             /*player.name = "NewPlayer";
             player.level = 0;
             player.currentExperience = 0;
@@ -80,7 +103,7 @@ public class MainMenuController : MonoBehaviour
             player.money = 1500;*/
             print(player.money);
             //print("here");
-            saveToJSON(player);
+            savePlayerToExternal(player);
             return; // something here
         }
         BinaryFormatter bf = new BinaryFormatter();
@@ -99,7 +122,7 @@ public class MainMenuController : MonoBehaviour
     
 
     // saves a player to json
-    public static void saveToJSON(PlayerClass player){
+    public static void savePlayerToExternal(PlayerClass player){
          
         string dest = Application.persistentDataPath + "/player.dat";
         FileStream file;

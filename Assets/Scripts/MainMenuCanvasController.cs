@@ -39,6 +39,9 @@ public class MainMenuCanvasController : MonoBehaviour
     GameObject loadBeatMapButton;
     //public static string beatmapDir; 
 
+    // car switching 
+    private GameObject playerCar;
+    private int currentCarIndex = MainMenuController.player.currentCarID;
     
     int currentState = 2;
     void Start()
@@ -82,6 +85,8 @@ public class MainMenuCanvasController : MonoBehaviour
           SceneManager.LoadScene(sceneBuildIndex:2);
         });
         editNameButton.GetComponent<Button>().onClick.AddListener(toEditUsername);
+        nextCarButton.GetComponent<Button>().onClick.AddListener(handleNextCarButton);
+        prevCarButton.GetComponent<Button>().onClick.AddListener(handlePrevCarButton);
         
         MapSelect.SetActive(false);
 
@@ -96,6 +101,7 @@ public class MainMenuCanvasController : MonoBehaviour
 
         //comparisonVector3 = new Vector3(0.01f, 0.01f, 0.01f);
         
+        playerCar = GameObject.Find("PlayerCar");
     }
 
     // Update is called once per frame
@@ -221,17 +227,55 @@ public class MainMenuCanvasController : MonoBehaviour
         //beatMapPanel.GetComponentInChildren<Text>().text = beatMap.name;
     }
 
+    // edit username
     private void toEditUsername(){
-        //ouchScreenKeyboard keyboard;
+        //TouchScreenKeyboard keyboard;
         print("test");
         string nameToEdit = "test";
         
         TouchScreenKeyboard.Open(nameToEdit, TouchScreenKeyboardType.Default);
         MainMenuController.player.name = nameToEdit;
         // saving user data
-        MainMenuController.saveToJSON(MainMenuController.player);
-        MainMenuController.LoadFromJSON(ref MainMenuController.player);
+        MainMenuController.savePlayerToExternal(MainMenuController.player);
+        MainMenuController.LoadPlayerFromExternal(ref MainMenuController.player);
         usernameText.GetComponent<Text>().text = nameToEdit;
+    }
+
+    private void handleNextCarButton(){ 
+        int prevCarIndex = currentCarIndex;
+        if(currentCarIndex + 1 > MainMenuController.cars.Length-1){
+            currentCarIndex = 0;
+        }else{
+            currentCarIndex++;
+        }
+        print(prevCarIndex + " " + currentCarIndex);
+        
+        MainMenuController.cars[prevCarIndex].SetActive(false);
+        MainMenuController.cars[currentCarIndex].SetActive(true);
+        
+        //Vector3 oldPos = MainMenuController.cars[currentCarIndex].transform.position;
+        //MainMenuController.cars[currentCarIndex].transform.position = playerCar.transform.position;
+        //MainMenuController.cars[currentCarIndex].transform.rotation = playerCar.transform.rotation;
+        //playerCar.transform.position = oldPos; 
+        //MainMenuController.cars[prevCarIndex].transform.position = oldPos;
+        // need to set the player car here
+
+        
+    }
+
+    private void handlePrevCarButton(){
+        int prevCarIndex = currentCarIndex;
+        if(currentCarIndex - 1 < 0){
+            currentCarIndex = MainMenuController.cars.Length-1;
+        }else{
+            currentCarIndex--;
+        }
+        //Vector3 oldPos = MainMenuController.cars[currentCarIndex].transform.position;
+        //MainMenuController.cars[currentCarIndex].transform.position = playerCar.transform.position;
+        //MainMenuController.cars[currentCarIndex].transform.rotation = playerCar.transform.rotation;
+        //playerCar.transform.position = oldPos;
+        MainMenuController.cars[prevCarIndex].SetActive(false);
+        MainMenuController.cars[currentCarIndex].SetActive(true);
     }
 
 }

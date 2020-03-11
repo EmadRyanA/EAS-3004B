@@ -20,13 +20,17 @@ public class PlayerClass
     public float currentExperience{get;set;}
     public float experienceForNextLevel{get;set;}
     public int money{get;set;}
+    public int currentCarID{get;set;}
+    public int[] ownedCars{get;set;}
 
-    public PlayerClass(string n, int l, float ce, float next, int m){
+    public PlayerClass(string n, int l, float ce, float next, int m, int carID){
         name = n;
         level = l;
         currentExperience = ce;
         experienceForNextLevel = next;
         money = m;
+        currentCarID = carID;
+        ownedCars = new int[]{0};
     }
 
 

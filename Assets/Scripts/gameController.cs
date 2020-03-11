@@ -25,6 +25,9 @@ public class gameController : MonoBehaviour
     }
     */
     
+    private Vector3[] cameraPositions;
+    private Quaternion[] cameraRotations;
+    private Camera mainCamera;
     private int totalNotes;
     public const float TOTAL_PLAYER_HEALTH = 100;
     public static int _playerScore;
@@ -45,7 +48,7 @@ public class gameController : MonoBehaviour
     private float lastTime;
     private Text _pCombo;
     private Text _pScore;
-    
+    public static List<GameObject> objectiveList = new List<GameObject>();
     private System.Random rand = new System.Random();
     
     // game over panel
@@ -54,7 +57,7 @@ public class gameController : MonoBehaviour
     public GameObject gameOverRetryButton;
     public GameObject gameOverQuitButton;
     BeatMap beatMap;
-
+    
     public enum LOAD_STATE {
         NOT_LOADED,
         LOADED
@@ -63,7 +66,11 @@ public class gameController : MonoBehaviour
     public LOAD_STATE load_state;
 
     void Start()
-    {
+    { 
+        //mainCamera = GameObject.Find("Main Camera").GetComponent<Camera>();
+        // first index is initial camera position/rotation
+        //cameraPositions = new Vector3[] {mainCamera.transform.position, new Vector3(-313, -527, 1880)}; 
+        //cameraRotations = new Quaternion[] {mainCamera.transform.rotation, Quaternion.Euler(-1.813f, -181.159f, 0)};
         load_state = LOAD_STATE.NOT_LOADED;
         _gameState = GameState.playing;
        _playerScore = 0;
@@ -92,6 +99,12 @@ public class gameController : MonoBehaviour
 
        beatMap = BeatMapPlayer.loadBeatMap();
        beatMap.loadSamples(this);
+
+        // initial camera angle
+        //mainCamera.transform.position = Vector3.MoveTowards(cameraPositions[1], cameraPositions[0], 20f);
+        //mainCamera.transform.rotation = Quaternion.RotateTowards(cameraRotations[1], cameraRotations[0], 20f);
+        
+
        // temp, generate gameobjects based on beatmap
        //Stream openFileStream = File.OpenRead(Application.persistentDataPath + "/BeatMaps/testBeatmap.dat");
         //BinaryFormatter deserializer = new BinaryFormatter();
@@ -147,15 +160,25 @@ public class gameController : MonoBehaviour
     // when the retry button on the game over screen is clicked
     private void handleGameOverRetry(){
         Time.timeScale = 1; // unpause
-        
+
         // reset everything
+        // delete all spawned game objects
+        while(objectiveList.Count > 0){
+            Destroy(objectiveList[0]);
+            objectiveList.RemoveAt(0);
+            //print(objectiveList.Count); 
+        }
+        totalNotes = 0;
         _playerHealth = 100f;
         _playerCombo = 1;
+        _playerMaxCombo = 1;
         _playerScore = 0;
+        _playerNotesHit = 0;
+        _gameState = GameState.playing;
         GameObject.Find("TileManager").GetComponent<TileManager>().init(); // reset tilemanager (refactored Emad's code)
         gameOverPanel.SetActive(false);
         player.transform.position = new Vector3(0, 5, 0);
-        generateBeats();
+        generateBeats(); // respawn elements
         audioSrc.Play();
     }
 
@@ -202,15 +225,18 @@ public class gameController : MonoBehaviour
         // generate each objective 
         foreach(LaneObject laneObj in bmQueue){
             //float laneObjX = laneObj.lane;
+            //GameObject spawnedObject;
             lastObjectiveZ = movementSpeed * laneObj.time;
             if(laneObj.type==0){ // obstacle
-                Instantiate(badObjective, new Vector3(laneToX(laneObj.lane), 0, lastObjectiveZ), Quaternion.Euler(0,0,0));
+                objectiveList.Add(Instantiate(badObjective, new Vector3(laneToX(laneObj.lane), 0, lastObjectiveZ), Quaternion.Euler(0,0,0)));
             }else{ // beat
                 totalNotes++;
-                Instantiate(objective, new Vector3(laneToX(laneObj.lane), 0, lastObjectiveZ), Quaternion.Euler(0,0,0));
+                objectiveList.Add(Instantiate(objective, new Vector3(laneToX(laneObj.lane), 0, lastObjectiveZ), Quaternion.Euler(0,0,0)));
             }
             
+            // populate objective list
             
+
             //for(int i = 0; i<rand.Next(-1, 3); i++){ // generate up to 3 badobjectives per objective
                 // generates a badobjective at a random offset between x and y, either behind or in front the objective in a random lane
                 //Instantiate(badObjective, new Vector3(laneToX(rand.Next(0, 3)), 0, (movementSpeed * laneObj.time) + (randPosNeg() * rand.Next(25, 50))), Quaternion.Euler(0,0,0));

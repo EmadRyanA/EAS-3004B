@@ -22,6 +22,9 @@ public class ObjectiveCollisionDetector : MonoBehaviour
             Destroy(this);
        }
        */
+       // delete this object from the objectiveList
+        //gameController.objectiveList.RemoveAt(gameController.objectiveList.FindIndex(o => o == this.gameObject));
+
        if(other.name == "PlayerHitbox"){
            if(this.tag == "BadObjective"){
                 gameController._playerCombo = 1;
