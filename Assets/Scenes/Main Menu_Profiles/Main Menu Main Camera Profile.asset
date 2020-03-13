@@ -236,6 +236,44 @@ MonoBehaviour:
   - {fileID: -2667813647097833696}
   - {fileID: -761388721876909702}
   - {fileID: 1661933222022109808}
+  - {fileID: 980248340886531321}
+--- !u!114 &980248340886531321
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b3f6f3f7c722b4544b97e3c75840aa33, type: 3}
+  m_Name: AutoExposure
+  m_EditorClassIdentifier: 
+  active: 0
+  enabled:
+    overrideState: 1
+    value: 1
+  filtering:
+    overrideState: 0
+    value: {x: 57.579517, y: 99}
+  minLuminance:
+    overrideState: 1
+    value: 1.07
+  maxLuminance:
+    overrideState: 1
+    value: 3.58
+  keyValue:
+    overrideState: 0
+    value: 1
+  eyeAdaptation:
+    overrideState: 0
+    value: 0
+  speedUp:
+    overrideState: 0
+    value: 2
+  speedDown:
+    overrideState: 0
+    value: 1
 --- !u!114 &1661933222022109808
 MonoBehaviour:
   m_ObjectHideFlags: 3

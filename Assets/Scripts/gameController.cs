@@ -128,29 +128,36 @@ public class gameController : MonoBehaviour
 
             // health/healthbar handler
             //Debug.Log(_playerHealth);
-            healthBarHandler();
+            //healthBarHandler();
+            
+            // decreases playerhealth at a fixed rate
+            if(_playerHealth <=0){
+                _gameState = GameState.game_over;
+                //return;
+            }
+            if(_gameState == GameState.game_over){ // game over state
+                //Debug.Log(_playerHealth); 
+                gameOverPanel.SetActive(true);
+
+                Time.timeScale = 0; // pauses game
+                audioSrc.Stop(); // stops audio playback
+            }else if(_gameState == GameState.win){ // victory state
+                SceneManager.LoadScene("VictoryRoyaleScene");
+            }else{ // otherwise keep decreasing the player's health
+                // _gamestate == gamestate.playing
+                if(Time.time - lastTime >= 0.1){ // decreases at a specified rate
+                    _playerHealth -= _playerHealthDecreaseRate;
+                    lastTime = Time.time;
+                }
+            } 
             GameObject.Find("HealthBar").GetComponent<Slider>().value = _playerHealth / TOTAL_PLAYER_HEALTH; 
         }
         
     }
 
-    private void healthBarHandler(){
-        // decreases playerhealth at a fixed rate
-        if(_playerHealth <=0){
-            _gameState = GameState.game_over;
-            //Debug.Log(_playerHealth); 
-            gameOverPanel.SetActive(true);
-
-            Time.timeScale = 0; // pauses game
-            audioSrc.Stop(); // stops audio playback
-
-            return;
-        }
-        if(Time.time - lastTime >= 0.1){ // decreases at a specified rate
-            _playerHealth -= _playerHealthDecreaseRate;
-            lastTime = Time.time;
-        }
-    }
+    //private void healthBarHandler(){
+         
+    //}
 
     // when the quit button on the game over screen is clicked
     private void handleGameOverQuit(){
@@ -314,6 +321,6 @@ public class gameController : MonoBehaviour
         WinDataClassHelper.saveToExternal(winData);
 
         _gameState = GameState.win;
-        SceneManager.LoadScene("VictoryRoyaleScene");
+        //SceneManager.LoadScene("VictoryRoyaleScene");
     }
 }
