@@ -150,6 +150,8 @@ public class gameController : MonoBehaviour
         
         // reset everything
         _playerHealth = 100f;
+        _playerCombo = 1;
+        _playerScore = 0;
         GameObject.Find("TileManager").GetComponent<TileManager>().init(); // reset tilemanager (refactored Emad's code)
         gameOverPanel.SetActive(false);
         player.transform.position = new Vector3(0, 5, 0);
@@ -247,13 +249,34 @@ public class gameController : MonoBehaviour
         //decimal expEarnedDecimal = (decimal)(Math.Sqrt(_playerScore)) * (_playerNotesHit/totalNotes) + (_playerMaxCombo == 1 ? 0 : _playerMaxCombo);
 
 
-        WinDataClass winData = new WinDataClass(0,0,0,0,0,0);
+        WinDataClass winData = new WinDataClass(0,0,0,0,0,0, "");
+        string calculatedGrade = "";
+        float notePercentage = (float)((decimal)_playerNotesHit/(decimal)totalNotes);
+
+        if(notePercentage < 0.5){
+            calculatedGrade = "D";
+        }else if(notePercentage >= 0.5 && notePercentage < 0.6){
+            calculatedGrade = "C";
+        }else if(notePercentage >= 0.6 && notePercentage < 0.7){
+            calculatedGrade = "B";
+        }else if(notePercentage >= 0.7 && notePercentage < 0.8){
+            calculatedGrade = "A";
+        }else if(notePercentage >= 0.8 && notePercentage < 0.9){
+            calculatedGrade = "S";
+        }else if(notePercentage >= 0.9 && notePercentage < 1){
+            calculatedGrade = "SS";
+        }else{
+            calculatedGrade = "ACE";
+        }
+        
+
         winData.score = _playerScore;
         winData.maxCombo = _playerMaxCombo;
         winData.notesHit = _playerNotesHit;
         winData.mapTotalNotes = totalNotes; // can calculate the percentage using this and above
         winData.moneyEarned = (int)Math.Round((Math.Sqrt(_playerScore) * (float)((decimal)_playerNotesHit/(decimal)totalNotes) + _playerMaxCombo)/100.0); // round money earned to closest integer
         winData.expEarned = (float)Math.Round(((Math.Sqrt(_playerScore)) * (float)((decimal)_playerNotesHit/(decimal)totalNotes) + (_playerMaxCombo == 1 ? 0 : _playerMaxCombo)), 2); // round exp to 2 digits
+        winData.grade = calculatedGrade;
 
         print("big equation thing: " + Math.Round(((Math.Sqrt(_playerScore) * (float)((decimal)_playerNotesHit/(decimal)totalNotes) + _playerMaxCombo)/100.0), 2));
         /* 

@@ -201,7 +201,7 @@ Achievements:
 - testing if game runs/works on mobile
 
 ___________________________________________
-Week of Mar 1 - Mar 9
+Week of Mar 1 - Mar 8
 
 ---------
 Wednesday
@@ -226,3 +226,32 @@ Duties:
 Achievements:
 - fixed issues related to integer division in the serialization of the player's performance data
 - fixed some UI issues - displaying text on the victory scene
+
+---------
+Friday
+Time spent: 2 hours
+
+Duties:
+- Improving graphical fidelity of the game
+
+Achievements:
+- added some post processing effects (e.g. depth of field, chromatic aberration, bloom, etc.)
+- adjusted post processing parameters to suit the overall look of the game
+- minor bugfixes
+
+___________________________________________
+Week of Mar 9 - Mar 15
+
+Tuesday
+Time spent: 5 hours
+
+Duties:
+- adding additional cars
+- adding function to the garage in the main menu
+- additional experimentation with graphics
+
+Achievements:
+- the player is now able to keep track of their owned cars/current selected car
+- their current selected car is reflected in the main menu (as the showcase car)
+- can now cycle through cars in the garage menu
+- planning for additional functionality in the garage menu (buying cars)

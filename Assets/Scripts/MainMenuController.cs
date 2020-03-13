@@ -13,6 +13,7 @@ public class MainMenuController : MonoBehaviour
     public static Quaternion[] cameraRotations;
     public TextAsset jsonFile;
     public static PlayerClass player;
+    public static bool updated = false;
     WinDataClass winData;
     void Start()
     {
@@ -62,7 +63,7 @@ public class MainMenuController : MonoBehaviour
     }
 
     // parses a json, saves the data into a PlayerClass object.
-    public void LoadFromJSON(ref PlayerClass player){
+    public static void LoadFromJSON(ref PlayerClass player){
         string dest = Application.persistentDataPath + "/player.dat";
         FileStream file;
 
@@ -98,7 +99,7 @@ public class MainMenuController : MonoBehaviour
     
 
     // saves a player to json
-    public void saveToJSON(PlayerClass player){
+    public static void saveToJSON(PlayerClass player){
          
         string dest = Application.persistentDataPath + "/player.dat";
         FileStream file;

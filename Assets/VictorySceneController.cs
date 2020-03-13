@@ -106,5 +106,6 @@ public class VictorySceneController : MonoBehaviour
         moneyEarnedText.GetComponent<Text>().text = winData.moneyEarned + "";
         expText.GetComponent<Text>().text = winData.expEarned + "";
         // calculate grade
+        gradeText.GetComponent<Text>().text = winData.grade;
     }
 }
