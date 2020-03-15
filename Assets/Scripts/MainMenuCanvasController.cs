@@ -38,15 +38,15 @@ public class MainMenuCanvasController : MonoBehaviour
     //GameObject mapsContent;
     GameObject loadBeatMapButton;
     //public static string beatmapDir; 
-
+    private int currentCarIndex;
     // car switching 
     private GameObject playerCar;
-    private int currentCarIndex = MainMenuController.player.currentCarID;
+    
     
     int currentState = 2;
     void Start()
     {
-
+        currentCarIndex = MainMenuController.player.currentCarID;
         //print(Application.persistentDataPath);
         //player = 
         //playButton = GameObject.Find("PlayButton").GetComponent<Button>();

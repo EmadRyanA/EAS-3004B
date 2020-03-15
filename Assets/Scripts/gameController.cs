@@ -67,6 +67,7 @@ public class gameController : MonoBehaviour
 
     void Start()
     { 
+        //Screen.SetResolution(1280, 720, true, 60);
         //mainCamera = GameObject.Find("Main Camera").GetComponent<Camera>();
         // first index is initial camera position/rotation
         //cameraPositions = new Vector3[] {mainCamera.transform.position, new Vector3(-313, -527, 1880)}; 

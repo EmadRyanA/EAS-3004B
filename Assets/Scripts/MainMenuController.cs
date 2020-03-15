@@ -21,6 +21,7 @@ public class MainMenuController : MonoBehaviour
     
     void Start()
     {
+        //Screen.SetResolution(1920, 1080, true, 60);
         // prevents reading on game launch
         if(finishedMap){
             WinDataClassHelper.LoadFromExternal(ref winData);
