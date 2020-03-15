@@ -278,7 +278,7 @@ public class BGA
         }
 
         BeatMap beatMap = makeBeatMap();
-        saveBeatMap(ref beatMap);
+        beatMap.save(persistentDataPath);
 
         //todo deal with random stuff below
         //debug output
@@ -419,47 +419,4 @@ public class BGA
 
         return beatMap;
     }
-
-    void saveBeatMap(ref BeatMap beatMap)
-    {
-
-        beatMap.unloadSamples();
-        //todo file format, name
-        //for now just seralize beatMap
-        //See https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/concepts/serialization/walkthrough-persisting-an-object-in-visual-studio
-        string fileDir = persistentDataPath + "/BeatMaps";
-        if (!Directory.Exists(fileDir)) Directory.CreateDirectory(fileDir);
-        string fileName = fileDir + "/" + beatMap.fileName;
-        Stream saveFileStream = File.Create(fileName);
-        BinaryFormatter serializer = new BinaryFormatter();
-        serializer.Serialize(saveFileStream, beatMap);
-        saveFileStream.Close();
-    }
-
-    // Update is called once per frame
-    /*
-    void Update()
-    {
-        if (done)
-        {
-            if (!doPlay)
-            {
-                song_info.audioSource.Play();
-                doPlay = true;
-            }
-            frameCount += 1;
-            float sampleLength = song_info.length / (float)song_info.sampleCount;
-            int location = (Mathf.FloorToInt(song_info.audioSource.time / sampleLength)) / N_BINS;
-            float[] spectrum = output.fftData[location];
-            for (int i = 1; i < spectrum.Length - 1; i++)
-            {
-                Debug.DrawLine(new Vector3(i - 1, spectrum[i] + 10, 0), new Vector3(i, spectrum[i + 1] + 10, 0), Color.red);
-                Debug.DrawLine(new Vector3(i - 1, Mathf.Log(spectrum[i - 1]) + 10, 2), new Vector3(i, Mathf.Log(spectrum[i]) + 10, 2), Color.cyan);
-                Debug.DrawLine(new Vector3(Mathf.Log(i - 1), spectrum[i - 1] - 10, 1), new Vector3(Mathf.Log(i), spectrum[i] - 10, 1), Color.green);
-                Debug.DrawLine(new Vector3(Mathf.Log(i - 1), Mathf.Log(spectrum[i - 1]), 3), new Vector3(Mathf.Log(i), Mathf.Log(spectrum[i]), 3), Color.blue);
-            }
-        }
-
-    }
-    */
 }

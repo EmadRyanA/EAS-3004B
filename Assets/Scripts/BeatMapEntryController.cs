@@ -23,7 +23,7 @@ public class BeatMapEntryController : MonoBehaviour
 
     void songPlayListener()
     {
-        BeatMapPlayer.fileName = fileName;
+        BeatMap.futureFileName = fileName;
         SceneManager.LoadScene("New Scene");
     }
 

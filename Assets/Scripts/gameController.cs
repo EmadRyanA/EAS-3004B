@@ -98,7 +98,7 @@ public class gameController : MonoBehaviour
        // do not render the pause canvas on launch
        GameObject.Find("PauseCanvas").SetActive(false);
 
-       beatMap = BeatMapPlayer.loadBeatMap();
+       beatMap = BeatMap.loadBeatMap();
        beatMap.loadSamples(this);
 
         // initial camera angle

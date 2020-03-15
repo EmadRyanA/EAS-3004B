@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -11,6 +12,8 @@ using UnityEngine.Networking;
  [Serializable()]
 public class BeatMap
 {
+
+    public static string futureFileName;
 
     public enum STATE {
         SAMPLES_UNLOADED,
@@ -24,6 +27,22 @@ public class BeatMap
     public song_meta_struct song_meta {get;}
     public string fileName {get; set;} //not path; just the name in /BeatMaps/
     public string songFilePath {get; set;} //Where we store the .mp3 file
+
+    public static BeatMap loadBeatMap() 
+    {
+        return loadBeatMap(futureFileName);
+    }
+
+    public static BeatMap loadBeatMap(string fn) //Todo rename this class to a static "BeatMapLoader" class
+    {
+        //see https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/concepts/serialization/walkthrough-persisting-an-object-in-visual-studio
+        Stream openFileStream = File.OpenRead(fn);
+        BinaryFormatter deserializer = new BinaryFormatter();
+        BeatMap beatMap = (BeatMap)deserializer.Deserialize(openFileStream);
+        Debug.Log("Beatmap loaded");
+        Debug.Log(beatMap.song_meta.title);
+        return beatMap;
+    }
 
     public BeatMap (bga_settings bga_settings, song_info_struct song_info, song_meta_struct song_meta, string songFilePath)
     {
@@ -43,7 +62,7 @@ public class BeatMap
         laneObjectStore.Add(laneObject);
     }
 
-    IEnumerator getAudioClipFromPath(string path)
+    private IEnumerator getAudioClipFromPath(string path)
     {
         //see https://docs.unity3d.com/ScriptReference/Networking.UnityWebRequestMultimedia.GetAudioClip.html
 
@@ -115,6 +134,18 @@ public class BeatMap
         AudioClip audioClip = AudioClip.Create(song_meta.title, song_info.samples.Length, song_info.channels, song_info.frequency, false);
         audioClip.SetData(song_info.samples, 0);
         return audioClip;
+    }
+
+    public void save (string persistentDataPath) {
+        unloadSamples();
+        //See https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/concepts/serialization/walkthrough-persisting-an-object-in-visual-studio
+        string fileDir = persistentDataPath + "/BeatMaps";
+        if (!Directory.Exists(fileDir)) Directory.CreateDirectory(fileDir);
+        string fn = fileDir + "/" + this.fileName;
+        Stream saveFileStream = File.Create(fn);
+        BinaryFormatter serializer = new BinaryFormatter();
+        serializer.Serialize(saveFileStream, this);
+        saveFileStream.Close();
     }
 }
 /*

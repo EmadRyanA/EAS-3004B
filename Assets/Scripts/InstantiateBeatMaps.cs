@@ -20,9 +20,7 @@ public class InstantiateBeatMaps : MonoBehaviour
         foreach (string fileName in Directory.EnumerateFiles(beatMapDir)) {
           //see https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/concepts/serialization/walkthrough-persisting-an-object-in-visual-studio
           if (!fileName.EndsWith(".dat")) continue;
-          Stream openFileStream = File.OpenRead(fileName);
-          BinaryFormatter deserializer = new BinaryFormatter();
-          BeatMap beatMap = (BeatMap)deserializer.Deserialize(openFileStream);
+          BeatMap beatMap = BeatMap.loadBeatMap(fileName);
           GameObject beatMapPanel = (GameObject)Instantiate(prefab, new Vector3(0, 0, 0), new Quaternion(0, 0, 0, 0), mapsContent);
           BeatMapEntryController controller = beatMapPanel.GetComponentInChildren<BeatMapEntryController>();
           controller.fileName = fileName;
