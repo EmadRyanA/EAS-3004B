@@ -24,10 +24,11 @@ public class gameController : MonoBehaviour
         public float expEarned;
     }
     */
-    
+    private PlayerClass playerClass;
+    private GameObject[] cars;
     private Vector3[] cameraPositions;
     private Quaternion[] cameraRotations;
-    private Camera mainCamera;
+    private GameObject mainCamera;
     private int totalNotes;
     public const float TOTAL_PLAYER_HEALTH = 100;
     public static int _playerScore;
@@ -49,7 +50,7 @@ public class gameController : MonoBehaviour
     private Text _pCombo;
     private Text _pScore;
     public static List<GameObject> objectiveList = new List<GameObject>();
-    private System.Random rand = new System.Random();
+    //private System.Random rand = new System.Random();
     
     // game over panel
     public GameObject gameOverPanel;
@@ -85,6 +86,8 @@ public class gameController : MonoBehaviour
        lastTime = Time.time;
        totalNotes = 0; 
 
+       mainCamera = GameObject.Find("Main Camera");
+
        //gameOverPanel = GameObject.Find("GameOverPanel");
        gameOverPanel.SetActive(false);
        //gameOverRetryButton = GameObject.Find("GameOverRetryButton");
@@ -98,6 +101,17 @@ public class gameController : MonoBehaviour
        // do not render the pause canvas on launch
        GameObject.Find("PauseCanvas").SetActive(false);
 
+       LoadPlayerFromExternal(ref playerClass);
+
+        // handle car visibility
+        GameObject car_gt86 = GameObject.Find("car_gt86");
+        GameObject car_merc = GameObject.Find("car_merc"); 
+        GameObject car_lambo = GameObject.Find("car_lambo");
+        
+        cars = new GameObject[]{car_gt86, car_merc, car_lambo}; // keep the order here the same as in MainMenuCanvasController
+
+        handleCarVisibility();
+
        beatMap = BeatMap.loadBeatMap();
        beatMap.loadSamples(this);
 
@@ -110,6 +124,8 @@ public class gameController : MonoBehaviour
        //Stream openFileStream = File.OpenRead(Application.persistentDataPath + "/BeatMaps/testBeatmap.dat");
         //BinaryFormatter deserializer = new BinaryFormatter();
         //BeatMap beatMap = (BeatMap)deserializer.Deserialize(openFileStream);
+
+
     }
 
     // Update is called once per frame
@@ -206,6 +222,7 @@ public class gameController : MonoBehaviour
         return laneObjX;
     }
 
+    /*
     private int randPosNeg(){
         int rnd = rand.Next(0, 2);
         if(rnd == 0){
@@ -215,6 +232,7 @@ public class gameController : MonoBehaviour
         }
 
     }
+    */
 
     void generateBeats(){
         
@@ -323,5 +341,55 @@ public class gameController : MonoBehaviour
 
         _gameState = GameState.win;
         //SceneManager.LoadScene("VictoryRoyaleScene");
+    }
+
+    private void handleCarVisibility(){
+        int counter = 0;
+        print(playerClass.currentCarID);
+        cars[2].SetActive(false);
+        foreach(GameObject obj in cars){
+            print(counter);
+            if(counter == playerClass.currentCarID){
+                //obj.transform.position = carPositions[]
+                obj.SetActive(true);
+                mainCamera.GetComponent<SmoothCameraController>().player = cars[counter];
+            }else{
+                obj.SetActive(false);
+            }
+            counter++;
+        }
+    }
+
+    public static void LoadPlayerFromExternal(ref PlayerClass player){
+        string dest = Application.persistentDataPath + "/player.dat";
+        FileStream file;
+
+        if(File.Exists(dest)){
+            file = File.OpenRead(dest);
+        }else{
+            // create a default player json if it doesn't exist
+            //file = File.Create(dest);
+            player = new PlayerClass("NewPlayer", 0, 0, 1000, 1500, 0);
+            /*player.name = "NewPlayer";
+            player.level = 0;
+            player.currentExperience = 0;
+            player.experienceForNextLevel = 1000;
+            player.money = 1500;*/
+            print(player.money);
+            //print("here");
+            //savePlayerToExternal(player);
+            return; // something here
+        }
+        BinaryFormatter bf = new BinaryFormatter();
+        
+        player = (PlayerClass) bf.Deserialize(file);
+        print(player.name);
+        print(player.money);
+        //player = new PlayerClass("", 0,0,0,0);
+        
+        file.Close();
+
+
+        //return JsonUtility.FromJson<PlayerClass>(json.text);
     }
 }

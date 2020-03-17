@@ -38,7 +38,7 @@ public class CameraRotation : MonoBehaviour
         zeroAcc = Input.acceleration;
         currAcc = Vector3.zero;
 
-        step = GameObject.Find("Player").GetComponent<MovementScript>().shift_speed*Time.deltaTime; // gets the step value from movementscript
+        step = GameObject.Find("car_lambo").GetComponent<MovementScript>().shift_speed*Time.deltaTime; // gets the step value from movementscript
 
         Debug.Log(initialRotation);
         

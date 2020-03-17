@@ -15,10 +15,9 @@ public class MainMenuController : MonoBehaviour
     public static PlayerClass player;
     public static bool updated = false;
     WinDataClass winData;
-    public static GameObject[] cars;
+    
     public static Vector3[] carPositions; // proper car positions so that the car is one the plane
-    
-    
+
     void Start()
     {
         //Screen.SetResolution(1920, 1080, true, 60);
@@ -33,34 +32,19 @@ public class MainMenuController : MonoBehaviour
         cameraLocations = new Vector3[] {new Vector3(22.42f, 3.46f, 17.65f), new Vector3(-1.91f, 6.15f, 41.69f), new Vector3(36.81f, 4.09f, 29.95f)};
         cameraRotations = new Quaternion[] {Quaternion.Euler(0f ,0f , -3.446f), Quaternion.Euler(2.148f, 141.484f, 2.696f), Quaternion.Euler(-0.667f, -81.023f, 1.109f)};
 
-        // load cars
-        GameObject car_gt86 = GameObject.Find("car_gt86");
-        GameObject car_merc = GameObject.Find("car_merc");
-        GameObject car_lambo = GameObject.Find("car_lambo");
-       cars = new GameObject[]{car_gt86, car_merc, car_lambo}; // do not change indices
+        // load cars positions
+        
         carPositions = new Vector3[]{new Vector3(-516, -592.95f, 96.9325f), new Vector3(-516, -592.94f, 96.9325f), new Vector3(-516, -589.8253f, 96.9325f)};
 
         //saveToJSON(player);
-        player = new PlayerClass("", 0, 0, 0, 0, 0);
+        player = new PlayerClass("", 0, 0, 0, 1500, 0);
         
-        //saveToJSON(player);
+        //savePlayerToExternal(player); // debug
         // loads the player's data upon startup
         LoadPlayerFromExternal(ref player);
         print(player.name);
         
-        // make the user's current car active.
-        int counter = 0;
-        cars[2].SetActive(false);
-        foreach(GameObject obj in cars){
-            //print(obj.transform.position);
-            if(counter == player.currentCarID){
-                //obj.transform.position = carPositions[]
-                obj.SetActive(true);
-            }else{
-                obj.SetActive(false);
-            }
-            counter++;
-        }
+        
         
     }
 
