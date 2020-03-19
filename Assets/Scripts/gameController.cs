@@ -245,8 +245,9 @@ public class gameController : MonoBehaviour
         
         audioSrc.clip = beatMap.getAudioClip();
 
-        float movementSpeed = GameObject.Find("Player").GetComponent<MovementScript>().movement_speed; // public, non static variable
-        
+        //float movementSpeed = GameObject.Find("Player").GetComponent<MovementScript>().movement_speed; // public, non static variable
+        float movementSpeed = 100;
+
         //totalNotes = bmQueue.Count; // counting total notes to be used in win calculations
         // generate each objective 
         foreach(LaneObject laneObj in bmQueue){
