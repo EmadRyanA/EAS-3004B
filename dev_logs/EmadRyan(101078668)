@@ -20,4 +20,17 @@ Week 2(January 24-31)
   Week 6(Feb 21-28)
     -Created materials and sprites for graphics
     -Added background and road textures
+  Week 7(Feb 28-March 6)
+    -Worked made background sprite
+    -sprite tracks user and moves in accordance
+    -expanded prefabs to fill environment more
+  Week 8(March 6-13)
+    -Changed from sprite background to full skybox
+      -had to make multiple surrounding textures
+      -raised elevation to allow user to actually see proper skybox, as default spawn is much higher than anticipated.
+  Week 9(March 13-20)
+    -D3 prep
+    
+   
+  
   
