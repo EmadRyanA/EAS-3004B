@@ -30,7 +30,9 @@ Week 2(January 24-31)
       -raised elevation to allow user to actually see proper skybox, as default spawn is much higher than anticipated.
   Week 9(March 13-20)
     -D3 prep
-    
+  Week 10(March 20-27)
+    -Adding neon environmental cubes
+      -Creating and adding them to prefabs to spawn around user
    
   
   
