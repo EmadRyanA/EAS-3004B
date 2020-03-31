@@ -20,7 +20,7 @@ public class PausePanelButtonHandler : MonoBehaviour
 
         btnPause.onClick.AddListener(handlePause);
         btnQuit.onClick.AddListener(handleQuit);
-
+        btnRetry.onClick.AddListener(handleRetry);
     }
 
     // pauses and unpauses the game.
@@ -33,7 +33,11 @@ public class PausePanelButtonHandler : MonoBehaviour
 
     // resets the stage, restarts the game.
     private void handleRetry(){
-
+        Time.timeScale = Mathf.Approximately(Time.timeScale, 0.0f) ? 1.0f : 0.0f;
+        PauseButton.paused = !PauseButton.paused;
+        PauseButton.pauseBtn.enabled = !PauseButton.pauseBtn.enabled;
+        gameController.audioSrc.Play();
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
     // quits the current game, brings the game back to menu screen
