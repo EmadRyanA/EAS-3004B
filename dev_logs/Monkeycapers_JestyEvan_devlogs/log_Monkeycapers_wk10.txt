@@ -1,0 +1,7 @@
+March 31st
+
+Added detecting of drift sections to BGA.
+It takes a threshold of the peak values, sorts by greatest peaks and selects a specified number
+based on the # of drift sections per section setting.
+
+~5 hrs

@@ -254,9 +254,17 @@ public class gameController : MonoBehaviour
             //float laneObjX = laneObj.lane;
             //GameObject spawnedObject;
             lastObjectiveZ = movementSpeed * laneObj.time;
-            if(laneObj.type==0){ // obstacle
+            if (laneObj.type == LANE_OBJECT_TYPE.START_DRIFT_TRIGGER) {
+                GameObject driftTrigger = Instantiate(trigger, new Vector3(laneToX(1), 0, lastObjectiveZ), Quaternion.Euler(0,0,0));
+                driftTrigger.GetComponent<MovementStateTrigger>().stateToTrigger = MovementStateTrigger.movementStates.Drifting;
+            }
+            else if (laneObj.type == LANE_OBJECT_TYPE.START_NORMAL_TRIGGER) {
+                GameObject driftTrigger = Instantiate(trigger, new Vector3(laneToX(1), 0, lastObjectiveZ), Quaternion.Euler(0,0,0));
+                driftTrigger.GetComponent<MovementStateTrigger>().stateToTrigger = MovementStateTrigger.movementStates.Driving;
+            }
+            else if(laneObj.type == LANE_OBJECT_TYPE.Obstacle){ // obstacle
                 objectiveList.Add(Instantiate(badObjective, new Vector3(laneToX(laneObj.lane), 0, lastObjectiveZ), Quaternion.Euler(0,0,0)));
-            }else{ // beat
+            }else if (laneObj.type == LANE_OBJECT_TYPE.Beat) { // beat
                 totalNotes++;
                 objectiveList.Add(Instantiate(objective, new Vector3(laneToX(laneObj.lane), 0, lastObjectiveZ), Quaternion.Euler(0,0,0)));
             }

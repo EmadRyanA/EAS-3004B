@@ -1,0 +1,5 @@
+Worked on making the d4 document with the group.
+
+Created diagrams for showcasing the BGA Algorithim and the Java Plugin
+
+~5hrs

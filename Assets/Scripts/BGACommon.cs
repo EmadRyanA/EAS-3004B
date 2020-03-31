@@ -7,7 +7,10 @@ using UnityEngine.Networking;
 public enum LANE_OBJECT_TYPE
 {
     Obstacle,
-    Beat
+    Beat,
+    START_DRIFT_TRIGGER,
+    START_NORMAL_TRIGGER,
+    START_FLY_TRIGGER
 }
 
 [Serializable()]
@@ -32,15 +35,24 @@ public struct bga_settings
     public int n_bins; //the number of bins to use for FFT - must be power of 2
     public float threshold_time; //time in seconds for how long the threshold should be
     public float threshold_multiplier; //the multiplier used for the threshold
+    public float drift_threshold_time;
+    public float drift_threshold_multiplier;
+    public float drifts_per_minute; //# of drift sections
+    public float min_drift_seperation_time; //The minimum time between drift sections
     public float min_peak_seperation_time; //The minimum time between peaks in seconds
     public float warm_up_time; //time in seconds of how long the period where no Beat LaneObjects are generated
     public int rng_seed; //If rng_seed == 0 a new random seed is created
 
-    public bga_settings(int n_bins, float threshold_time, float threshold_multiplier, float min_peak_seperation_time, float warm_up_time, int rng_seed)
+    public bga_settings(int n_bins, float threshold_time, float threshold_multiplier, float drift_threshold_time,
+     float drift_threshold_multiplier, float drifts_per_minute, float min_drift_seperation_time, float min_peak_seperation_time, float warm_up_time, int rng_seed)
     {
         this.n_bins = n_bins;
         this.threshold_time = threshold_time;
         this.threshold_multiplier = threshold_multiplier;
+        this.drift_threshold_time = drift_threshold_time;
+        this.drift_threshold_multiplier = drift_threshold_multiplier;
+        this.drifts_per_minute = drifts_per_minute;
+        this.min_drift_seperation_time = min_drift_seperation_time;
         this.min_peak_seperation_time = min_peak_seperation_time;
         this.warm_up_time = warm_up_time;
         this.rng_seed = rng_seed;

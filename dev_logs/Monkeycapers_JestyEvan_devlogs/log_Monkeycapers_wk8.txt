@@ -1,0 +1,5 @@
+March 14 and 15
+
+- Refactored BeatMap so that saving and loading is done in BeatMap
+
+~2hrs

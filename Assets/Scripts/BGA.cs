@@ -31,6 +31,8 @@ public class BGA
 
     public const Int32 RANDOM_SEED_LENGTH = 8;
 
+    public const float delta = 0.001f;
+
     public bga_settings settings;
 
     public System.Random bga_random;
@@ -51,9 +53,26 @@ public class BGA
         public float[] flux;
         public float[] flux2;
         public float[] peaks; //true final output
-        public float[] peaks2;
+        public float[] peaks2; //peaks filterd to min_time_between_peaks
         public float[] threshold;
+
+        public float[] peakThreshold;
+        public float[] drifts;
+
+        public int totalPeaks;
+        public float totalPeaksOverTime;
     }
+
+    public struct GreatestValueElement {
+          public int index;
+          public float value;
+
+          public GreatestValueElement(int index, float value) {
+              this.index = index;
+              this.value = value;
+          }
+    };
+
 
     public output_struct output;
 
@@ -171,6 +190,8 @@ public class BGA
         output.peaks = new float[finalArraySize];
         output.peaks2 = new float[finalArraySize];
         output.threshold = new float[finalArraySize];
+        output.peakThreshold = new float[finalArraySize];
+        output.drifts = new float[finalArraySize];
         FFTProvider fftProvider = new DSPLibFFTProvider(settings.n_bins);
         WINDOW_TYPE fftWindow = WINDOW_TYPE.Hamming;
 
@@ -249,6 +270,7 @@ public class BGA
             if (output.flux2[i] > output.flux2[i + 1])
             {
                 output.peaks[i] = output.flux2[i]; //Beat Detected
+                output.totalPeaks += 1;
             }
             else
             {
@@ -256,6 +278,117 @@ public class BGA
             }
         }
 
+        //avg # of beats per second... multiply by 60 to get bpm
+        output.totalPeaksOverTime = output.totalPeaks / song_info.length;
+
+        Debug.Log("BPM: ");
+        Debug.Log(output.totalPeaksOverTime * 60);
+
+        //define a window size for the threshold. THRESHOLD_TIME is the length in time that the window should be.
+        int thresholdWindowSize2 = Mathf.FloorToInt((settings.drift_threshold_time / song_info.sampleLength) / settings.n_bins) / 2;
+        Debug.Log("threshold2: ");
+        Debug.Log(thresholdWindowSize2);
+
+        //Compute a threshold on avg # of peaks at a given time
+        for (int i = 0; i < output.peaks.Length; i++)
+        {
+            float avg = 0;
+            float count = 0;
+            for (int j = (i - thresholdWindowSize2); j < (i + thresholdWindowSize2); j++)
+            {
+                if (j < 0 || j >= output.peaks.Length) continue; //todo should be optimized
+                avg += output.peaks[j];
+                count += 1;
+            }
+            if (count > 0)
+            {
+                output.peakThreshold[i] = (avg / count) * settings.drift_threshold_multiplier;
+            }
+            else
+            {
+                output.peakThreshold[i] = 0f;
+            }
+        }
+
+        //select amount_drift_sections from output.peakThreshold, ensuring that each drift section is min_time_between_drift apart
+        //remove all duplicates / close values next to a value, then store remaning values as a GreatestValueElement in a arraylist, then sort the list.
+
+        
+        List<GreatestValueElement> greatestValues = new List<GreatestValueElement>();
+
+
+        Debug.Log("Start greatestvalues");
+        int offset = 1;
+        for (int i = 0; i < output.peakThreshold.Length; i+= offset) {
+          offset = 1;
+          if ((i - thresholdWindowSize2) <= 0 || (i + thresholdWindowSize2) >= output.peakThreshold.Length) { //throw out values near beginning and near end
+              continue;
+          }
+          while (((i + offset) < output.peakThreshold.Length) && Math.Abs(output.peakThreshold[i] - output.peakThreshold[i + offset]) <= delta) {
+              output.peakThreshold[i + offset] = 0;
+              offset += 1;
+          }
+          GreatestValueElement elem = new GreatestValueElement(i, output.peakThreshold[i]);
+          greatestValues.Add(elem); 
+        }
+
+        Debug.Log("Sort greatestvalues");
+
+        greatestValues.Sort((x, y) => {
+          return Mathf.FloorToInt(y.value - x.value);
+        });
+
+        Debug.Log("Song length:");
+        Debug.Log(song_info.length);
+
+        int minLengthBetweenDrift = Mathf.FloorToInt((settings.min_drift_seperation_time / song_info.sampleLength) / settings.n_bins);
+        int totalAllowableDrifts = Mathf.FloorToInt(settings.drifts_per_minute * Mathf.FloorToInt(song_info.length / 60f));
+        int warmUpTimeLength = Mathf.FloorToInt((settings.warm_up_time / song_info.sampleLength) / settings.n_bins);
+
+        Debug.Log("drifts per minute:");
+        Debug.Log(settings.drifts_per_minute);
+
+        Debug.Log("Drift sections: ");
+        Debug.Log(totalAllowableDrifts);
+
+        Debug.Log("Min length between drifts: ");
+        Debug.Log(minLengthBetweenDrift);
+
+        //select elements and make sure they are min_time_between_drift apart
+        int numSelected = 0;
+        List<GreatestValueElement> addedValues = new List<GreatestValueElement>();
+        bool first = true;
+        foreach (GreatestValueElement elem in greatestValues) {
+            if (numSelected >= totalAllowableDrifts) break;
+            if (first) {
+                int offSetIndex = Math.Max(elem.index - thresholdWindowSize2, 0);
+                if (offSetIndex == 0) continue;
+                if (offSetIndex - warmUpTimeLength <= 0) continue;
+                output.drifts[offSetIndex] = elem.value;
+                numSelected = 1;
+                first = false;
+                addedValues.Add(elem);
+            }
+            else {
+                bool flag = false;
+                //We need to check if this elem is properly spaced at least min_time_between_drift apart from other drifts
+                foreach (GreatestValueElement added in addedValues) {
+                    if (Math.Abs(elem.index - added.index) <= minLengthBetweenDrift) {
+                        flag = true;
+                        break;
+                    }
+                }
+                if (!flag) {
+                  int offSetIndex = Math.Max(elem.index - thresholdWindowSize2, 0);
+                  if (offSetIndex == 0) continue;
+                  if (offSetIndex - warmUpTimeLength <= 0) continue;
+                  output.drifts[offSetIndex] = elem.value;
+                  numSelected += 1;
+                  addedValues.Add(elem);
+                }
+            }
+        }
+        
         //Filter peaks to allowable min_time_between_peaks
         //Todo this is a bit naive should probably select highest peak or something (but will work for now)
         //int minLengthBetweenPeaks = Mathf.FloorToInt(Mathf.FloorToInt((settings.min_peak_seperation_time / sampleLength) / settings.n_bins) / 2);
@@ -277,7 +410,7 @@ public class BGA
             }
         }
 
-        BeatMap beatMap = makeBeatMap();
+        BeatMap beatMap = makeBeatMap(thresholdWindowSize2 * 2);
         beatMap.save(persistentDataPath);
 
         //todo deal with random stuff below
@@ -286,7 +419,7 @@ public class BGA
         Debug.Log("FFT Data collected");
         this.state = STATE.DONE;
 
-        /*
+        
 
         using (StreamWriter file = new StreamWriter("output.txt"))
         {
@@ -325,14 +458,29 @@ public class BGA
         }
         using (StreamWriter file = new StreamWriter("output6.txt"))
         {
+            for (int i = 0; i < output.peakThreshold.Length; i++)
+            {
+                file.WriteLine(output.peakThreshold[i]);
+            }
+        }
+        using (StreamWriter file = new StreamWriter("output7.txt"))
+        {
+            for (int i = 0; i < output.drifts.Length; i++)
+            {
+                file.WriteLine(output.drifts[i]);
+            }
+        }
+        using (StreamWriter file = new StreamWriter("output8.txt"))
+        {
             Queue<LaneObject> laneObjects = beatMap.initLaneObjectQueue();
             foreach (LaneObject l in laneObjects) {
                 file.WriteLine(l.sampleIndex + " " + l.lane + " " + l.time + " " + (l.type == LANE_OBJECT_TYPE.Beat ? "1" : "0"));
             }
         }
+        
 
         Debug.Log("Output file saved");
-        */
+        
 
         //frameScale = (int) (songLength / finalArraySize);
         //float sampleLength = song_info.length / (float)song_info.sampleCount;
@@ -353,7 +501,7 @@ public class BGA
     }
 
     //All peaks are detected - now its time to decide where these beats are going
-    BeatMap makeBeatMap()
+    BeatMap makeBeatMap(int drift_length)
     {
         BeatMap beatMap = new BeatMap(settings, song_info, song_meta, songFilePath);
 
@@ -362,6 +510,12 @@ public class BGA
         
         for (int i=0; i < output.peaks2.Length; i++) {
             float currTime = getTimeFromIndex(i);
+            if (output.drifts[i] > 0) {
+              LaneObject lObj1 = new LaneObject(i, currTime, -1, LANE_OBJECT_TYPE.START_DRIFT_TRIGGER);
+              LaneObject lObj2 = new LaneObject(i + drift_length, getTimeFromIndex(i + drift_length), -1, LANE_OBJECT_TYPE.START_NORMAL_TRIGGER);
+              beatMap.addLaneObject(lObj1);
+              beatMap.addLaneObject(lObj2);
+            }
             if (output.peaks2[i] <= 0) {
                 continue;
             } 
