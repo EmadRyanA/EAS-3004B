@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Runtime.Serialization.Formatters.Binary;
 using UnityEngine.SceneManagement;
+using System.Linq;
 
 public class MainMenuCanvasController : MonoBehaviour
 {
@@ -38,9 +39,24 @@ public class MainMenuCanvasController : MonoBehaviour
     //GameObject mapsContent;
     GameObject loadBeatMapButton;
     //public static string beatmapDir; 
+    GameObject purchaseButton;
+    GameObject carPrice;
     private int currentCarIndex;
     // car switching 
     private GameObject playerCar;
+
+    public struct carBundle{
+        
+        public carBundle(GameObject c, int p) : this(){
+            carObject = c;
+            price = p;
+        }
+        public GameObject carObject{get;}
+        public int price{get;}
+        
+    }
+    public carBundle[] cars;
+    
     
     
     int currentState = 2;
@@ -74,6 +90,9 @@ public class MainMenuCanvasController : MonoBehaviour
         experienceText = userProfileCanvas.transform.Find("ExperienceText").gameObject;
         experienceBar = userProfileCanvas.transform.Find("ExperienceBar").gameObject;
         editNameButton = GameObject.Find("EditNameButton").gameObject;
+
+        purchaseButton = GameObject.Find("PurchaseButton").gameObject;
+        carPrice = GameObject.Find("CarPrice").gameObject;
         
         // listeners
         playButton.GetComponent<Button>().onClick.AddListener(toBeatmapSelection);
@@ -87,6 +106,7 @@ public class MainMenuCanvasController : MonoBehaviour
         editNameButton.GetComponent<Button>().onClick.AddListener(toEditUsername);
         nextCarButton.GetComponent<Button>().onClick.AddListener(handleNextCarButton);
         prevCarButton.GetComponent<Button>().onClick.AddListener(handlePrevCarButton);
+        purchaseButton.GetComponent<Button>().onClick.AddListener(handlePurchaseButton);
         
         MapSelect.SetActive(false);
 
@@ -102,6 +122,16 @@ public class MainMenuCanvasController : MonoBehaviour
         //comparisonVector3 = new Vector3(0.01f, 0.01f, 0.01f);
         
         playerCar = GameObject.Find("PlayerCar");
+
+        // load cars
+        GameObject car_gt86 = GameObject.Find("car_gt86");
+        GameObject car_merc = GameObject.Find("car_merc");
+        GameObject car_lambo = GameObject.Find("car_lambo");
+        GameObject car_gtr_test = GameObject.Find("car_gtr");
+        cars = new carBundle[]{new carBundle(car_gt86, 0), new carBundle(car_merc, 10000), new carBundle(car_lambo, 75000), new carBundle(car_gtr_test, 1)}; // do not change indices
+
+        // make the user's current car active.
+        handleCarVisibility();
     }
 
     // Update is called once per frame
@@ -120,6 +150,9 @@ public class MainMenuCanvasController : MonoBehaviour
                 garageButton.SetActive(false);
 
                 coinImage.SetActive(false);
+
+                purchaseButton.SetActive(false);
+                carPrice.SetActive(false);
 
                 title.SetActive(false);
 
@@ -156,6 +189,8 @@ public class MainMenuCanvasController : MonoBehaviour
                     // only stops updating once the camera completes its transition
                     updated = true;
                 }
+                
+                handleCarVisibility(); // sets the visible car to the player's currently selected one
 
             // garage pov
             }else if(currentState == 3){
@@ -172,6 +207,28 @@ public class MainMenuCanvasController : MonoBehaviour
                 coinImage.SetActive(true);
                 currentMoney.GetComponent<Text>().text = MainMenuController.player.money + "";
 
+                purchaseButton.SetActive(true);
+                carPrice.SetActive(true);
+                
+                // the player owns the current car
+                if(MainMenuController.player.ownedCars.Contains(currentCarIndex)){
+                    purchaseButton.GetComponent<Button>().interactable = true; // greys out the button
+                    purchaseButton.GetComponentInChildren<Text>().text = "Select";
+                    carPrice.SetActive(false); 
+                }else{
+                    // player cannot afford car
+                    if(cars[currentCarIndex].price > MainMenuController.player.money){
+                        purchaseButton.GetComponent<Button>().interactable = false;
+                        purchaseButton.GetComponentInChildren<Text>().text = "Insufficient Funds";
+                    // player can afford car
+                    }else{
+                        purchaseButton.GetComponent<Button>().interactable = true;
+                        purchaseButton.GetComponentInChildren<Text>().text = "Purchase";
+                    }
+                    carPrice.transform.GetChild(0).GetComponent<Text>().text = cars[currentCarIndex].price + "";
+                    carPrice.SetActive(true);
+                }
+                
                 title.SetActive(false);
 
                 mainCamera.transform.position = Vector3.Lerp(mainCamera.transform.position, MainMenuController.cameraLocations[2], Time.deltaTime);
@@ -202,6 +259,7 @@ public class MainMenuCanvasController : MonoBehaviour
         updated = false;
         if(currentState == 3){
             currentState = 2;
+            currentCarIndex = MainMenuController.player.currentCarID;
         }else{
             currentState = 3;
         }
@@ -242,16 +300,17 @@ public class MainMenuCanvasController : MonoBehaviour
     }
 
     private void handleNextCarButton(){ 
+        print(MainMenuController.player.ownedCars.Contains(currentCarIndex));
         int prevCarIndex = currentCarIndex;
-        if(currentCarIndex + 1 > MainMenuController.cars.Length-1){
+        if(currentCarIndex + 1 > cars.Length-1){
             currentCarIndex = 0;
         }else{
             currentCarIndex++;
         }
         print(prevCarIndex + " " + currentCarIndex);
         
-        MainMenuController.cars[prevCarIndex].SetActive(false);
-        MainMenuController.cars[currentCarIndex].SetActive(true);
+        cars[prevCarIndex].carObject.SetActive(false);
+        cars[currentCarIndex].carObject.SetActive(true);
         
         //Vector3 oldPos = MainMenuController.cars[currentCarIndex].transform.position;
         //MainMenuController.cars[currentCarIndex].transform.position = playerCar.transform.position;
@@ -266,7 +325,7 @@ public class MainMenuCanvasController : MonoBehaviour
     private void handlePrevCarButton(){
         int prevCarIndex = currentCarIndex;
         if(currentCarIndex - 1 < 0){
-            currentCarIndex = MainMenuController.cars.Length-1;
+            currentCarIndex = cars.Length-1;
         }else{
             currentCarIndex--;
         }
@@ -274,8 +333,44 @@ public class MainMenuCanvasController : MonoBehaviour
         //MainMenuController.cars[currentCarIndex].transform.position = playerCar.transform.position;
         //MainMenuController.cars[currentCarIndex].transform.rotation = playerCar.transform.rotation;
         //playerCar.transform.position = oldPos;
-        MainMenuController.cars[prevCarIndex].SetActive(false);
-        MainMenuController.cars[currentCarIndex].SetActive(true);
+        cars[prevCarIndex].carObject.SetActive(false);
+        cars[currentCarIndex].carObject.SetActive(true);
+    }
+
+    private void handlePurchaseButton(){
+        int price = cars[currentCarIndex].price;
+        if(MainMenuController.player.ownedCars.Contains(currentCarIndex)){
+            MainMenuController.player.currentCarID = currentCarIndex;
+            MainMenuController.savePlayerToExternal(MainMenuController.player);
+            MainMenuController.LoadPlayerFromExternal(ref MainMenuController.player);
+            currentState = 2;
+            return;
+        }
+        if(price <= MainMenuController.player.money){
+            // handle purchase here
+            MainMenuController.player.money -= price;
+
+            currentMoney.GetComponent<Text>().text = MainMenuController.player.money + "";
+            MainMenuController.player.ownedCars.Add(currentCarIndex); // this should update the availability of the car
+            
+            MainMenuController.savePlayerToExternal(MainMenuController.player); // save player data in dat file
+            MainMenuController.LoadPlayerFromExternal(ref MainMenuController.player); // reload player data
+        }
+    }
+
+    private void handleCarVisibility(){
+        int counter = 0;
+        cars[2].carObject.SetActive(false);
+        foreach(carBundle obj in cars){
+            //print(obj.transform.position);
+            if(counter == MainMenuController.player.currentCarID){
+                //obj.transform.position = carPositions[]
+                obj.carObject.SetActive(true);
+            }else{
+                obj.carObject.SetActive(false);
+            }
+            counter++;
+        }
     }
 
 }

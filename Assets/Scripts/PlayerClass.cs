@@ -21,7 +21,7 @@ public class PlayerClass
     public float experienceForNextLevel{get;set;}
     public int money{get;set;}
     public int currentCarID{get;set;}
-    public int[] ownedCars{get;set;}
+    public List<int> ownedCars{get;set;}
 
     public PlayerClass(string n, int l, float ce, float next, int m, int carID){
         name = n;
@@ -30,7 +30,9 @@ public class PlayerClass
         experienceForNextLevel = next;
         money = m;
         currentCarID = carID;
-        ownedCars = new int[]{0};
+        //ownedCars = new int[]{0};
+        ownedCars = new List<int>();
+        ownedCars.Add(0);
     }
 
 
