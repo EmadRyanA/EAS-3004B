@@ -102,8 +102,18 @@ public class MovementScript : MonoBehaviour
             transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.Euler(0, moveHorizontalTilt*45*-1, 0), step);
             
         }else if(movementState == 2){ // flying state
-            float moveHorizontal = Input.GetAxis("Horizontal");
+            float moveHorizontal = 0;
             float moveVertical = Input.GetAxis("Vertical");
+
+            foreach(Touch touch in Input.touches){
+                
+                //print(Screen.currentResolution.width);
+                if(touch.position.x < Screen.currentResolution.width / 2){ // left side of the screen
+                    moveHorizontal = -1;
+                }else{
+                    moveHorizontal = 1;
+                }
+            }
 
             transform.position = Vector3.MoveTowards(transform.position, new Vector3(moveHorizontal * shift_amount, 10, transform.position.z), step);
             transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.Euler(0, 0, moveHorizontal*20), step);
