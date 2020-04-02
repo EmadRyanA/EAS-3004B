@@ -922,7 +922,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 33ee04f77aa529b47a1fc0532f0bc52d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  stateToTrigger: 3
+  stateToTrigger: 1
 --- !u!65 &391193709
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -2680,6 +2680,7 @@ MonoBehaviour:
   gameOverRetryButton: {fileID: 0}
   gameOverQuitButton: {fileID: 0}
   load_state: 0
+  warningText: {fileID: 0}
 --- !u!4 &1338093524
 Transform:
   m_ObjectHideFlags: 0

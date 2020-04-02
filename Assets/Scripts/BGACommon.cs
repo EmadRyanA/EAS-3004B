@@ -101,7 +101,7 @@ public static class BGACommon
 {
     public const int NUMBER_LANES = 3;
     public const Char DELIMITER = '~';
-    public const bool IS_PC = false; // debug
+    public const bool IS_PC = true; // debug
     public const string SONG_FORMAT = (IS_PC ? ".ogg" : ".mp3");
     public const AudioType AUDIO_TYPE = (IS_PC ? AudioType.OGGVORBIS : AudioType.MPEG);
 }

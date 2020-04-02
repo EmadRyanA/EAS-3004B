@@ -42,7 +42,7 @@ public class MainMenuController : MonoBehaviour
         //savePlayerToExternal(player); // debug
         // loads the player's data upon startup
         LoadPlayerFromExternal(ref player);
-        print(player.name);
+        print(player.ownedCars);
         
         
         
@@ -94,8 +94,8 @@ public class MainMenuController : MonoBehaviour
         BinaryFormatter bf = new BinaryFormatter();
         
         player = (PlayerClass) bf.Deserialize(file);
-        print(player.name);
-        print(player.money);
+        print("player name:" + player.name);
+        print("player money:" + player.money);
         //player = new PlayerClass("", 0,0,0,0);
         
         file.Close();

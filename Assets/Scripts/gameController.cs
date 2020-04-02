@@ -66,6 +66,8 @@ public class gameController : MonoBehaviour
 
     public LOAD_STATE load_state;
 
+    public GameObject warningText;
+
     void Start()
     { 
         //Screen.SetResolution(1280, 720, true, 60);
@@ -73,14 +75,15 @@ public class gameController : MonoBehaviour
         // first index is initial camera position/rotation
         //cameraPositions = new Vector3[] {mainCamera.transform.position, new Vector3(-313, -527, 1880)}; 
         //cameraRotations = new Quaternion[] {mainCamera.transform.rotation, Quaternion.Euler(-1.813f, -181.159f, 0)};
+        warningText = GameObject.Find("warningText");
         load_state = LOAD_STATE.NOT_LOADED;
         _gameState = GameState.playing;
        _playerScore = 0;
        _playerCombo = 1;
        _playerNotesHit = 0;
        _playerMaxCombo = 1;
-       _pCombo = GameObject.Find("scoreText").GetComponent<Text>();
-       _pScore = GameObject.Find("comboText").GetComponent<Text>();
+       _pCombo = GameObject.Find("comboText").GetComponent<Text>();
+       _pScore = GameObject.Find("scoreText").GetComponent<Text>();
        _playerHealth = 100f;
        _playerHealthDecreaseRate = 1f;
        lastTime = Time.time;
@@ -151,6 +154,10 @@ public class gameController : MonoBehaviour
             if(_playerHealth <=0){
                 _gameState = GameState.game_over;
                 //return;
+            }else if(_playerHealth <= 30){
+                warningText.GetComponent<Text>().text = "Health Critical";
+            }else{
+                warningText.GetComponent<Text>().text = "";
             }
             if(_gameState == GameState.game_over){ // game over state
                 //Debug.Log(_playerHealth); 

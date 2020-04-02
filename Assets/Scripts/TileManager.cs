@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -62,8 +63,8 @@ public class TileManager : MonoBehaviour
         GameObject tileIns;
         if(prefabIndex == -1)
         {
-            //tileIns = Instantiate(tilePrefabs[RandomPrefab()]) as GameObject;
-            tileIns = Instantiate(tilePrefabs[0]) as GameObject;
+            tileIns = Instantiate(tilePrefabs[RandomPrefab()]) as GameObject;
+            //tileIns = Instantiate(tilePrefabs[0]) as GameObject;
 
         }
         else
@@ -88,11 +89,27 @@ public class TileManager : MonoBehaviour
         {
             return 0;
         }
+        
+        System.Random r = new System.Random();
+        int randInt = r.Next(0,100);
         int rngIndex = lastPrefab;
-        while(rngIndex == lastPrefab)
-        {
-            rngIndex = Random.Range(0,tilePrefabs.Length);
+        
+        if(randInt>= 0 && randInt < 30){
+            // generate empty env
+            rngIndex = 0;
+        }else if(randInt >= 30 && randInt < 80){
+            // generate tree env
+            rngIndex = 2;
+        }else{
+            // generate building env
+            rngIndex = 1;
         }
+        
+        
+        //while(rngIndex == lastPrefab)
+        //{
+            //rngIndex = Random.Range(0,tilePrefabs.Length);
+        //}
         lastPrefab = rngIndex;
         return rngIndex;
     }

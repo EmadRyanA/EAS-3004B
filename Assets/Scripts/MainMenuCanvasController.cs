@@ -127,8 +127,9 @@ public class MainMenuCanvasController : MonoBehaviour
         GameObject car_gt86 = GameObject.Find("car_gt86");
         GameObject car_merc = GameObject.Find("car_merc");
         GameObject car_lambo = GameObject.Find("car_lambo");
-        GameObject car_gtr_test = GameObject.Find("car_gtr");
-        cars = new carBundle[]{new carBundle(car_gt86, 0), new carBundle(car_merc, 10000), new carBundle(car_lambo, 75000), new carBundle(car_gtr_test, 1)}; // do not change indices
+        //GameObject car_gtr_test = GameObject.Find("car_gtr"); 
+        //new carBundle(car_gtr_test, 1)
+        cars = new carBundle[]{new carBundle(car_gt86, 0), new carBundle(car_merc, 10000), new carBundle(car_lambo, 75000)}; // do not change indices
 
         // make the user's current car active.
         handleCarVisibility();
@@ -256,6 +257,7 @@ public class MainMenuCanvasController : MonoBehaviour
     }
 
     private void toGarage(){
+        print(currentState);
         updated = false;
         if(currentState == 3){
             currentState = 2;
