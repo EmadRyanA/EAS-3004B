@@ -257,27 +257,41 @@ public class gameController : MonoBehaviour
 
         //totalNotes = bmQueue.Count; // counting total notes to be used in win calculations
         // generate each objective 
+        bool isFlying = false; // spawns obstacles at a different y if true
         foreach(LaneObject laneObj in bmQueue){
             //float laneObjX = laneObj.lane;
             //GameObject spawnedObject;
             lastObjectiveZ = movementSpeed * laneObj.time;
             if (laneObj.type == LANE_OBJECT_TYPE.START_DRIFT_TRIGGER) {
+                isFlying = false;
                 GameObject driftTrigger = Instantiate(trigger, new Vector3(laneToX(1), 0, lastObjectiveZ), Quaternion.Euler(0,0,0));
                 driftTrigger.GetComponent<MovementStateTrigger>().stateToTrigger = MovementStateTrigger.movementStates.Drifting;
             }
             else if (laneObj.type == LANE_OBJECT_TYPE.START_FLY_TRIGGER) {
+                isFlying = true;
                 GameObject flyTrigger = Instantiate(trigger, new Vector3(laneToX(1), 0, lastObjectiveZ), Quaternion.Euler(0,0,0));
                 flyTrigger.GetComponent<MovementStateTrigger>().stateToTrigger = MovementStateTrigger.movementStates.Flying;
             }
             else if (laneObj.type == LANE_OBJECT_TYPE.START_NORMAL_TRIGGER) {
+                isFlying = false;
                 GameObject driftTrigger = Instantiate(trigger, new Vector3(laneToX(1), 0, lastObjectiveZ), Quaternion.Euler(0,0,0));
                 driftTrigger.GetComponent<MovementStateTrigger>().stateToTrigger = MovementStateTrigger.movementStates.Driving;
             }
             else if(laneObj.type == LANE_OBJECT_TYPE.Obstacle){ // obstacle
-                objectiveList.Add(Instantiate(badObjective, new Vector3(laneToX(laneObj.lane), 0, lastObjectiveZ), Quaternion.Euler(0,0,0)));
+                if(isFlying){
+                    objectiveList.Add(Instantiate(badObjective, new Vector3(laneToX(laneObj.lane), 10, lastObjectiveZ), Quaternion.Euler(0,0,0)));
+                }else{
+                    objectiveList.Add(Instantiate(badObjective, new Vector3(laneToX(laneObj.lane), 0, lastObjectiveZ), Quaternion.Euler(0,0,0)));
+                }
+                
             }else if (laneObj.type == LANE_OBJECT_TYPE.Beat) { // beat
                 totalNotes++;
-                objectiveList.Add(Instantiate(objective, new Vector3(laneToX(laneObj.lane), 0, lastObjectiveZ), Quaternion.Euler(0,0,0)));
+                if(isFlying){
+                    objectiveList.Add(Instantiate(objective, new Vector3(laneToX(laneObj.lane), 10, lastObjectiveZ), Quaternion.Euler(0,0,0)));
+                }else{
+                    objectiveList.Add(Instantiate(objective, new Vector3(laneToX(laneObj.lane), 0, lastObjectiveZ), Quaternion.Euler(0,0,0)));
+                }
+                
             }
             
             // populate objective list
