@@ -265,6 +265,10 @@ public class gameController : MonoBehaviour
                 GameObject driftTrigger = Instantiate(trigger, new Vector3(laneToX(1), 0, lastObjectiveZ), Quaternion.Euler(0,0,0));
                 driftTrigger.GetComponent<MovementStateTrigger>().stateToTrigger = MovementStateTrigger.movementStates.Drifting;
             }
+            else if (laneObj.type == LANE_OBJECT_TYPE.START_FLY_TRIGGER) {
+                GameObject flyTrigger = Instantiate(trigger, new Vector3(laneToX(1), 0, lastObjectiveZ), Quaternion.Euler(0,0,0));
+                flyTrigger.GetComponent<MovementStateTrigger>().stateToTrigger = MovementStateTrigger.movementStates.Flying;
+            }
             else if (laneObj.type == LANE_OBJECT_TYPE.START_NORMAL_TRIGGER) {
                 GameObject driftTrigger = Instantiate(trigger, new Vector3(laneToX(1), 0, lastObjectiveZ), Quaternion.Euler(0,0,0));
                 driftTrigger.GetComponent<MovementStateTrigger>().stateToTrigger = MovementStateTrigger.movementStates.Driving;

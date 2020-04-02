@@ -36,7 +36,6 @@ public struct bga_settings
     public float threshold_time; //time in seconds for how long the threshold should be
     public float threshold_multiplier; //the multiplier used for the threshold
     public float drift_threshold_time;
-    public float drift_threshold_multiplier;
     public float drifts_per_minute; //# of drift sections
     public float min_drift_seperation_time; //The minimum time between drift sections
     public float min_peak_seperation_time; //The minimum time between peaks in seconds
@@ -44,13 +43,12 @@ public struct bga_settings
     public int rng_seed; //If rng_seed == 0 a new random seed is created
 
     public bga_settings(int n_bins, float threshold_time, float threshold_multiplier, float drift_threshold_time,
-     float drift_threshold_multiplier, float drifts_per_minute, float min_drift_seperation_time, float min_peak_seperation_time, float warm_up_time, int rng_seed)
+     float drifts_per_minute, float min_drift_seperation_time, float min_peak_seperation_time, float warm_up_time, int rng_seed)
     {
         this.n_bins = n_bins;
         this.threshold_time = threshold_time;
         this.threshold_multiplier = threshold_multiplier;
         this.drift_threshold_time = drift_threshold_time;
-        this.drift_threshold_multiplier = drift_threshold_multiplier;
         this.drifts_per_minute = drifts_per_minute;
         this.min_drift_seperation_time = min_drift_seperation_time;
         this.min_peak_seperation_time = min_peak_seperation_time;
