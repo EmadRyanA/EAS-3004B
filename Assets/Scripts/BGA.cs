@@ -55,12 +55,13 @@ public class BGA
         public float[] peaks; //true final output
         public float[] peaks2; //peaks filterd to min_time_between_peaks
         public float[] threshold;
-
         public float[] peakThreshold;
         public float[] drifts;
 
         public int totalPeaks;
         public float totalPeaksOverTime;
+
+        public int flySectionIndex;
     }
 
     public struct GreatestValueElement {
@@ -192,6 +193,7 @@ public class BGA
         output.threshold = new float[finalArraySize];
         output.peakThreshold = new float[finalArraySize];
         output.drifts = new float[finalArraySize];
+        output.flySectionIndex = 0;
         FFTProvider fftProvider = new DSPLibFFTProvider(settings.n_bins);
         WINDOW_TYPE fftWindow = WINDOW_TYPE.Hamming;
 
@@ -284,6 +286,61 @@ public class BGA
         Debug.Log("BPM: ");
         Debug.Log(output.totalPeaksOverTime * 60);
 
+        //fly detection
+
+        //define a window size for the threshold. THRESHOLD_TIME is the length in time that the window should be. for now use drift threshold time
+        int thresholdWindowSize3 = Mathf.FloorToInt((settings.drift_threshold_time / song_info.sampleLength) / settings.n_bins) / 2;
+        Debug.Log("threshold3: ");
+        Debug.Log(thresholdWindowSize3);
+
+        //only look at the song between 30% and 70% duration,
+        //and only find largest value.
+
+        float largestDelta = 0;
+        int indexLargest = 0;
+
+        Debug.Log("Detect fly");
+        Debug.Log(Mathf.FloorToInt(.30f * output.peaks.Length));
+        Debug.Log(Mathf.FloorToInt(.70f * output.peaks.Length));
+
+        for (int i = Mathf.FloorToInt(.30f * output.peaks.Length); i < Mathf.FloorToInt(.70f * output.peaks.Length); i++)
+        {
+            float avgL = 0;
+            float avgR = 0;
+            float countL = 0;
+            float countR = 0;
+
+            for (int j = (i - thresholdWindowSize3); j < (i + thresholdWindowSize3); j++)
+            {
+                if (j < 0 || j >= output.peaks.Length) continue; //todo should be optimized
+                if (j < i) {
+                    avgL += output.peaks[j];
+                    countL += 1;
+                }
+                else {
+                    avgR += output.peaks[j];
+                    countR += 1;
+                }
+            }
+            if (countL > 0 && countR > 0)
+            {
+                float avg = (avgL / countL) - (avgR / countR); //we are looking for the biggest difference from left to right
+                if (avg > largestDelta) {
+                    largestDelta = avg;
+                    indexLargest = i;
+                }
+            }
+        }
+
+        output.flySectionIndex = indexLargest;
+
+        Debug.Log("Fly section: ");
+        Debug.Log(output.flySectionIndex);
+
+        //end fly detection
+
+        //drift detection
+
         //define a window size for the threshold. THRESHOLD_TIME is the length in time that the window should be.
         int thresholdWindowSize2 = Mathf.FloorToInt((settings.drift_threshold_time / song_info.sampleLength) / settings.n_bins) / 2;
         Debug.Log("threshold2: ");
@@ -302,7 +359,7 @@ public class BGA
             }
             if (count > 0)
             {
-                output.peakThreshold[i] = (avg / count) * settings.drift_threshold_multiplier;
+                output.peakThreshold[i] = (avg / count);
             }
             else
             {
@@ -312,10 +369,8 @@ public class BGA
 
         //select amount_drift_sections from output.peakThreshold, ensuring that each drift section is min_time_between_drift apart
         //remove all duplicates / close values next to a value, then store remaning values as a GreatestValueElement in a arraylist, then sort the list.
-
         
         List<GreatestValueElement> greatestValues = new List<GreatestValueElement>();
-
 
         Debug.Log("Start greatestvalues");
         int offset = 1;
@@ -372,8 +427,10 @@ public class BGA
             else {
                 bool flag = false;
                 //We need to check if this elem is properly spaced at least min_time_between_drift apart from other drifts
+                //And that the elem is not in the middle of a <fly> section
                 foreach (GreatestValueElement added in addedValues) {
-                    if (Math.Abs(elem.index - added.index) <= minLengthBetweenDrift) {
+                    if (Math.Abs(elem.index - added.index) <= minLengthBetweenDrift
+                    || Math.Abs(elem.index - output.flySectionIndex) <= thresholdWindowSize2 * 2) {
                         flag = true;
                         break;
                     }
@@ -388,6 +445,8 @@ public class BGA
                 }
             }
         }
+
+        //end drift detection
         
         //Filter peaks to allowable min_time_between_peaks
         //Todo this is a bit naive should probably select highest peak or something (but will work for now)
@@ -418,8 +477,6 @@ public class BGA
 
         Debug.Log("FFT Data collected");
         this.state = STATE.DONE;
-
-        
 
         using (StreamWriter file = new StreamWriter("output.txt"))
         {
@@ -510,11 +567,20 @@ public class BGA
         
         for (int i=0; i < output.peaks2.Length; i++) {
             float currTime = getTimeFromIndex(i);
+            if (i == output.flySectionIndex) {
+              LaneObject lObj1 = new LaneObject(i, currTime, -1, LANE_OBJECT_TYPE.START_FLY_TRIGGER);
+              LaneObject lObj2 = new LaneObject(i + drift_length, getTimeFromIndex(i + drift_length), -1, LANE_OBJECT_TYPE.START_NORMAL_TRIGGER);
+              beatMap.addLaneObject(lObj1);
+              beatMap.addLaneObject(lObj2);
+              Debug.Log("Added the fly section triggers");
+              continue;
+            }
             if (output.drifts[i] > 0) {
               LaneObject lObj1 = new LaneObject(i, currTime, -1, LANE_OBJECT_TYPE.START_DRIFT_TRIGGER);
               LaneObject lObj2 = new LaneObject(i + drift_length, getTimeFromIndex(i + drift_length), -1, LANE_OBJECT_TYPE.START_NORMAL_TRIGGER);
               beatMap.addLaneObject(lObj1);
               beatMap.addLaneObject(lObj2);
+              continue;
             }
             if (output.peaks2[i] <= 0) {
                 continue;
