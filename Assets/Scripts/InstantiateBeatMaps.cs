@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System;
 using System.Runtime.Serialization.Formatters.Binary;
 using UnityEngine;
 using UnityEngine.UI;
@@ -28,9 +29,7 @@ public class InstantiateBeatMaps : MonoBehaviour
         }
 
         //sort beatmaps
-        beatMaps.Sort((x, y) => {
-          return y.lastPlayed > x.lastPlayed ? 1 : 0;
-        });
+        beatMaps.Sort((x, y) => DateTime.Compare(y.lastPlayed, x.lastPlayed));
 
         foreach(BeatMap beatMap in beatMaps) {
           GameObject beatMapPanel = (GameObject)Instantiate(prefab, new Vector3(0, 0, 0), new Quaternion(0, 0, 0, 0), mapsContent);

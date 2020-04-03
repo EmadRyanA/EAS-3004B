@@ -54,6 +54,7 @@ public class BeatMap
         BeatMap beatMap = (BeatMap)deserializer.Deserialize(openFileStream);
         Debug.Log("Beatmap loaded");
         Debug.Log(beatMap.song_meta.title);
+        openFileStream.Close();
         return beatMap;
     }
 

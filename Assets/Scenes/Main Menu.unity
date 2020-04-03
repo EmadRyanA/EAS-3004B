@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.32311955, g: 0.08270856, b: 0.40871668, a: 1}
+  m_IndirectSpecularColor: {r: 0.32311955, g: 0.08270829, b: 0.40871668, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -7033,7 +7033,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 563616794}
   m_HandleRect: {fileID: 563616793}
   m_Direction: 0
-  m_Value: 1
+  m_Value: 0
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -8889,7 +8889,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -0.000016176862}
+  m_AnchoredPosition: {x: 0, y: -0.000040431638}
   m_SizeDelta: {x: 0, y: 300}
   m_Pivot: {x: 0, y: 1}
 --- !u!1 &954450528
@@ -14515,7 +14515,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Content: {fileID: 1553181463}
-  m_Horizontal: 1
+  m_Horizontal: 0
   m_Vertical: 1
   m_MovementType: 1
   m_Elasticity: 0.1
@@ -14636,6 +14636,7 @@ GameObject:
   - component: {fileID: 1553181463}
   - component: {fileID: 1553181464}
   - component: {fileID: 1553181465}
+  - component: {fileID: 1553181466}
   m_Layer: 5
   m_Name: MapsContent
   m_TagString: Untagged
@@ -14701,6 +14702,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   prefab: {fileID: 7438358215630601637, guid: 16365dc9f2d4bec48a79506d63d7a1bb, type: 3}
   mapsContent: {fileID: 1553181463}
+--- !u!114 &1553181466
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1553181462}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3245ec927659c4140ac4f8d17403cc18, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_HorizontalFit: 2
+  m_VerticalFit: 2
 --- !u!1001 &1554076257
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -16559,7 +16574,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1595560754}
   m_HandleRect: {fileID: 1595560753}
   m_Direction: 2
-  m_Value: 1
+  m_Value: 0
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:

@@ -389,9 +389,14 @@ public class BGA
 
         Debug.Log("Sort greatestvalues");
 
-        greatestValues.Sort((x, y) => {
-          return Mathf.FloorToInt(y.value - x.value);
-        });
+        //todo debug this...
+        try {
+            greatestValues.Sort((x, y) => y.value.CompareTo(x.value));
+        }
+        catch (Exception e) {
+            Debug.Log("Could not sort greatestValues!");
+            Debug.Log(e.ToString());
+        }
 
         Debug.Log("Song length:");
         Debug.Log(song_info.length);
@@ -427,10 +432,10 @@ public class BGA
             else {
                 bool flag = false;
                 //We need to check if this elem is properly spaced at least min_time_between_drift apart from other drifts
-                //And that the elem is not in the middle of a <fly> section
+                //And that the elem is not in the middle of a <fly> section or <time_after_fly> section
                 foreach (GreatestValueElement added in addedValues) {
                     if (Math.Abs(elem.index - added.index) <= minLengthBetweenDrift
-                    || Math.Abs(elem.index - output.flySectionIndex) <= thresholdWindowSize2 * 2) {
+                    || Math.Abs(elem.index - output.flySectionIndex) <= (thresholdWindowSize2 * 2)) {
                         flag = true;
                         break;
                     }
