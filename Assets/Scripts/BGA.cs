@@ -564,28 +564,38 @@ public class BGA
 
         int currLane = 0;
         int currLaneCount = 0;
+
+        int timeAfterFly = Mathf.FloorToInt(getIndexFromTime(BGACommon.TIME_AFTER_FLY_SECTION));
+
+        int endFlyIndex = -1;
         
         for (int i=0; i < output.peaks2.Length; i++) {
             float currTime = getTimeFromIndex(i);
             if (i == output.flySectionIndex) {
               LaneObject lObj1 = new LaneObject(i, currTime, -1, LANE_OBJECT_TYPE.START_FLY_TRIGGER);
               LaneObject lObj2 = new LaneObject(i + drift_length, getTimeFromIndex(i + drift_length), -1, LANE_OBJECT_TYPE.START_NORMAL_TRIGGER);
+              endFlyIndex = i + drift_length;
               beatMap.addLaneObject(lObj1);
               beatMap.addLaneObject(lObj2);
               Debug.Log("Added the fly section triggers");
               continue;
             }
-            if (output.drifts[i] > 0) {
+            else if (output.drifts[i] > 0) {
               LaneObject lObj1 = new LaneObject(i, currTime, -1, LANE_OBJECT_TYPE.START_DRIFT_TRIGGER);
               LaneObject lObj2 = new LaneObject(i + drift_length, getTimeFromIndex(i + drift_length), -1, LANE_OBJECT_TYPE.START_NORMAL_TRIGGER);
               beatMap.addLaneObject(lObj1);
               beatMap.addLaneObject(lObj2);
               continue;
             }
-            if (output.peaks2[i] <= 0) {
+            else if (i == endFlyIndex) { //Don't spawn anything after a <fly> section so that the car can fall back to the track
+                endFlyIndex = -1;
+                i += timeAfterFly;
+                continue;
+            }
+            else if (output.peaks2[i] <= 0) {
                 continue;
             } 
-            if (currTime < settings.warm_up_time) { //we do not spawn notes until warm up time is done. So we spawn obstacles on L and R to show the beats
+            else if (currTime < settings.warm_up_time) { //we do not spawn notes until warm up time is done. So we spawn obstacles on L and R to show the beats
                 int lane = (bga_random.Next(0, 2) == 1) ? 0 : 2;
                 LaneObject lObj = new LaneObject(i, currTime, lane, LANE_OBJECT_TYPE.Obstacle);
                 beatMap.addLaneObject(lObj);
@@ -597,9 +607,7 @@ public class BGA
                     currLaneCount = 1;
                 }
                 else {
-                    //use a 1/x like function to decrease the probability that we stay in the current lane the longer we stay in the lane
-                    //todo if (bga_random.NextDouble() > (1.0 / ((0.8 * (currLaneCount - 1) + 1.3)))) {
-                    if (bga_random.NextDouble() < 0.75) { //25 % chance we stay in the same lane
+                    if (bga_random.NextDouble() < BGACommon.CHANCE_TO_SWITCH_LANES) { //5 % chance we stay in the same lane
                         currLaneCount = 1;
                         int direction = (bga_random.Next(0, 2) == 1) ? -1 : 1; //move left or right? if on ends wrap around
                         currLane = Math.Abs((currLane + direction) % BGACommon.NUMBER_LANES);

@@ -10,6 +10,7 @@ public class BeatMapEntryController : MonoBehaviour
 {
 
     public string fileName;
+    public BeatMap beatMap;
 
     public Button songPlay;
     public Image coverArtImage;
@@ -23,6 +24,8 @@ public class BeatMapEntryController : MonoBehaviour
 
     void songPlayListener()
     {
+        //Indicate that we are going to play the beatMap to update lastPlayed, timesPlayed, ...
+        beatMap.play(Application.persistentDataPath);
         BeatMap.futureFileName = fileName;
         SceneManager.LoadScene("New Scene");
     }

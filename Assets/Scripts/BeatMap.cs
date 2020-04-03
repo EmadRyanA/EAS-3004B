@@ -27,10 +27,23 @@ public class BeatMap
     public song_meta_struct song_meta {get;}
     public string fileName {get; set;} //not path; just the name in /BeatMaps/
     public string songFilePath {get; set;} //Where we store the .mp3 file
+    public DateTime timeGenerated {get; set;}
+    public DateTime lastPlayed {get; set;} //lastPlayed == last time we called loadSamples()
+    public int timesPlayed {get; set;}
 
     public static BeatMap loadBeatMap() 
     {
         return loadBeatMap(futureFileName);
+    }
+
+    public bga_settings get_settings()
+    {
+        return this.bga_settings;
+    }
+
+    public song_info_struct get_song_info()
+    {
+        return this.song_info;
     }
 
     public static BeatMap loadBeatMap(string fn) //Todo rename this class to a static "BeatMapLoader" class
@@ -53,6 +66,7 @@ public class BeatMap
         //this.name = name;
         this.fileName = song_meta.title + "~" + song_meta.artist + "~" + song_meta.album + ";" + bga_settings.rng_seed.ToString() + ".dat";
         this.songFilePath = songFilePath;
+        this.timesPlayed = 0;
         laneObjectStore = new List<LaneObject>();
     }
 
@@ -110,7 +124,7 @@ public class BeatMap
     }
 
     public void unloadSamples() {
-        this.song_info.samples = null; //gc will unload samples later. we mostly want to unload when saving the beatmap
+        this.song_info.samples = null; //gc will unload samples later. we mostly want to unload when saving the beatmap so that we don't waste 70+mb of space
         state = STATE.SAMPLES_UNLOADED;
     }
 
@@ -136,8 +150,17 @@ public class BeatMap
         return audioClip;
     }
 
+    //indicates that the beatmap is to be played; so we need to save an updated play count / last played
+    public void play(string persistentDataPath) {
+        lastPlayed = DateTime.Now;
+        this.timesPlayed += 1;
+        save(persistentDataPath);
+    }
+
     public void save (string persistentDataPath) {
         unloadSamples();
+        lastPlayed = DateTime.Now; //todo if never played
+        timeGenerated = DateTime.Now;
         //See https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/concepts/serialization/walkthrough-persisting-an-object-in-visual-studio
         string fileDir = persistentDataPath + "/BeatMaps";
         if (!Directory.Exists(fileDir)) Directory.CreateDirectory(fileDir);
