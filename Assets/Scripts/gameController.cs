@@ -401,6 +401,10 @@ public class gameController : MonoBehaviour
         print("winData.moneyEarned: " + winData.moneyEarned);
         print("winData.expEarned: " + winData.expEarned); */
 
+        //scoreboard
+        beatMap.addWin(winData);
+        beatMap.save(Application.persistentDataPath); 
+
         WinDataClassHelper.saveToExternal(winData);
 
         _gameState = GameState.win;

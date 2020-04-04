@@ -10,21 +10,33 @@ public class BeatMapEntryController : MonoBehaviour
 {
 
     public string fileName;
+    public BeatMap beatMap;
 
     public Button songPlay;
+    public Button moreInfo;
     public Image coverArtImage;
+
+    public InstantiateBeatMaps instantiateBeatMaps;
     // Start is called before the first frame update
     void Start()
     {
         songPlay = songPlay.GetComponent<Button>();
+        moreInfo = moreInfo.GetComponent<Button>();
         coverArtImage = coverArtImage.GetComponent<Image>();
         songPlay.onClick.AddListener(songPlayListener);
+        moreInfo.onClick.AddListener(moreInfoListener);
     }
 
     void songPlayListener()
     {
+        //Indicate that we are going to play the beatMap to update lastPlayed, timesPlayed, ...
+        beatMap.play(Application.persistentDataPath);
         BeatMap.futureFileName = fileName;
         SceneManager.LoadScene("New Scene");
+    }
+
+    void moreInfoListener() {
+        instantiateBeatMaps.moreInfo(beatMap, this);
     }
 
     public void setCoverArt(string path) {
@@ -71,5 +83,10 @@ public class BeatMapEntryController : MonoBehaviour
     void Update()
     {
         
+    }
+
+    public void destroy()
+    {
+        Destroy(gameObject);
     }
 }

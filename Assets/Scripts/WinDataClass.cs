@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 
@@ -17,6 +18,7 @@ public class WinDataClass
     public int moneyEarned{get;set;}
     public float expEarned{get;set;}
     public string grade{get;set;}
+    public DateTime date {get;set;}
 
     public WinDataClass(int s, int mc, int nh, int mtn, int me, float ee, string g){
         score = s;
@@ -26,6 +28,7 @@ public class WinDataClass
         moneyEarned = me;
         expEarned = ee;
         grade = g;
+        date = DateTime.Now;
     }
 
 
