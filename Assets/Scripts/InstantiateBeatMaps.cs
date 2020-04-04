@@ -11,10 +11,20 @@ public class InstantiateBeatMaps : MonoBehaviour
 
     public GameObject prefab;
     public Transform mapsContent;
+    public Text leaderBoard;
+
+    public Button removeBeatMapButton;
+    public Text selectedBeatMapText;
+    public BeatMap selectedBeatMap;
+    public BeatMapEntryController selectedBeatMapEntryController;
     // Start is called before the first frame update
     void Start()
     {
         mapsContent = mapsContent.GetComponent<Transform>();
+        leaderBoard = leaderBoard.GetComponent<Text>();
+        selectedBeatMapText = selectedBeatMapText.GetComponent<Text>();
+        removeBeatMapButton = removeBeatMapButton.GetComponent<Button>();
+        removeBeatMapButton.onClick.AddListener(removeBeatMapListener);
         string beatMapDir = Application.persistentDataPath + "/BeatMaps/";
         Debug.Log(beatMapDir);
         Directory.CreateDirectory(beatMapDir); //create if it does not exist
@@ -34,6 +44,7 @@ public class InstantiateBeatMaps : MonoBehaviour
         foreach(BeatMap beatMap in beatMaps) {
           GameObject beatMapPanel = (GameObject)Instantiate(prefab, new Vector3(0, 0, 0), new Quaternion(0, 0, 0, 0), mapsContent);
           BeatMapEntryController controller = beatMapPanel.GetComponentInChildren<BeatMapEntryController>();
+          controller.instantiateBeatMaps = this;
           controller.fileName = beatMapDir + beatMap.fileName;
           controller.setCoverArt(beatMap.songFilePath + ".png");
           controller.beatMap = beatMap;
@@ -46,6 +57,30 @@ public class InstantiateBeatMaps : MonoBehaviour
           }
         }
         
+    }
+
+    //for now, more info == scoreboard
+    public void moreInfo(BeatMap beatMap, BeatMapEntryController controller)
+    {
+      selectedBeatMap = beatMap;
+      selectedBeatMapEntryController = controller;
+      selectedBeatMapText.text = "Selected: " + beatMap.song_meta.title + " by " + beatMap.song_meta.artist + " (" + beatMap.get_settings().rng_seed.ToString() + ")";
+      leaderBoard.text = "";
+      List<WinDataClass> wins = beatMap.getScoreBoard();
+      foreach (WinDataClass win in wins)
+      {
+        leaderBoard.text += " " + win.score.ToString() + " on: " + win.date.ToShortDateString() + "\n";
+      }
+    }
+
+    void removeBeatMapListener()
+    {
+      if (selectedBeatMap != null && selectedBeatMapEntryController != null) {
+        selectedBeatMap.delete_self(Application.persistentDataPath);
+        selectedBeatMapEntryController.destroy();
+      }
+      selectedBeatMap = null;
+      selectedBeatMapEntryController = null;
     }
 
     // Update is called once per frame

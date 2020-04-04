@@ -74,18 +74,7 @@ public class BGA
           }
     };
 
-
     public output_struct output;
-
-    //todo gamestate needs to be moved
-    //public bool done = false;
-    //bool doPlay = false;
-    //public int frameCount = 0;
-
-    //todo constructor
-    //public BGA() {
-    //  this.state = STATE.READY;
-    //}
 
     public void StartBGA(ref AudioClip audioClip, bga_settings settings, song_meta_struct song, string songFilePath)
     {

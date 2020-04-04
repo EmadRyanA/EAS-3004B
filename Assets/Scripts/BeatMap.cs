@@ -30,6 +30,8 @@ public class BeatMap
     public DateTime timeGenerated {get; set;}
     public DateTime lastPlayed {get; set;} //lastPlayed == last time we called loadSamples()
     public int timesPlayed {get; set;}
+    //store WinDataClass objects as a scoreboard
+    private List<WinDataClass> scoreboard;
 
     public static BeatMap loadBeatMap() 
     {
@@ -69,12 +71,24 @@ public class BeatMap
         this.songFilePath = songFilePath;
         this.timesPlayed = 0;
         laneObjectStore = new List<LaneObject>();
+        scoreboard = new List<WinDataClass>();
     }
 
     public void addLaneObject(LaneObject laneObject)
     {
         //todo check if valid... for now this is left to bga to make sure
         laneObjectStore.Add(laneObject);
+    }
+
+    public void addWin(WinDataClass win)
+    {
+        scoreboard.Add(win);
+    }
+
+    public List<WinDataClass> getScoreBoard()
+    {
+        scoreboard.Sort((x, y) => y.score.CompareTo(x.score));
+        return scoreboard;
     }
 
     private IEnumerator getAudioClipFromPath(string path)
@@ -170,6 +184,14 @@ public class BeatMap
         BinaryFormatter serializer = new BinaryFormatter();
         serializer.Serialize(saveFileStream, this);
         saveFileStream.Close();
+    }
+
+    public void delete_self(string persistentDataPath)
+    {
+        //GoodBye! After this we will only be loaded in memory, and promptly cleaned up by gc
+        string fileDir = persistentDataPath + "/BeatMaps";
+        string fn = fileDir + "/" + this.fileName;
+        File.Delete(fn);
     }
 }
 /*
