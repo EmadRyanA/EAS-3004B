@@ -38,7 +38,7 @@ public class PausePanelButtonHandler : MonoBehaviour
         btnQuit.onClick.AddListener(handleQuit);
         btnRetry.onClick.AddListener(handleRetry);
         //btnSettings.onClick.AddListener(handleSettings);
-        exitSettingsButton.onClick.AddListener(handleExitSettings);
+        //exitSettingsButton.onClick.AddListener(handleExitSettings);
 
         settingsPanel.SetActive(false);
     }
