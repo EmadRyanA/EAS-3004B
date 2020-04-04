@@ -64,6 +64,8 @@ public class gameController : MonoBehaviour
     public GameObject pauseCanvas;
     public GameObject settingsCanvas;
     public Button exitSettingsButton;
+    public Slider volumeSlider;
+    public Slider tiltSensSlider;
 
     BeatMap beatMap;
     
@@ -207,6 +209,13 @@ public class gameController : MonoBehaviour
             GameObject.Find("HealthBar").GetComponent<Slider>().value = _playerHealth / TOTAL_PLAYER_HEALTH; 
         }
         
+        // handles the sliders in the settings panel
+        // volume slider code
+        audioSrc.volume = volumeSlider.value;
+        // tilt sensitivity code
+        MovementScript.tiltSensHorizontal = tiltSensSlider.value * 2.5f;
+        MovementScript.tiltSensVertical = tiltSensSlider.value * 2.5f;
+
     }
 
     //private void healthBarHandler(){
