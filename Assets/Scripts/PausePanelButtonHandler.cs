@@ -11,16 +11,36 @@ public class PausePanelButtonHandler : MonoBehaviour
     private Button btnRetry;
     private Button btnQuit;
     private Button btnSettings;
+    private GameObject settingsCanvas;
+    public GameObject settingsPanel;
+    public GameObject pausePanel;
+    private GameObject pauseCanvas;
+    private Button exitSettingsButton;
     void Start()
     {
+        pausePanel = GameObject.Find("PausePanel");
+        //settingsPanel = GameObject.Find("SettingsPanel");
+
         btnPause = this.transform.Find("PauseButton").GetComponent<Button>();
         btnRetry = this.transform.Find("RetryButton").GetComponent<Button>();
         btnQuit = this.transform.Find("QuitButton").GetComponent<Button>();
         btnSettings = this.transform.Find("SettingsButton").GetComponent<Button>();
+        pauseCanvas = GameObject.Find("PauseCanvas");
+        settingsCanvas = GameObject.Find("SettingsCanvas");
+        
+        exitSettingsButton = pausePanel.transform.GetChild(4).GetComponent<Button>();
+
+        //settingsPanel = settingsCanvas.transform.GetChild(0).gameObject;
+
+        print(settingsPanel);
 
         btnPause.onClick.AddListener(handlePause);
         btnQuit.onClick.AddListener(handleQuit);
         btnRetry.onClick.AddListener(handleRetry);
+        //btnSettings.onClick.AddListener(handleSettings);
+        exitSettingsButton.onClick.AddListener(handleExitSettings);
+
+        settingsPanel.SetActive(false);
     }
 
     // pauses and unpauses the game.
@@ -50,7 +70,15 @@ public class PausePanelButtonHandler : MonoBehaviour
 
     // brings up another panel containing editable settings
     private void handleSettings(){
+        pauseCanvas.SetActive(false);
+        settingsPanel.SetActive(true);
+        //print(pausePanel);
+        //print(settingsPanel);
+    }
 
+    private void handleExitSettings(){
+        settingsPanel.SetActive(false);
+        pausePanel.SetActive(true);
     }
 
     // Update is called once per frame

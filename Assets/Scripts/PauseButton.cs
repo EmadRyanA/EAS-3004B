@@ -9,10 +9,17 @@ public class PauseButton : MonoBehaviour
     public static bool paused;
     public GameObject menu;
     public static Button pauseBtn;
+    //public Button btnSettings;
+    //public GameObject pausePanel;
+    //public GameObject settingsCanvas;
+    //public Button exitSettingsButton;
     void Start()
     {
         pauseBtn = GetComponent<Button>();
         pauseBtn.onClick.AddListener(TogglePause);
+
+        //btnSettings.onClick.AddListener(handleSettings);
+        //exitSettingsButton.onClick.AddListener(handleExitSettings);
     }
 
     private void TogglePause(){
@@ -22,6 +29,16 @@ public class PauseButton : MonoBehaviour
         pauseBtn.enabled = !pauseBtn.enabled;
     }
 
+    /*private void handleSettings(){
+        print("test");
+        pausePanel.SetActive(false);
+        settingsCanvas.SetActive(true);
+    }*/
+
+    /*private void handleExitSettings(){
+        pausePanel.SetActive(true);
+        settingsCanvas.SetActive(false);
+    }*/
 
     // Update is called once per frame
     void Update()

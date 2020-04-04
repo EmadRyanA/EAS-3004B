@@ -57,6 +57,14 @@ public class gameController : MonoBehaviour
     public GameObject player;
     public GameObject gameOverRetryButton;
     public GameObject gameOverQuitButton;
+
+    // settings panel
+    public GameObject settingsPanel;
+    public Button btnSettings;
+    public GameObject pauseCanvas;
+    public GameObject settingsCanvas;
+    public Button exitSettingsButton;
+
     BeatMap beatMap;
     
     public enum LOAD_STATE {
@@ -64,9 +72,11 @@ public class gameController : MonoBehaviour
         LOADED
     }
 
+
     public LOAD_STATE load_state;
 
     public GameObject warningText;
+
 
     void Start()
     { 
@@ -113,11 +123,17 @@ public class gameController : MonoBehaviour
         
         cars = new GameObject[]{car_gt86, car_merc, car_lambo}; // keep the order here the same as in MainMenuCanvasController
 
-        handleCarVisibility();
+        btnSettings.onClick.AddListener(handleSettings);
+        exitSettingsButton.onClick.AddListener(handleExitSettings);
 
-       beatMap = BeatMap.loadBeatMap();
-       beatMap.loadSamples(this);
+        settingsPanel.SetActive(false);
 
+        handleCarVisibility();      
+
+        beatMap = BeatMap.loadBeatMap();
+        beatMap.loadSamples(this);
+
+       
         // initial camera angle
         //mainCamera.transform.position = Vector3.MoveTowards(cameraPositions[1], cameraPositions[0], 20f);
         //mainCamera.transform.rotation = Quaternion.RotateTowards(cameraRotations[1], cameraRotations[0], 20f);
@@ -129,6 +145,20 @@ public class gameController : MonoBehaviour
         //BeatMap beatMap = (BeatMap)deserializer.Deserialize(openFileStream);
 
 
+    }
+
+    private void handleSettings(){
+        print("test");
+        settingsPanel.SetActive(true);
+        pauseCanvas.SetActive(false);
+        print(settingsPanel + " " + pauseCanvas);
+        
+    }
+
+    private void handleExitSettings(){
+        settingsPanel.SetActive(false);
+        pauseCanvas.SetActive(true);
+        
     }
 
     // Update is called once per frame
