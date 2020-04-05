@@ -1,4 +1,4 @@
-Robert Occleston-Pratt (101044703) Dev Log
+Robert Occleston-Pratt (101044703) Dev Logs
 Week 1 (January 20 - January 24)
  - Installed work environment (Unity, Android Studio, VS Code, Blender).
  - Worked on deliverable and presentation with group.
