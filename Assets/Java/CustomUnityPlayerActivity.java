@@ -107,7 +107,7 @@ public class CustomUnityPlayerActivity extends UnityPlayerActivity {
                 Log.d("CustomUnityPlayerActivity", "E2");
             }
 
-            UnityPlayer.UnitySendMessage("BGACanvas", "resultFromJava", songInfo);
+            UnityPlayer.UnitySendMessage("UI", "resultFromJava", songInfo);
         }
         
     }

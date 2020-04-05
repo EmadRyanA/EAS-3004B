@@ -17,8 +17,10 @@ public class InstantiateBeatMaps : MonoBehaviour
     public Text selectedBeatMapText;
     public BeatMap selectedBeatMap;
     public BeatMapEntryController selectedBeatMapEntryController;
+    public List<BeatMapEntryController> controllers = new List<BeatMapEntryController>();
+    public List<GameObject> panes = new List<GameObject>();
     // Start is called before the first frame update
-    void Start()
+    public void Start()
     {
         mapsContent = mapsContent.GetComponent<Transform>();
         leaderBoard = leaderBoard.GetComponent<Text>();
@@ -44,6 +46,8 @@ public class InstantiateBeatMaps : MonoBehaviour
         foreach(BeatMap beatMap in beatMaps) {
           GameObject beatMapPanel = (GameObject)Instantiate(prefab, new Vector3(0, 0, 0), new Quaternion(0, 0, 0, 0), mapsContent);
           BeatMapEntryController controller = beatMapPanel.GetComponentInChildren<BeatMapEntryController>();
+          controllers.Add(controller);
+          panes.Add(beatMapPanel);
           controller.instantiateBeatMaps = this;
           controller.fileName = beatMapDir + beatMap.fileName;
           controller.setCoverArt(beatMap.songFilePath + ".png");
@@ -81,6 +85,16 @@ public class InstantiateBeatMaps : MonoBehaviour
       }
       selectedBeatMap = null;
       selectedBeatMapEntryController = null;
+    }
+
+    public void refreshBeatMaps()
+    {
+      foreach(BeatMapEntryController c in controllers){
+        if(c != null){
+          c.destroy();
+        }
+      }
+      Start();
     }
 
     // Update is called once per frame
