@@ -347,11 +347,11 @@ public class MainMenuCanvasController : MonoBehaviour
                     state = STATE.BGA_STARTED;
                     bga_settings settings;
                     if(difficulty == DIFFICULTY.EASY){
-                        settings = new bga_settings(1024, 0.3f, 1.5f, 30f, 1f, 25f, 0.8f, 5f, currentSeed);
+                        settings = new bga_settings(1024, 0.3f, 1.5f, 30f, 30f, 1f, 25f, 0.8f, 5f, currentSeed);
                     } else if(difficulty == DIFFICULTY.HARD){
-                        settings = new bga_settings(1024, 0.3f, 1.5f, 30f, 1f, 25f, 0.2f, 5f, currentSeed);
+                        settings = new bga_settings(1024, 0.3f, 1.5f, 30f, 30f, 1f, 25f, 0.33f, 5f, currentSeed);
                     } else {
-                        settings = new bga_settings(1024, 0.3f, 1.5f, 30f, 1f, 25f, 0.5f, 5f, currentSeed);
+                        settings = new bga_settings(1024, 0.3f, 1.5f, 30f, 30f, 1f, 25f, 0.5f, 5f, currentSeed);
                     }
                     bga.StartBGA(ref inputAudioClip, settings, song, path);
                 }
