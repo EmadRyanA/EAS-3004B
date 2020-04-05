@@ -552,6 +552,10 @@ public class MainMenuCanvasController : MonoBehaviour
     {
       Debug.Log("Got a result from java");
       Debug.Log(s);
+      if (string.Equals(s, "bgaerror")) {
+          Debug.Log("err");
+          return; //Chances are user did not pick a song so we just silently fail
+      }
       string[] strings = s.Split(new char[] {BGACommon.DELIMITER});
       song = new song_meta_struct(strings[0], strings[1], strings[2]);
       songNameText.text = song.title + " by " + song.artist;
