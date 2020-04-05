@@ -203,7 +203,7 @@ public class BGAMenu : MonoBehaviour
             Debug.Log("Starting BGA");
             state = STATE.BGA_STARTED;
 
-            bga_settings settings = new bga_settings(1024, thresholdWindowLengthSlider.value, thresholdMultiplierSlider.value, 30f, 1f, 25f, minPeakSeperationTimeSlider.value, 5f, 0);
+            bga_settings settings = new bga_settings(1024, thresholdWindowLengthSlider.value, thresholdMultiplierSlider.value, 30f, 30f, 1f, 25f, minPeakSeperationTimeSlider.value, 5f, 0);
             bga.StartBGA(ref inputAudioClip, settings, song, path);
         }
 
