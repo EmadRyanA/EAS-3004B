@@ -11,9 +11,11 @@ using UnityEngine;
 
 /* The class that performs beat map generation given an audioClip
  * Sources used during development:
- * https://medium.com/giant-scam/algorithmic-beat-mapping-in-unity-preprocessed-audio-analysis-d41c339c135a for unity specific steps (e.g getting FFT data for all of the sample length)
+ * https://medium.com/giant-scam/algorithmic-beat-mapping-in-unity-preprocessed-audio-analysis-d41c339c135a for some unity specific steps (e.g running as thread, specifics about the AudioClip, etc)
  * https://www.codeproject.com/Articles/1107480/DSPLib-FFT-DFT-Fourier-Transform-Library-for-NET-6 This is the FFT library that we currently use.
- * https://www.badlogicgames.com/wordpress/?p=122 Used to create the peaks[] (detect beats). (this is where concepts like spectral flux, threshold come from)
+ * https://www.badlogicgames.com/wordpress/?p=122 Used to learn about beat detection logic. (this is where concepts like spectral flux, threshold come from)
+ * 
+ * Author: Evan Jesty (101078735)
  */
 
 public class BGA
@@ -24,6 +26,7 @@ public class BGA
         READY,
         ACTIVE,
         THREAD_ACTIVE,
+        ERROR,
         DONE
     }
 
@@ -119,13 +122,6 @@ public class BGA
         return Mathf.FloorToInt(new System.Random().Next((int)Mathf.Pow(10, (RANDOM_SEED_LENGTH - 1)), (int)Mathf.Pow(10, RANDOM_SEED_LENGTH) - 1));
     }
 
-    // Start is called before the first frame update
-    //void Start()
-    //{
-    //    this.state = STATE.READY;
-    //    Debug.Log("BGA Game object loaded.");
-    //}
-
     //Background thread to run the algorithim
     void algorithimWrapper()
     {
@@ -138,6 +134,7 @@ public class BGA
         catch (Exception e)
         {
             Debug.Log(e);
+            this.state = STATE.ERROR;
         }
     }
 
@@ -278,9 +275,9 @@ public class BGA
         //fly detection
 
         //define a window size for the threshold. THRESHOLD_TIME is the length in time that the window should be. for now use drift threshold time
-        int thresholdWindowSize3 = Mathf.FloorToInt((settings.drift_threshold_time / song_info.sampleLength) / settings.n_bins) / 2;
+        int flyThresholdWindowSize = Mathf.FloorToInt((settings.fly_threshold_time / song_info.sampleLength) / settings.n_bins) / 2;
         Debug.Log("threshold3: ");
-        Debug.Log(thresholdWindowSize3);
+        Debug.Log(flyThresholdWindowSize);
 
         //only look at the song between 30% and 70% duration,
         //and only find largest value.
@@ -299,7 +296,7 @@ public class BGA
             float countL = 0;
             float countR = 0;
 
-            for (int j = (i - thresholdWindowSize3); j < (i + thresholdWindowSize3); j++)
+            for (int j = (i - flyThresholdWindowSize); j < (i + flyThresholdWindowSize); j++)
             {
                 if (j < 0 || j >= output.peaks.Length) continue; //todo should be optimized
                 if (j < i) {
@@ -331,16 +328,16 @@ public class BGA
         //drift detection
 
         //define a window size for the threshold. THRESHOLD_TIME is the length in time that the window should be.
-        int thresholdWindowSize2 = Mathf.FloorToInt((settings.drift_threshold_time / song_info.sampleLength) / settings.n_bins) / 2;
+        int driftThresholdWindowSize = Mathf.FloorToInt((settings.drift_threshold_time / song_info.sampleLength) / settings.n_bins) / 2;
         Debug.Log("threshold2: ");
-        Debug.Log(thresholdWindowSize2);
+        Debug.Log(driftThresholdWindowSize);
 
         //Compute a threshold on avg # of peaks at a given time
         for (int i = 0; i < output.peaks.Length; i++)
         {
             float avg = 0;
             float count = 0;
-            for (int j = (i - thresholdWindowSize2); j < (i + thresholdWindowSize2); j++)
+            for (int j = (i - driftThresholdWindowSize); j < (i + driftThresholdWindowSize); j++)
             {
                 if (j < 0 || j >= output.peaks.Length) continue; //todo should be optimized
                 avg += output.peaks[j];
@@ -365,7 +362,7 @@ public class BGA
         int offset = 1;
         for (int i = 0; i < output.peakThreshold.Length; i+= offset) {
           offset = 1;
-          if ((i - thresholdWindowSize2) <= 0 || (i + thresholdWindowSize2) >= output.peakThreshold.Length) { //throw out values near beginning and near end
+          if ((i - driftThresholdWindowSize) <= 0 || (i + driftThresholdWindowSize) >= output.peakThreshold.Length) { //throw out values near beginning and near end
               continue;
           }
           while (((i + offset) < output.peakThreshold.Length) && Math.Abs(output.peakThreshold[i] - output.peakThreshold[i + offset]) <= delta) {
@@ -410,7 +407,7 @@ public class BGA
         foreach (GreatestValueElement elem in greatestValues) {
             if (numSelected >= totalAllowableDrifts) break;
             if (first) {
-                int offSetIndex = Math.Max(elem.index - thresholdWindowSize2, 0);
+                int offSetIndex = Math.Max(elem.index - driftThresholdWindowSize, 0);
                 if (offSetIndex == 0) continue;
                 if (offSetIndex - warmUpTimeLength <= 0) continue;
                 output.drifts[offSetIndex] = elem.value;
@@ -424,13 +421,13 @@ public class BGA
                 //And that the elem is not in the middle of a <fly> section or <time_after_fly> section
                 foreach (GreatestValueElement added in addedValues) {
                     if (Math.Abs(elem.index - added.index) <= minLengthBetweenDrift
-                    || Math.Abs(elem.index - output.flySectionIndex) <= (thresholdWindowSize2 * 2)) {
+                    || Math.Abs(elem.index - output.flySectionIndex) <= (flyThresholdWindowSize * 2.2)) {
                         flag = true;
                         break;
                     }
                 }
                 if (!flag) {
-                  int offSetIndex = Math.Max(elem.index - thresholdWindowSize2, 0);
+                  int offSetIndex = Math.Max(elem.index - driftThresholdWindowSize, 0);
                   if (offSetIndex == 0) continue;
                   if (offSetIndex - warmUpTimeLength <= 0) continue;
                   output.drifts[offSetIndex] = elem.value;
@@ -463,74 +460,74 @@ public class BGA
             }
         }
 
-        BeatMap beatMap = makeBeatMap(thresholdWindowSize2 * 2);
+        BeatMap beatMap = makeBeatMap(driftThresholdWindowSize * 2, flyThresholdWindowSize * 2);
         beatMap.save(persistentDataPath);
 
         //todo deal with random stuff below
         //debug output
 
-        Debug.Log("FFT Data collected");
+        Debug.Log("BGA Done");
         this.state = STATE.DONE;
 
-        using (StreamWriter file = new StreamWriter("output.txt"))
-        {
-            for (int i=0; i < output.flux.Length; i++)
-            {
-                file.WriteLine(output.flux[i]);
-            }
-        }
-        using (StreamWriter file = new StreamWriter("output2.txt"))
-        {
-            for (int i = 0; i < output.threshold.Length; i++)
-            {
-                file.WriteLine(output.threshold[i]);
-            }
-        }
-        using (StreamWriter file = new StreamWriter("output3.txt"))
-        {
-            for (int i = 0; i < output.flux2.Length; i++)
-            {
-                file.WriteLine(output.flux2[i]);
-            }
-        }
-        using (StreamWriter file = new StreamWriter("output4.txt"))
-        {
-            for (int i = 0; i < output.peaks.Length; i++)
-            {
-                file.WriteLine(output.peaks[i]);
-            }
-        }
-        using (StreamWriter file = new StreamWriter("output5.txt"))
-        {
-            for (int i = 0; i < output.peaks2.Length; i++)
-            {
-                file.WriteLine(output.peaks2[i]);
-            }
-        }
-        using (StreamWriter file = new StreamWriter("output6.txt"))
-        {
-            for (int i = 0; i < output.peakThreshold.Length; i++)
-            {
-                file.WriteLine(output.peakThreshold[i]);
-            }
-        }
-        using (StreamWriter file = new StreamWriter("output7.txt"))
-        {
-            for (int i = 0; i < output.drifts.Length; i++)
-            {
-                file.WriteLine(output.drifts[i]);
-            }
-        }
-        using (StreamWriter file = new StreamWriter("output8.txt"))
-        {
-            Queue<LaneObject> laneObjects = beatMap.initLaneObjectQueue();
-            foreach (LaneObject l in laneObjects) {
-                file.WriteLine(l.sampleIndex + " " + l.lane + " " + l.time + " " + (l.type == LANE_OBJECT_TYPE.Beat ? "1" : "0"));
-            }
-        }
+        // using (StreamWriter file = new StreamWriter("output.txt"))
+        // {
+        //     for (int i=0; i < output.flux.Length; i++)
+        //     {
+        //         file.WriteLine(output.flux[i]);
+        //     }
+        // }
+        // using (StreamWriter file = new StreamWriter("output2.txt"))
+        // {
+        //     for (int i = 0; i < output.threshold.Length; i++)
+        //     {
+        //         file.WriteLine(output.threshold[i]);
+        //     }
+        // }
+        // using (StreamWriter file = new StreamWriter("output3.txt"))
+        // {
+        //     for (int i = 0; i < output.flux2.Length; i++)
+        //     {
+        //         file.WriteLine(output.flux2[i]);
+        //     }
+        // }
+        // using (StreamWriter file = new StreamWriter("output4.txt"))
+        // {
+        //     for (int i = 0; i < output.peaks.Length; i++)
+        //     {
+        //         file.WriteLine(output.peaks[i]);
+        //     }
+        // }
+        // using (StreamWriter file = new StreamWriter("output5.txt"))
+        // {
+        //     for (int i = 0; i < output.peaks2.Length; i++)
+        //     {
+        //         file.WriteLine(output.peaks2[i]);
+        //     }
+        // }
+        // using (StreamWriter file = new StreamWriter("output6.txt"))
+        // {
+        //     for (int i = 0; i < output.peakThreshold.Length; i++)
+        //     {
+        //         file.WriteLine(output.peakThreshold[i]);
+        //     }
+        // }
+        // using (StreamWriter file = new StreamWriter("output7.txt"))
+        // {
+        //     for (int i = 0; i < output.drifts.Length; i++)
+        //     {
+        //         file.WriteLine(output.drifts[i]);
+        //     }
+        // }
+        // using (StreamWriter file = new StreamWriter("output8.txt"))
+        // {
+        //     Queue<LaneObject> laneObjects = beatMap.initLaneObjectQueue();
+        //     foreach (LaneObject l in laneObjects) {
+        //         file.WriteLine(l.sampleIndex + " " + l.lane + " " + l.time + " " + (l.type == LANE_OBJECT_TYPE.Beat ? "1" : "0"));
+        //     }
+        // }
         
 
-        Debug.Log("Output file saved");
+        // Debug.Log("Output file saved");
         
 
         //frameScale = (int) (songLength / finalArraySize);
@@ -552,7 +549,7 @@ public class BGA
     }
 
     //All peaks are detected - now its time to decide where these beats are going
-    BeatMap makeBeatMap(int drift_length)
+    BeatMap makeBeatMap(int drift_length, int fly_length)
     {
         BeatMap beatMap = new BeatMap(settings, song_info, song_meta, songFilePath);
 
@@ -567,7 +564,7 @@ public class BGA
             float currTime = getTimeFromIndex(i);
             if (i == output.flySectionIndex) {
               LaneObject lObj1 = new LaneObject(i, currTime, -1, LANE_OBJECT_TYPE.START_FLY_TRIGGER);
-              LaneObject lObj2 = new LaneObject(i + drift_length, getTimeFromIndex(i + drift_length), -1, LANE_OBJECT_TYPE.START_NORMAL_TRIGGER);
+              LaneObject lObj2 = new LaneObject(i + fly_length, getTimeFromIndex(i + fly_length), -1, LANE_OBJECT_TYPE.START_NORMAL_TRIGGER);
               endFlyIndex = i + drift_length;
               beatMap.addLaneObject(lObj1);
               beatMap.addLaneObject(lObj2);

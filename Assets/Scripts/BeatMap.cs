@@ -7,7 +7,7 @@ using UnityEngine;
 using UnityEngine.Networking;
 
 /*  Stores the generated beatmap
- * 
+ *  Author: Evan Jesty (101078735)
  */
  [Serializable()]
 public class BeatMap
@@ -175,7 +175,7 @@ public class BeatMap
     public void save (string persistentDataPath) {
         unloadSamples();
         lastPlayed = DateTime.Now; //todo if never played
-        timeGenerated = DateTime.Now;
+        timeGenerated = lastPlayed; //make times the same
         //See https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/concepts/serialization/walkthrough-persisting-an-object-in-visual-studio
         string fileDir = persistentDataPath + "/BeatMaps";
         if (!Directory.Exists(fileDir)) Directory.CreateDirectory(fileDir);

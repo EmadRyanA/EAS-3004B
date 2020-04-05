@@ -5,3 +5,23 @@ It takes a threshold of the peak values, sorts by greatest peaks and selects a s
 based on the # of drift sections per section setting.
 
 ~5 hrs
+
+April 2
+
+Added fly detection to BGA.
+It looks for the greatest shift downwards in intensity from left to right - this is the start of the bridge
+
+~3 hrs
+
+April 3
+Added leaderboards and support for deleting beatmaps
+
+leaderboards are lists of type windataclass stored in the beatmap
+
+~3 hrs
+
+April 5
+Final code clean up, helping others with issues, lots of testing
+~2 hrs
+
+

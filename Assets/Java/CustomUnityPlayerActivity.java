@@ -1,5 +1,9 @@
-package com.DefaultCompany.NewUnityProject;
-//This is for getting the result uri from the native android file
+package com.EAS.SoundWaveSurfer;
+//package com.DefaultCompany.NewUnityProject;
+
+
+//This plugin extends the default UnityPlayerActivity to enable file browser support for picking the mp3 file
+//Author: Evan Jesty (101078735)
 
 import com.unity3d.player.*;
 import com.unity3d.player.UnityPlayerActivity;
@@ -40,7 +44,18 @@ public class CustomUnityPlayerActivity extends UnityPlayerActivity {
         super.onActivityResult(requestCode, resultCode, data);
         Log.d("CustomUnityPlayerActivity", "On Activty Result");
         if (requestCode == REQUEST_CODE) { //todo check for errors in intent
+
+            if (data == null) {
+                UnityPlayer.UnitySendMessage("UI", "resultFromJava", "bgaerror");
+                return;
+            }
+
             Uri fileUri = data.getData();
+
+            if (fileUri == null) {
+                UnityPlayer.UnitySendMessage("UI", "resultFromJava", "bgaerror");
+                return;
+            }
 
             //https://developer.android.com/training/secure-file-sharing/retrieve-info
             //Cursor returnCursor = getContentResolver().query(fileUri, null, null, null, null);
@@ -61,6 +76,8 @@ public class CustomUnityPlayerActivity extends UnityPlayerActivity {
             //String songTitle = (cursor.getString(0) == null ? "NA" : cursor.getString(0)).replaceAll("~", "");
             //String songArtist = (cursor.getString(1) == null ? "NA" : cursor.getString(1)).replaceAll("~", "");
             //String songDisplayName = (cursor.getString(2) == null ? "NA" : cursor.getString(2)).replaceAll("~", "");
+
+
 
             MediaMetadataRetriever metaData = new MediaMetadataRetriever();
             metaData.setDataSource(this, fileUri);
@@ -107,7 +124,7 @@ public class CustomUnityPlayerActivity extends UnityPlayerActivity {
                 Log.d("CustomUnityPlayerActivity", "E2");
             }
 
-            UnityPlayer.UnitySendMessage("BGACanvas", "resultFromJava", songInfo);
+            UnityPlayer.UnitySendMessage("UI", "resultFromJava", songInfo);
         }
         
     }

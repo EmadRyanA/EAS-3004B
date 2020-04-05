@@ -6,6 +6,10 @@ using System.Runtime.Serialization.Formatters.Binary;
 using UnityEngine;
 using UnityEngine.UI;
 
+/* Instantiate the beatmapentrys in the beatmap list
+ * Authors: Evan Jesty (101078735), Robert Occleston-Pratt (101044703)
+ */
+
 public class InstantiateBeatMaps : MonoBehaviour
 {
 
@@ -17,8 +21,10 @@ public class InstantiateBeatMaps : MonoBehaviour
     public Text selectedBeatMapText;
     public BeatMap selectedBeatMap;
     public BeatMapEntryController selectedBeatMapEntryController;
+    public List<BeatMapEntryController> controllers = new List<BeatMapEntryController>();
+    public List<GameObject> panes = new List<GameObject>();
     // Start is called before the first frame update
-    void Start()
+    public void Start()
     {
         mapsContent = mapsContent.GetComponent<Transform>();
         leaderBoard = leaderBoard.GetComponent<Text>();
@@ -44,6 +50,8 @@ public class InstantiateBeatMaps : MonoBehaviour
         foreach(BeatMap beatMap in beatMaps) {
           GameObject beatMapPanel = (GameObject)Instantiate(prefab, new Vector3(0, 0, 0), new Quaternion(0, 0, 0, 0), mapsContent);
           BeatMapEntryController controller = beatMapPanel.GetComponentInChildren<BeatMapEntryController>();
+          controllers.Add(controller);
+          panes.Add(beatMapPanel);
           controller.instantiateBeatMaps = this;
           controller.fileName = beatMapDir + beatMap.fileName;
           controller.setCoverArt(beatMap.songFilePath + ".png");
@@ -51,7 +59,7 @@ public class InstantiateBeatMaps : MonoBehaviour
           foreach(Text text in beatMapPanel.GetComponentsInChildren<Text>()) {
             if (text.name == "SongName") text.text = beatMap.song_meta.title + " by " + beatMap.song_meta.artist;
             else if (text.name == "SongInfo")  {
-              text.text = "Times Played: " + beatMap.timesPlayed + "  Last Played: " + beatMap.lastPlayed.ToShortDateString() + " " + beatMap.lastPlayed.ToShortTimeString()
+              text.text = "Times Played: " + beatMap.timesPlayed + "  Last Played: " + (beatMap.timesPlayed == 0 ? "never" : beatMap.lastPlayed.ToShortDateString() + " " + beatMap.lastPlayed.ToShortTimeString())
                           + "\nRNG Seed: " + beatMap.get_settings().rng_seed.ToString() + " Duration: " + (Mathf.FloorToInt(beatMap.get_song_info().length) / 60f).ToString("0.0") + " minutes";
             }
           }
@@ -67,6 +75,9 @@ public class InstantiateBeatMaps : MonoBehaviour
       selectedBeatMapText.text = "Selected: " + beatMap.song_meta.title + " by " + beatMap.song_meta.artist + " (" + beatMap.get_settings().rng_seed.ToString() + ")";
       leaderBoard.text = "";
       List<WinDataClass> wins = beatMap.getScoreBoard();
+      if (wins.Count == 0) {
+        leaderBoard.text = "No recorded scores.";
+      }
       foreach (WinDataClass win in wins)
       {
         leaderBoard.text += " " + win.score.ToString() + " on: " + win.date.ToShortDateString() + "\n";
@@ -81,6 +92,16 @@ public class InstantiateBeatMaps : MonoBehaviour
       }
       selectedBeatMap = null;
       selectedBeatMapEntryController = null;
+    }
+
+    public void refreshBeatMaps()
+    {
+      foreach(BeatMapEntryController c in controllers){
+        if(c != null){
+          c.destroy();
+        }
+      }
+      Start();
     }
 
     // Update is called once per frame
