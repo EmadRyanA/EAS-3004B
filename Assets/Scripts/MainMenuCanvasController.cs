@@ -65,6 +65,7 @@ public class MainMenuCanvasController : MonoBehaviour
     GameObject generatingCanvas;
     GameObject songArt;
 
+
     //For BGA
     public BGA bga;
     public AudioClip inputAudioClip; //To be loaded from web url or file url
@@ -78,6 +79,7 @@ public class MainMenuCanvasController : MonoBehaviour
         AUDIO_CLIP_LOADING,
         AUDIO_CLIP_ERROR,
         AUDIO_CLIP_LOADED,
+        AUDIO_CLIP_PRESENTED,
         START_BGA,
         BGA_STARTED,
         BGA_FINISHED
@@ -333,7 +335,6 @@ public class MainMenuCanvasController : MonoBehaviour
                     songDurationText.GetComponent<Text>().text = (int)songLength/60 + ":" + (int)(songLength%60);
                     //load album art of song
                     try {
-                        print("ALJFLAHSLKFLKAHFLKASLKFALKSFJLKAJSLKFJSA");
                         byte[] bytes = System.IO.File.ReadAllBytes(path + ".png");
                         Texture2D texture2D = new Texture2D(1, 1);
                         texture2D.LoadImage(bytes);
@@ -343,7 +344,9 @@ public class MainMenuCanvasController : MonoBehaviour
                     catch (IOException e) {
                         Debug.Log("err");
                             Debug.Log(e);
-                    }               
+                    }
+                    songArt.SetActive(true);
+                    state = STATE.AUDIO_CLIP_PRESENTED;               
                 }
 
                 //if generateBGA button is hit
@@ -521,9 +524,8 @@ public class MainMenuCanvasController : MonoBehaviour
     {
 
         if (BGACommon.IS_PC) {
-            path = Application.persistentDataPath + "/Songs/Dreams~Lost Sky~Dreams"; //for testing on windows: set the path var to a song
-            song = new song_meta_struct("Dreams", "Lost Sky", "Dreams"); //for testing; set the meta data
-            songNameText.text = song.title + " by " + song.artist;//for testing; set the text UI
+            //for testing
+            resultFromJava("Dreams~Lost Sky~Dreams");
         }
         else {
             Debug.Log("Opening select file on android...");
@@ -537,14 +539,6 @@ public class MainMenuCanvasController : MonoBehaviour
             }
             //path = "file://" + filePath;
             activity.Call("CallFromUnity", filePath);
-
-        }
-
-        //start loading song
-        if (path != "")
-        {
-            state = STATE.AUDIO_CLIP_LOADING;
-            StartCoroutine(getAudioClipFromPath(path + BGACommon.SONG_FORMAT));
         }
     }
 
@@ -556,6 +550,10 @@ public class MainMenuCanvasController : MonoBehaviour
       song = new song_meta_struct(strings[0], strings[1], strings[2]);
       songNameText.text = song.title + " by " + song.artist;
       path = Application.persistentDataPath + "/Songs/" + s;
+
+      //start loading song
+      state = STATE.AUDIO_CLIP_LOADING;
+      StartCoroutine(getAudioClipFromPath(path + BGACommon.SONG_FORMAT));
     }
 
     #else
@@ -604,7 +602,7 @@ public class MainMenuCanvasController : MonoBehaviour
     {
         Debug.Log("generate");
         Debug.Log(path);
-        if(state == STATE.AUDIO_CLIP_LOADED && inputAudioClip != null)
+        if(state == STATE.AUDIO_CLIP_PRESENTED && inputAudioClip != null)
             {
                 Debug.Log("generate");
                 Debug.Log(path);
@@ -636,7 +634,6 @@ public class MainMenuCanvasController : MonoBehaviour
     void okButtonListener()
     {
         mapsContent.GetComponent<InstantiateBeatMaps>().refreshBeatMaps();
-        print("AKJDKJASKJDHKJSAHDKJAHSKJDHAKJS");
         //set state for bga to ready so more songs can be generated, set state of UI to map select
         state = STATE.READY;
         currentState = 1;
@@ -647,6 +644,6 @@ public class MainMenuCanvasController : MonoBehaviour
         songDurationText.GetComponent<Text>().text = "00:00";
         inputAudioClip = null;
         path = "";
-        
+        songArt.SetActive(false);
     }
 }
