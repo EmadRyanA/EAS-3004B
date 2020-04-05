@@ -1,0 +1,60 @@
+Robert Occleston-Pratt (101044703) Dev Logs
+Week 1 (January 20 - January 24)
+ - Installed work environment (Unity, Android Studio, VS Code, Blender).
+ - Worked on deliverable and presentation with group.
+ - Practiced using Unity.
+ - Practiced using C#.
+
+Week 2(January 27 - January 31)
+ - Practiced creating basic shapes in Blender.
+ - Created palm tree 3D Model asset (not used).
+ - Started making car 3D Model asset (not used).
+
+Week 3(February 3 - February 7)
+ - Started working on main menu
+ - Finished Car 3D model (not used).
+ - Created road texture and some background textures.
+ - Sourced 3D models for cars and palm trees
+
+Week 4(February 10 - February 14)
+ - Was very busy with other classes, didn't get much done this week.
+
+Week 5(February 17 - February 21)
+ - Reading week. 
+
+Week 6(February 24 - February 28)
+ - Created textures for background of game.
+
+Week 7(March 2 - March 6)
+ - Simplified BGA scene's interface to easy, medium, and hard settings with fixed values
+   instead of sliders.
+ - Rearranged BGA scene's UI.
+ - Started working on animation for when song is loading.
+Week 8(March 9 - March 13)
+ - Worked on D3 diagrams.
+ - Made new textures for skybox, modified old textures.
+ - Created textures for BGAScene buttons, background, and loading song.
+ - Prepped for D3.
+
+Week 9(March 16 - March 20)
+ - Prepared for D3 interview.
+ - Lost work for BGA Menu, had to restart.
+
+Week 10(March 23 - March 27)
+ - Started moving BGA scene's functionality to main menu scene.
+ - Creted canvas and UI for selecting a song in main menu.
+ - Moved load function from BGASCene to main menu, can now load songs with a fixed file path.
+ - Added functioning file select to main menu canvas from BGAScene.
+ - Started adding more states to main menu to prepare for more functionality relating to BGA.
+
+Week 11(March 30 - April 3)
+ - Added loading screen while BGA is running in main menu.
+ - Changed select song menu such that it loads the song before the generate BGA button is hit.
+ - Select song menu now displays song duration and album art of song once it is selected and loaded
+ - Fixed various bugs relating to BGA in the main menu.
+   - Created refresh function so newly generated beatmaps show up in map select.
+   - Only being able to generate a beatmap once before having to refresh scene, had to set state of BGA to READY.
+   - Songs wouldn't load on Android - had code that loaded songs in the listener for select song button, tried to load
+     the song before the path was determined, moved it to resultfromjava function.
+ - Polished main menu a bit, refactored some slower code.
+
