@@ -270,3 +270,42 @@ Achievements:
 - your selected car in the garage can now be used in game
 - change company name/game name and reflected the changes in the Java code 
 - other bug fixes
+
+___________________________________________
+Week of Mar 23 - Mar 29
+
+Sunday
+Time spent: 4 hours
+
+Duties:
+- bug fixing
+- code refactoring
+
+Achievements:
+- code has been refactored, and is now easier to navigate/edit.
+
+___________________________________________
+Week of Mar 30 - Apr 5
+
+Friday
+Time spent: 6 hours
+
+Duties:
+- add more UI elements
+- refine aesthetics
+
+Achievements:
+- added warning and notification UI elements
+- added different font, swapped out many text elements
+- added settings menu element, added functionality to different elements
+- added more environments (trees, buildings)
+
+Sunday
+Time spent: 2 hours
+
+Duties:
+- general refinement
+
+Achievements:
+- added sound effects upon colliding with an objective/obstacle
+- fixed bugs.
