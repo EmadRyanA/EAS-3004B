@@ -320,7 +320,7 @@ public class MainMenuCanvasController : MonoBehaviour
                 MapSelect.SetActive(false);
                 BGAMenu.SetActive(true);
 
-                if(seedInput.GetComponent<InputField>().text.Length == 8){
+                if(seedInput.GetComponent<InputField>().text != ""){
                     currentSeed = int.Parse(seedInput.GetComponent<InputField>().text);
                 }
 
