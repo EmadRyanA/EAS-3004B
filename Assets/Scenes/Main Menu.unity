@@ -1425,7 +1425,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 210, y: 135}
+  m_AnchoredPosition: {x: 250, y: 150}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &166119971
@@ -1448,7 +1448,7 @@ MonoBehaviour:
       m_Calls: []
   m_FontData:
     m_Font: {fileID: 12800000, guid: 047d099572cece2408b517ac0acc2c2b, type: 3}
-    m_FontSize: 18
+    m_FontSize: 22
     m_FontStyle: 0
     m_BestFit: 0
     m_MinSize: 1
@@ -6538,7 +6538,7 @@ GameObject:
   - component: {fileID: 593802115}
   - component: {fileID: 593802114}
   m_Layer: 5
-  m_Name: SongThumbnail
+  m_Name: SongArt
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6560,8 +6560,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -320, y: 140}
-  m_SizeDelta: {x: 65, y: 65}
+  m_AnchoredPosition: {x: -320, y: 150}
+  m_SizeDelta: {x: 75, y: 75}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &593802114
 MonoBehaviour:
@@ -7798,8 +7798,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -40, y: 135}
-  m_SizeDelta: {x: 440, y: 30}
+  m_AnchoredPosition: {x: -50, y: 150}
+  m_SizeDelta: {x: 410, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &656979438
 MonoBehaviour:
@@ -7821,16 +7821,16 @@ MonoBehaviour:
       m_Calls: []
   m_FontData:
     m_Font: {fileID: 12800000, guid: 047d099572cece2408b517ac0acc2c2b, type: 3}
-    m_FontSize: 18
+    m_FontSize: 22
     m_FontStyle: 0
-    m_BestFit: 0
+    m_BestFit: 1
     m_MinSize: 1
     m_MaxSize: 40
     m_Alignment: 0
     m_AlignByGeometry: 0
     m_RichText: 1
     m_HorizontalOverflow: 0
-    m_VerticalOverflow: 0
+    m_VerticalOverflow: 1
     m_LineSpacing: 1
   m_Text: No song selected.
 --- !u!222 &656979439
@@ -8027,7 +8027,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -175, y: 230}
+  m_AnchoredPosition: {x: -175, y: 250}
   m_SizeDelta: {x: 500, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &715981481
@@ -8342,7 +8342,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 563616794}
   m_HandleRect: {fileID: 563616793}
   m_Direction: 0
-  m_Value: 1
+  m_Value: 0
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -8874,7 +8874,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   songNameText: {fileID: 0}
-  songDurationText: {fileID: 0}
   currentSeed: 0
   inputAudioClip: {fileID: 0}
   difficulty: 0
@@ -10541,7 +10540,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -120, y: 170}
+  m_AnchoredPosition: {x: -80, y: 200}
   m_SizeDelta: {x: 200, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &970200987
@@ -12592,7 +12591,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 200, y: 170}
+  m_AnchoredPosition: {x: 240, y: 200}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1158882600
@@ -13206,7 +13205,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2128777236}
   m_HandleRect: {fileID: 2128777235}
   m_Direction: 2
-  m_Value: 0
+  m_Value: 1
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -19690,7 +19689,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 8.900024}
+  m_AnchoredPosition: {x: 0, y: 8.9001465}
   m_SizeDelta: {x: -400, y: -102.2}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1774454464
@@ -21193,7 +21192,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 220}
+  m_AnchoredPosition: {x: 0, y: 240}
   m_SizeDelta: {x: 200, y: 40}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1901049921

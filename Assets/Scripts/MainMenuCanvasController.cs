@@ -58,11 +58,13 @@ public class MainMenuCanvasController : MonoBehaviour
     GameObject seedInput;
     GameObject okButton;
     public Text songNameText;
-    public Text songDurationText;
+    GameObject songDurationText;
     public int currentSeed = 0;
     GameObject generatingText;
     GameObject loadingAnimationText;
     GameObject generatingCanvas;
+    GameObject songArt;
+
 
     //For BGA
     public BGA bga;
@@ -77,6 +79,8 @@ public class MainMenuCanvasController : MonoBehaviour
         AUDIO_CLIP_LOADING,
         AUDIO_CLIP_ERROR,
         AUDIO_CLIP_LOADED,
+        AUDIO_CLIP_PRESENTED,
+        START_BGA,
         BGA_STARTED,
         BGA_FINISHED
     }
@@ -150,6 +154,8 @@ public class MainMenuCanvasController : MonoBehaviour
         generatingText = GameObject.Find("GeneratingText");
         loadingAnimationText = GameObject.Find("LoadingAnimationText");
         generatingCanvas = GameObject.Find("GeneratingCanvas");
+        songDurationText = GameObject.Find("SongDuration");
+        songArt = GameObject.Find("SongArt");
 
 
         // listeners
@@ -165,9 +171,9 @@ public class MainMenuCanvasController : MonoBehaviour
         purchaseButton.GetComponent<Button>().onClick.AddListener(handlePurchaseButton);
         
         //BGA Menu listeners
-        easyButton.GetComponent<Button>().onClick.AddListener(() => {this.difficulty = DIFFICULTY.EASY;});
-        normalButton.GetComponent<Button>().onClick.AddListener(() => {this.difficulty = DIFFICULTY.NORMAL;});
-        hardButton.GetComponent<Button>().onClick.AddListener(() => {this.difficulty = DIFFICULTY.HARD;});
+        easyButton.GetComponent<Button>().onClick.AddListener(easyButtonListener);
+        normalButton.GetComponent<Button>().onClick.AddListener(normalButtonListener);
+        hardButton.GetComponent<Button>().onClick.AddListener(hardButtonListener);
         selectSongButton.GetComponent<Button>().onClick.AddListener(selectFileListener);
         generateButton.GetComponent<Button>().onClick.AddListener(generateBeatMapListener);
         BGAExitButton.GetComponent<Button>().onClick.AddListener(toBGA);
@@ -324,23 +330,27 @@ public class MainMenuCanvasController : MonoBehaviour
                     currentSeed = int.Parse(seedInput.GetComponent<InputField>().text);
                 }
 
-                //to see which difficulty is chosen
-                if(difficulty == DIFFICULTY.EASY){
-                    easyButton.GetComponent<Image>().color = new Color(255f, 0f, 255f);
-                    normalButton.GetComponent<Image>().color = new Color(255f, 255f, 255f);
-                    hardButton.GetComponent<Image>().color = new Color(255f, 255f, 255f);
-                } else if(difficulty == DIFFICULTY.NORMAL){
-                    easyButton.GetComponent<Image>().color = new Color(255f, 255f, 255f);
-                    normalButton.GetComponent<Image>().color = new Color(255f, 0f, 255f);
-                    hardButton.GetComponent<Image>().color = new Color(255f, 255f, 255f);
-                } else {
-                    easyButton.GetComponent<Image>().color = new Color(255f, 255f, 255f);
-                    normalButton.GetComponent<Image>().color = new Color(255f, 255f, 255f);
-                    hardButton.GetComponent<Image>().color = new Color(255f, 0f, 255f);
+                if(state == STATE.AUDIO_CLIP_LOADED && inputAudioClip != null){
+                    float songLength = inputAudioClip.length;
+                    songDurationText.GetComponent<Text>().text = (int)songLength/60 + ":" + (int)(songLength%60);
+                    //load album art of song
+                    try {
+                        byte[] bytes = System.IO.File.ReadAllBytes(path + ".png");
+                        Texture2D texture2D = new Texture2D(1, 1);
+                        texture2D.LoadImage(bytes);
+                        Sprite sprite = Sprite.Create(texture2D, new Rect(0, 0, texture2D.width, texture2D.height), new Vector2(0, 0));
+                        if (sprite != null) songArt.GetComponent<Image>().sprite = sprite;
+                    }
+                    catch (IOException e) {
+                        Debug.Log("err");
+                            Debug.Log(e);
+                    }
+                    songArt.SetActive(true);
+                    state = STATE.AUDIO_CLIP_PRESENTED;               
                 }
 
                 //if generateBGA button is hit
-                if (state == STATE.AUDIO_CLIP_LOADED && inputAudioClip != null)
+                if (state == STATE.START_BGA)
                 {
                     Debug.Log("Starting BGA");
                     print(currentSeed);
@@ -426,11 +436,6 @@ public class MainMenuCanvasController : MonoBehaviour
         BinaryFormatter deserializer = new BinaryFormatter();
         //BeatMap beatMap = (BeatMap)deserializer.Deserialize(openFileStream);
         SceneManager.LoadScene("New Scene");
-        //print(beatMap.initLaneObjectQueue().Peek());
-        //GameObject beatMapPanel = (GameObject)Instantiate(prefab, new Vector3(0, 0, 0), new Quaternion(0, 0, 0, 0), mapsContent);
-        //BeatMapEntryController controller = beatMapPanel.GetComponentInChildren<BeatMapEntryController>();
-        //controller.fileName = fileName;
-        //beatMapPanel.GetComponentInChildren<Text>().text = beatMap.name;
     }
 
     // edit username
@@ -459,15 +464,7 @@ public class MainMenuCanvasController : MonoBehaviour
         
         cars[prevCarIndex].carObject.SetActive(false);
         cars[currentCarIndex].carObject.SetActive(true);
-        
-        //Vector3 oldPos = MainMenuController.cars[currentCarIndex].transform.position;
-        //MainMenuController.cars[currentCarIndex].transform.position = playerCar.transform.position;
-        //MainMenuController.cars[currentCarIndex].transform.rotation = playerCar.transform.rotation;
-        //playerCar.transform.position = oldPos; 
-        //MainMenuController.cars[prevCarIndex].transform.position = oldPos;
-        // need to set the player car here
-
-        
+                
     }
 
     private void handlePrevCarButton(){
@@ -477,10 +474,6 @@ public class MainMenuCanvasController : MonoBehaviour
         }else{
             currentCarIndex--;
         }
-        //Vector3 oldPos = MainMenuController.cars[currentCarIndex].transform.position;
-        //MainMenuController.cars[currentCarIndex].transform.position = playerCar.transform.position;
-        //MainMenuController.cars[currentCarIndex].transform.rotation = playerCar.transform.rotation;
-        //playerCar.transform.position = oldPos;
         cars[prevCarIndex].carObject.SetActive(false);
         cars[currentCarIndex].carObject.SetActive(true);
     }
@@ -531,7 +524,8 @@ public class MainMenuCanvasController : MonoBehaviour
     {
 
         if (BGACommon.IS_PC) {
-           
+            //for testing
+            resultFromJava("Dreams~Lost Sky~Dreams");
         }
         else {
             Debug.Log("Opening select file on android...");
@@ -560,6 +554,10 @@ public class MainMenuCanvasController : MonoBehaviour
       song = new song_meta_struct(strings[0], strings[1], strings[2]);
       songNameText.text = song.title + " by " + song.artist;
       path = Application.persistentDataPath + "/Songs/" + s;
+
+      //start loading song
+      state = STATE.AUDIO_CLIP_LOADING;
+      StartCoroutine(getAudioClipFromPath(path + BGACommon.SONG_FORMAT));
     }
 
     #else
@@ -608,20 +606,48 @@ public class MainMenuCanvasController : MonoBehaviour
     {
         Debug.Log("generate");
         Debug.Log(path);
-        if (path != "")
-        {
-            state = STATE.AUDIO_CLIP_LOADING;
-            StartCoroutine(getAudioClipFromPath(path + BGACommon.SONG_FORMAT));
-        }
+        if(state == STATE.AUDIO_CLIP_PRESENTED && inputAudioClip != null)
+            {
+                Debug.Log("generate");
+                Debug.Log(path);
+                state = STATE.START_BGA;
+            }
     }
+
+    void easyButtonListener(){
+        difficulty = DIFFICULTY.EASY;
+        easyButton.GetComponent<Image>().color = new Color(255f, 0f, 255f);
+        normalButton.GetComponent<Image>().color = new Color(255f, 255f, 255f);
+        hardButton.GetComponent<Image>().color = new Color(255f, 255f, 255f);
+    }
+
+    void normalButtonListener(){
+        difficulty = DIFFICULTY.NORMAL;
+        easyButton.GetComponent<Image>().color = new Color(255f, 255f, 255f);
+        normalButton.GetComponent<Image>().color = new Color(255f, 0f, 255f);
+        hardButton.GetComponent<Image>().color = new Color(255f, 255f, 255f);
+    }
+
+    void hardButtonListener(){
+        difficulty = DIFFICULTY.HARD;
+        easyButton.GetComponent<Image>().color = new Color(255f, 255f, 255f);
+        normalButton.GetComponent<Image>().color = new Color(255f, 255f, 255f);
+        hardButton.GetComponent<Image>().color = new Color(255f, 0f, 255f);
+    }
+    
     void okButtonListener()
     {
-        //MapSelect.GetComponentInChildren<InstantiateBeatMaps>().refreshBeatMaps();
         mapsContent.GetComponent<InstantiateBeatMaps>().refreshBeatMaps();
-        print("AKJDKJASKJDHKJSAHDKJAHSKJDHAKJS");
+        //set state for bga to ready so more songs can be generated, set state of UI to map select
         state = STATE.READY;
         currentState = 1;
+        //reset values for next time the user generates a beat map
         generatingText.GetComponent<Text>().text = "Generating BeatMap";
         okButton.SetActive(false);
+        songNameText.GetComponent<Text>().text = "No song selected.";
+        songDurationText.GetComponent<Text>().text = "00:00";
+        inputAudioClip = null;
+        path = "";
+        songArt.SetActive(false);
     }
 }
