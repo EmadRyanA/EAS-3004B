@@ -59,7 +59,7 @@ public class InstantiateBeatMaps : MonoBehaviour
           foreach(Text text in beatMapPanel.GetComponentsInChildren<Text>()) {
             if (text.name == "SongName") text.text = beatMap.song_meta.title + " by " + beatMap.song_meta.artist;
             else if (text.name == "SongInfo")  {
-              text.text = "Times Played: " + beatMap.timesPlayed + "  Last Played: " + beatMap.lastPlayed.ToShortDateString() + " " + beatMap.lastPlayed.ToShortTimeString()
+              text.text = "Times Played: " + beatMap.timesPlayed + "  Last Played: " + (beatMap.timesPlayed == 0 ? "never" : beatMap.lastPlayed.ToShortDateString() + " " + beatMap.lastPlayed.ToShortTimeString())
                           + "\nRNG Seed: " + beatMap.get_settings().rng_seed.ToString() + " Duration: " + (Mathf.FloorToInt(beatMap.get_song_info().length) / 60f).ToString("0.0") + " minutes";
             }
           }
@@ -75,6 +75,9 @@ public class InstantiateBeatMaps : MonoBehaviour
       selectedBeatMapText.text = "Selected: " + beatMap.song_meta.title + " by " + beatMap.song_meta.artist + " (" + beatMap.get_settings().rng_seed.ToString() + ")";
       leaderBoard.text = "";
       List<WinDataClass> wins = beatMap.getScoreBoard();
+      if (wins.Count == 0) {
+        leaderBoard.text = "No recorded scores.";
+      }
       foreach (WinDataClass win in wins)
       {
         leaderBoard.text += " " + win.score.ToString() + " on: " + win.date.ToShortDateString() + "\n";
