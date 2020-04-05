@@ -1,4 +1,6 @@
-package com.DefaultCompany.NewUnityProject;
+package com.EAS.SoundWaveSurfer;
+//package com.DefaultCompany.NewUnityProject;
+
 
 //This plugin extends the default UnityPlayerActivity to enable file browser support for picking the mp3 file
 //Author: Evan Jesty (101078735)
