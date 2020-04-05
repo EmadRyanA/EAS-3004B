@@ -1,5 +1,7 @@
 package com.DefaultCompany.NewUnityProject;
-//This is for getting the result uri from the native android file
+
+//This plugin extends the default UnityPlayerActivity to enable file browser support for picking the mp3 file
+//Author: Evan Jesty (101078735)
 
 import com.unity3d.player.*;
 import com.unity3d.player.UnityPlayerActivity;

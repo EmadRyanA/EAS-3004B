@@ -11,9 +11,11 @@ using UnityEngine;
 
 /* The class that performs beat map generation given an audioClip
  * Sources used during development:
- * https://medium.com/giant-scam/algorithmic-beat-mapping-in-unity-preprocessed-audio-analysis-d41c339c135a for unity specific steps (e.g getting FFT data for all of the sample length)
+ * https://medium.com/giant-scam/algorithmic-beat-mapping-in-unity-preprocessed-audio-analysis-d41c339c135a for some unity specific steps (e.g running as thread, specifics about the AudioClip, etc)
  * https://www.codeproject.com/Articles/1107480/DSPLib-FFT-DFT-Fourier-Transform-Library-for-NET-6 This is the FFT library that we currently use.
- * https://www.badlogicgames.com/wordpress/?p=122 Used to create the peaks[] (detect beats). (this is where concepts like spectral flux, threshold come from)
+ * https://www.badlogicgames.com/wordpress/?p=122 Used to learn about beat detection logic. (this is where concepts like spectral flux, threshold come from)
+ * 
+ * Author: Evan Jesty (101078735)
  */
 
 public class BGA
@@ -24,6 +26,7 @@ public class BGA
         READY,
         ACTIVE,
         THREAD_ACTIVE,
+        ERROR,
         DONE
     }
 
@@ -119,13 +122,6 @@ public class BGA
         return Mathf.FloorToInt(new System.Random().Next((int)Mathf.Pow(10, (RANDOM_SEED_LENGTH - 1)), (int)Mathf.Pow(10, RANDOM_SEED_LENGTH) - 1));
     }
 
-    // Start is called before the first frame update
-    //void Start()
-    //{
-    //    this.state = STATE.READY;
-    //    Debug.Log("BGA Game object loaded.");
-    //}
-
     //Background thread to run the algorithim
     void algorithimWrapper()
     {
@@ -138,6 +134,7 @@ public class BGA
         catch (Exception e)
         {
             Debug.Log(e);
+            this.state = STATE.ERROR;
         }
     }
 
@@ -424,7 +421,7 @@ public class BGA
                 //And that the elem is not in the middle of a <fly> section or <time_after_fly> section
                 foreach (GreatestValueElement added in addedValues) {
                     if (Math.Abs(elem.index - added.index) <= minLengthBetweenDrift
-                    || Math.Abs(elem.index - output.flySectionIndex) <= (thresholdWindowSize2 * 2)) {
+                    || Math.Abs(elem.index - output.flySectionIndex) <= (thresholdWindowSize2 * 2.2)) {
                         flag = true;
                         break;
                     }
@@ -469,68 +466,68 @@ public class BGA
         //todo deal with random stuff below
         //debug output
 
-        Debug.Log("FFT Data collected");
+        Debug.Log("BGA Done");
         this.state = STATE.DONE;
 
-        using (StreamWriter file = new StreamWriter("output.txt"))
-        {
-            for (int i=0; i < output.flux.Length; i++)
-            {
-                file.WriteLine(output.flux[i]);
-            }
-        }
-        using (StreamWriter file = new StreamWriter("output2.txt"))
-        {
-            for (int i = 0; i < output.threshold.Length; i++)
-            {
-                file.WriteLine(output.threshold[i]);
-            }
-        }
-        using (StreamWriter file = new StreamWriter("output3.txt"))
-        {
-            for (int i = 0; i < output.flux2.Length; i++)
-            {
-                file.WriteLine(output.flux2[i]);
-            }
-        }
-        using (StreamWriter file = new StreamWriter("output4.txt"))
-        {
-            for (int i = 0; i < output.peaks.Length; i++)
-            {
-                file.WriteLine(output.peaks[i]);
-            }
-        }
-        using (StreamWriter file = new StreamWriter("output5.txt"))
-        {
-            for (int i = 0; i < output.peaks2.Length; i++)
-            {
-                file.WriteLine(output.peaks2[i]);
-            }
-        }
-        using (StreamWriter file = new StreamWriter("output6.txt"))
-        {
-            for (int i = 0; i < output.peakThreshold.Length; i++)
-            {
-                file.WriteLine(output.peakThreshold[i]);
-            }
-        }
-        using (StreamWriter file = new StreamWriter("output7.txt"))
-        {
-            for (int i = 0; i < output.drifts.Length; i++)
-            {
-                file.WriteLine(output.drifts[i]);
-            }
-        }
-        using (StreamWriter file = new StreamWriter("output8.txt"))
-        {
-            Queue<LaneObject> laneObjects = beatMap.initLaneObjectQueue();
-            foreach (LaneObject l in laneObjects) {
-                file.WriteLine(l.sampleIndex + " " + l.lane + " " + l.time + " " + (l.type == LANE_OBJECT_TYPE.Beat ? "1" : "0"));
-            }
-        }
+        // using (StreamWriter file = new StreamWriter("output.txt"))
+        // {
+        //     for (int i=0; i < output.flux.Length; i++)
+        //     {
+        //         file.WriteLine(output.flux[i]);
+        //     }
+        // }
+        // using (StreamWriter file = new StreamWriter("output2.txt"))
+        // {
+        //     for (int i = 0; i < output.threshold.Length; i++)
+        //     {
+        //         file.WriteLine(output.threshold[i]);
+        //     }
+        // }
+        // using (StreamWriter file = new StreamWriter("output3.txt"))
+        // {
+        //     for (int i = 0; i < output.flux2.Length; i++)
+        //     {
+        //         file.WriteLine(output.flux2[i]);
+        //     }
+        // }
+        // using (StreamWriter file = new StreamWriter("output4.txt"))
+        // {
+        //     for (int i = 0; i < output.peaks.Length; i++)
+        //     {
+        //         file.WriteLine(output.peaks[i]);
+        //     }
+        // }
+        // using (StreamWriter file = new StreamWriter("output5.txt"))
+        // {
+        //     for (int i = 0; i < output.peaks2.Length; i++)
+        //     {
+        //         file.WriteLine(output.peaks2[i]);
+        //     }
+        // }
+        // using (StreamWriter file = new StreamWriter("output6.txt"))
+        // {
+        //     for (int i = 0; i < output.peakThreshold.Length; i++)
+        //     {
+        //         file.WriteLine(output.peakThreshold[i]);
+        //     }
+        // }
+        // using (StreamWriter file = new StreamWriter("output7.txt"))
+        // {
+        //     for (int i = 0; i < output.drifts.Length; i++)
+        //     {
+        //         file.WriteLine(output.drifts[i]);
+        //     }
+        // }
+        // using (StreamWriter file = new StreamWriter("output8.txt"))
+        // {
+        //     Queue<LaneObject> laneObjects = beatMap.initLaneObjectQueue();
+        //     foreach (LaneObject l in laneObjects) {
+        //         file.WriteLine(l.sampleIndex + " " + l.lane + " " + l.time + " " + (l.type == LANE_OBJECT_TYPE.Beat ? "1" : "0"));
+        //     }
+        // }
         
 
-        Debug.Log("Output file saved");
+        // Debug.Log("Output file saved");
         
 
         //frameScale = (int) (songLength / finalArraySize);

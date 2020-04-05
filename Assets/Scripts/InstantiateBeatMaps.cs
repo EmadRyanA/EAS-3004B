@@ -6,6 +6,10 @@ using System.Runtime.Serialization.Formatters.Binary;
 using UnityEngine;
 using UnityEngine.UI;
 
+/* Instantiate the beatmapentrys in the beatmap list
+ * Authors: Evan Jesty (101078735), Robert Occleston-Pratt (101044703)
+ */
+
 public class InstantiateBeatMaps : MonoBehaviour
 {
 

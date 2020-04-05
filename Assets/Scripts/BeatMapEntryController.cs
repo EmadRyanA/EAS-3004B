@@ -6,6 +6,10 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.Networking;
 
+/* Control each beatmap entry in the beatmap list in main menu
+ * Author: Evan Jesty (101078735)
+ */
+
 public class BeatMapEntryController : MonoBehaviour
 {
 

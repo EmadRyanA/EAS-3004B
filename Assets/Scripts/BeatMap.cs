@@ -7,7 +7,7 @@ using UnityEngine;
 using UnityEngine.Networking;
 
 /*  Stores the generated beatmap
- * 
+ *  Author: Evan Jesty (101078735)
  */
  [Serializable()]
 public class BeatMap

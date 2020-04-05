@@ -4,6 +4,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 
+/* Define common struct types and constant variables
+ * Author: Evan Jesty (101078735)
+ */
+
 public enum LANE_OBJECT_TYPE
 {
     Obstacle,

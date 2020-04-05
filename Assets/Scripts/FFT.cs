@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using DSPLib;
 
 /*  Define an abstract class that performs the FFT algorthim along with any needed FFT window functions
+ *  Author: Evan Jesty (101078735)
  */
 
 //Define generic names for FFT window types, implementations must parse this and convert to an internal representation of the window type
