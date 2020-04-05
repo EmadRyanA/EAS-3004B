@@ -117,12 +117,9 @@ public static class BGACommon
         float time; //Timestamp approximation of sampleIndex
         int lane; //0 - (lanes - 1)
     }
-
     public class Obstacle : LaneObject
     {
-
     }
-
     public class Beat : LaneObject
     {
         float amplitude; //0 - 1.0; The amplitude of the beat
