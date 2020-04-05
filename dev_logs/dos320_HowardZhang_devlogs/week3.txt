@@ -1,0 +1,41 @@
+
+___________________________________________
+
+Week of Mon Feb 3 – Sun Feb 9
+
+---------
+Monday
+
+Time spent: 5 hours
+
+Duties:
+-	Health system
+-	UI
+
+Achievements:
+-	Functional health bar
+  o	Constantly decreasing
+  o	Decreases/increases when colliding with bad/good objectives, respectively
+-	Pause button / pause menu
+  o	Unpause button --- this is functional
+  o	Restart button --- needs implementation/development in other areas
+  o	Settings button --- needs implementation/development in other areas
+  o	Quit button --- needs implementation/development in other areas
+-	Refactored player movement code 
+  o	Player now moves faster from side to side (MoveTowards instead of Lerp)
+
+---------
+Sunday
+
+Time spent: 6 hours
+
+Duties: 
+- Main menu
+- Game UI
+- refining gameplay (particularly the camera)
+
+Achievements:
+- Garage function, can now potentially change your vehicle, track progression, etc.
+- more camera anglea/transitions
+- the camera now moves smoothly (using update() rather than fixedupdate())
+- added functionality to many buttons

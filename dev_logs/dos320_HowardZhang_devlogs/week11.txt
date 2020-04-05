@@ -1,0 +1,12 @@
+___________________________________________
+Week of Mar 23 - Mar 29
+
+Sunday
+Time spent: 4 hours
+
+Duties:
+- bug fixing
+- code refactoring
+
+Achievements:
+- code has been refactored, and is now easier to navigate/edit.

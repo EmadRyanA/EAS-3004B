@@ -1,0 +1,38 @@
+___________________________________________
+Week of Mar 1 - Mar 8
+
+---------
+Wednesday
+Time spent: 2 hours
+
+Duties:
+- adding the game win state
+
+Achievements:
+- serialization of game win data
+- added victory scene to display the results of the player's performance
+- added helper class to better organize code
+- a "game end" trigger now spawns at the end of every beatmap
+
+---------
+Thursday
+Time spent: 3 hours
+
+Duties:
+- adding the game win state, refining it
+
+Achievements:
+- fixed issues related to integer division in the serialization of the player's performance data
+- fixed some UI issues - displaying text on the victory scene
+
+---------
+Friday
+Time spent: 2 hours
+
+Duties:
+- Improving graphical fidelity of the game
+
+Achievements:
+- added some post processing effects (e.g. depth of field, chromatic aberration, bloom, etc.)
+- adjusted post processing parameters to suit the overall look of the game
+- minor bugfixes

@@ -1,0 +1,29 @@
+___________________________________________
+
+Week of feb 24 - mar 1
+
+---------
+Saturday
+Time spent: 2 hours
+
+Duties:
+- adding mobile controls
+- bugfixing
+
+Achievements:
+- added mobile controls (tapping, tilting)
+- added flying mode
+
+---------
+Sunday
+Time spent: 6 hours
+
+Duties:
+- generation of objectives
+- bugfixing
+
+Achievements:
+- minor refactoring of code to increase compatibility across the board
+- audio now plays
+- generation of objectives is functional
+- testing if game runs/works on mobile

@@ -1,0 +1,16 @@
+___________________________________________
+
+Week of feb 17 – feb 23 
+
+---------
+Wednesday 
+Time spent: 2 hours 
+
+Duties: 
+- Adding alternate movement states (driving, flying, drifting) 
+
+Achievements: 
+- Introduced trigger objects that change the player’s state upon detecting a collision 
+- Trigger can be customized to transition to different states (e.g. driving -> flying, drifting -> driving, etc.) 
+- Bug fixes related to the new trigger object 
+- other bug fixes

@@ -1,0 +1,25 @@
+___________________________________________
+Week of Mar 30 - Apr 5
+
+Friday
+Time spent: 6 hours
+
+Duties:
+- add more UI elements
+- refine aesthetics
+
+Achievements:
+- added warning and notification UI elements
+- added different font, swapped out many text elements
+- added settings menu element, added functionality to different elements
+- added more environments (trees, buildings)
+
+Sunday
+Time spent: 2 hours
+
+Duties:
+- general refinement
+
+Achievements:
+- added sound effects upon colliding with an objective/obstacle
+- fixed bugs.
