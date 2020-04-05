@@ -9,6 +9,11 @@ using UnityEngine.SceneManagement;
 #if !UNITY_ANDROID
 #endif
 
+/* DEPRECATED, MOVED TO MainMenuCanvasController 
+ * The original menu for beatmap generation
+ * Author: Evan Jesty (101078735)
+ */
+
 public class BGAMenu : MonoBehaviour
 {
 
