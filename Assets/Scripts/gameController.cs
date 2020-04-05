@@ -66,6 +66,10 @@ public class gameController : MonoBehaviour
     public Button exitSettingsButton;
     public Slider volumeSlider;
     public Slider tiltSensSlider;
+    public Slider sfxVolumeSlider;
+
+    private GameObject objective;
+    private GameObject badObjective;
 
     BeatMap beatMap;
     
@@ -78,6 +82,8 @@ public class gameController : MonoBehaviour
     public LOAD_STATE load_state;
 
     public GameObject warningText;
+
+    public static AudioSource[] sounds;
 
 
     void Start()
@@ -114,7 +120,7 @@ public class gameController : MonoBehaviour
        audioSrc = this.GetComponent<AudioSource>(); // there is an audiosource in beatmapplayer, but it is more convenient to create one here
        
        // do not render the pause canvas on launch
-       GameObject.Find("PauseCanvas").SetActive(false);
+       //GameObject.Find("PauseCanvas").SetActive(false);
 
        LoadPlayerFromExternal(ref playerClass);
 
@@ -135,6 +141,10 @@ public class gameController : MonoBehaviour
         beatMap = BeatMap.loadBeatMap();
         beatMap.loadSamples(this);
 
+        objective = GameObject.Find("Objective");
+        badObjective = GameObject.Find("BadObjective");
+
+        sounds = GetComponents<AudioSource>();
        
         // initial camera angle
         //mainCamera.transform.position = Vector3.MoveTowards(cameraPositions[1], cameraPositions[0], 20f);
@@ -191,8 +201,10 @@ public class gameController : MonoBehaviour
             }else{
                 warningText.GetComponent<Text>().text = "";
             }
+
             if(_gameState == GameState.game_over){ // game over state
-                //Debug.Log(_playerHealth); 
+                Debug.Log("GAME OVER"); 
+                pauseCanvas.SetActive(true);
                 gameOverPanel.SetActive(true);
 
                 Time.timeScale = 0; // pauses game
@@ -214,7 +226,13 @@ public class gameController : MonoBehaviour
         audioSrc.volume = volumeSlider.value;
         // tilt sensitivity code
         MovementScript.tiltSensHorizontal = tiltSensSlider.value * 2.5f;
-        MovementScript.tiltSensVertical = tiltSensSlider.value * 2.5f;
+        MovementScript.tiltSensVertical = tiltSensSlider.value * 2.5f; 
+        // sfx volume code
+        //objective.GetComponent<AudioSource>().volume = sfxVolumeSlider.value;
+        //badObjective.GetComponent<AudioSource>().volume = sfxVolumeSlider.value;
+        sounds[1].volume = sfxVolumeSlider.value; // good sound
+        sounds[2].volume = sfxVolumeSlider.value; // bad sound
+        //print(sounds[2].volume);
 
     }
 

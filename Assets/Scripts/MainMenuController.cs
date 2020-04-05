@@ -37,7 +37,7 @@ public class MainMenuController : MonoBehaviour
         carPositions = new Vector3[]{new Vector3(-516, -592.95f, 96.9325f), new Vector3(-516, -592.94f, 96.9325f), new Vector3(-516, -589.8253f, 96.9325f)};
 
         //saveToJSON(player);
-        player = new PlayerClass("", 0, 0, 0, 1500, 0);
+        player = new PlayerClass("", 0, 0, 0, 100000, 0); // change back to 1500 lol
         
         //savePlayerToExternal(player); // debug
         // loads the player's data upon startup
