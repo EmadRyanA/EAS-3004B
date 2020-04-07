@@ -22,6 +22,6 @@ leaderboards are lists of type windataclass stored in the beatmap
 
 April 5
 Final code clean up, helping others with issues, lots of testing
-~2 hrs
+~5 hrs
 
 
