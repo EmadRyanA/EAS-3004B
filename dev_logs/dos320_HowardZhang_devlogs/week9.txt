@@ -1,16 +1,14 @@
 ___________________________________________
-Week of Mar 9 - Mar 15
+Week of Mar 16 - Mar 22
 
 Tuesday
-Time spent: 5 hours
+Time spent: 4 hours
 
 Duties:
-- adding additional cars
-- adding function to the garage in the main menu
-- additional experimentation with graphics
+- refine the additional cars feature
 
 Achievements:
-- the player is now able to keep track of their owned cars/current selected car
-- their current selected car is reflected in the main menu (as the showcase car)
-- can now cycle through cars in the garage menu
-- planning for additional functionality in the garage menu (buying cars)
+- fix dependencies on specific game objects to be more generalized
+- your selected car in the garage can now be used in game
+- change company name/game name and reflected the changes in the Java code 
+- other bug fixes

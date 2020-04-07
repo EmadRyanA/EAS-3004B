@@ -1,12 +1,25 @@
 ___________________________________________
-Week of Mar 23 - Mar 29
+Week of Mar 30 - Apr 5
 
-Sunday
-Time spent: 4 hours
+Friday
+Time spent: 6 hours
 
 Duties:
-- bug fixing
-- code refactoring
+- add more UI elements
+- refine aesthetics
 
 Achievements:
-- code has been refactored, and is now easier to navigate/edit.
+- added warning and notification UI elements
+- added different font, swapped out many text elements
+- added settings menu element, added functionality to different elements
+- added more environments (trees, buildings)
+
+Sunday
+Time spent: 2 hours
+
+Duties:
+- general refinement
+
+Achievements:
+- added sound effects upon colliding with an objective/obstacle
+- fixed bugs.

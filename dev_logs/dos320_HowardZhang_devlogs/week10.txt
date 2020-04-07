@@ -1,14 +1,12 @@
 ___________________________________________
-Week of Mar 16 - Mar 22
+Week of Mar 23 - Mar 29
 
-Tuesday
+Sunday
 Time spent: 4 hours
 
 Duties:
-- refine the additional cars feature
+- bug fixing
+- code refactoring
 
 Achievements:
-- fix dependencies on specific game objects to be more generalized
-- your selected car in the garage can now be used in game
-- change company name/game name and reflected the changes in the Java code 
-- other bug fixes
+- code has been refactored, and is now easier to navigate/edit.
