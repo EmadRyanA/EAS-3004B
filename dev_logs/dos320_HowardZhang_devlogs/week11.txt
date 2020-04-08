@@ -13,6 +13,9 @@ Achievements:
 - added different font, swapped out many text elements
 - added settings menu element, added functionality to different elements
 - added more environments (trees, buildings)
+- added/changed lighting effects
+- added windzones (wind effects on trees)
+- bug fixes
 
 Sunday
 Time spent: 2 hours
